@@ -30,6 +30,7 @@ public class StampResultsTest extends BaseTest {
     public void failedTest(){
         ExtentTest nodeSetup = getTest().createNode("Make the test Failed");
         nodeSetup.log(Status.INFO,"Check for test failed");
-        Assert.fail("This test should failed");
+        Assert.assertEquals(false,true,"This test should failed");
+    }
     }
 }
