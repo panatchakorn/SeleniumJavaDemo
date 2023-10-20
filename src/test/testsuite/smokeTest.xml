@@ -3,10 +3,17 @@
 <suite name="Smoke Test Suite">
     <test verbose="2" preserve-order="true" thread-count="5" name="UserTests">
         <classes>
-            <class name="testcase.FirstTest">
+<!--            <class name="testcase.FirstTest">-->
+<!--                <methods>-->
+<!--                    <include name="firstTest"/>-->
+<!--                    <include name="secondTest"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+            <class name="testcase.StampResultsTest">
                 <methods>
-                    <include name="firstTest"/>
-                    <include name="secondTest"/>
+                    <include name="passedTest"/>
+                    <include name="skippedTest"/>
+                    <include name="failedTest"/>
                 </methods>
             </class>
         </classes>
