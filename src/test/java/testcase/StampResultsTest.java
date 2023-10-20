@@ -32,5 +32,4 @@ public class StampResultsTest extends BaseTest {
         nodeSetup.log(Status.INFO,"Check for test failed");
         Assert.assertEquals(false,true,"This test should failed");
     }
-    }
 }
