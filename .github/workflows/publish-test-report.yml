@@ -1,5 +1,5 @@
 
-name: Java CI with Maven
+name: publish-test-report
 
 on:
   workflow_dispatch:
