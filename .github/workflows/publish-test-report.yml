@@ -58,6 +58,7 @@ jobs:
         uses: phoenix-actions/test-reporting@v8
         if: success() || failure() # always run even if the previous step fails
         with:
+          name: Test Report
           comment-enabled: false
           comment-headers: false
           download-artifact-name: surefire-test-reports
