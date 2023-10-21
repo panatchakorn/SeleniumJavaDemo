@@ -59,6 +59,8 @@ jobs:
         if: success() || failure() # always run even if the previous step fails
         with:
           include_passed: true
+          check_retries: true
+          summary: true
           job_summary: true
           detailed_summary: true
           report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
