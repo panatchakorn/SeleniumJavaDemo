@@ -64,6 +64,8 @@ jobs:
           download-artifact-name: surefire-test-reports
           path: '**/target/surefire-reports/TEST-*.xml'
           reporter: java-junit
+          list-suites: all
+          list-tests: failed
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
