@@ -33,10 +33,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-reports
-          path: |
-            ./target/logs/
-            .target/reports/
+          path: |  
+          #  ./target/logs/
+          #  .target/reports/
           #  ./target/surefire-reports/
+            ~/target/logs/*
+            ~/target/reports/*
 
       - name: Upload surefire test reports
         if: always()
@@ -44,7 +46,8 @@ jobs:
         with:
           name: surefire-test-reports
           path: |
-            ./target/surefire-reports/TEST*.xml'
+          #  ./target/surefire-reports/TEST*.xml
+            ~/target/surefire-reports/TEST*.xml
 
       - name: Publish Test Report
         uses: turing85/publish-report@v1
