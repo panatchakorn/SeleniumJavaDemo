@@ -61,8 +61,7 @@ jobs:
           include_passed: true
           job_summary: true
           detailed_summary: true
-
-        #  report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
+          report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
