@@ -59,7 +59,6 @@ jobs:
         if: success() || failure() # always run even if the previous step fails
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          download-artifact-name: surefire-test-reports
 
         #  report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
