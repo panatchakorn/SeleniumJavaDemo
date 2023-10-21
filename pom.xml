@@ -22,8 +22,9 @@
                 <version>3.1.2</version> <!-- Use the latest version -->
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/testsuite/smokeTest.xml</suiteXmlFile> <!-- Your TestNG XML file -->
+                        <suiteXmlFile>${user.dir}/src/test/testsuite/smokeTest.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                    <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
         </plugins>
@@ -42,6 +43,7 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>7.8.0</version>
+            <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
