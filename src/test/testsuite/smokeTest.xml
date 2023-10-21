@@ -5,6 +5,7 @@
         <classes>
 <!--            <class name="testcase.FirstTest"/>-->
             <class name = "testcase.StampResultsTest"/>
+            <class name = "testcase.SecondTest"/>
         </classes>
     </test>
 <!--    <test verbose="2" preserve-order="true" thread-count="5" name="UserTests">-->

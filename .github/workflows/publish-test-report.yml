@@ -49,7 +49,7 @@ jobs:
         with:
           name: surefire-test-reports
           path: |
-            **/target/surefire-reports/TEST*.xml
+            **/target/surefire-reports/**/*
 
           #  ./target/surefire-reports/TEST*.xml
 
@@ -62,7 +62,7 @@ jobs:
           comment-enabled: false
           comment-headers: false
           download-artifact-name: surefire-test-reports
-          path: '**/target/surefire-reports/TEST-*.xml'
+          path: '**/target/surefire-reports/junitreports/TEST-*.xml'
           reporter: java-junit
           list-suites: all
           list-tests: failed
