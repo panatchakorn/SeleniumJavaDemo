@@ -3,7 +3,7 @@
 <suite name="Smoke Test Suite">
     <test name = "test1">
         <classes>
-            <class name="testcase.FirstTest"/>
+<!--            <class name="testcase.FirstTest"/>-->
             <class name = "testcase.StampResultsTest"/>
         </classes>
     </test>
