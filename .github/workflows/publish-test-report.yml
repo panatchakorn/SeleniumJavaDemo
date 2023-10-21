@@ -63,7 +63,7 @@ jobs:
           comment-headers: false
           download-artifact-name: surefire-test-reports
           path: '**/target/surefire-reports/TEST-*.xml'
-          report-reporter: java-junit
+          reporter: java-junit
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
