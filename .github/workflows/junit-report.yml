@@ -1,5 +1,5 @@
 
-name: surefire-report
+name: junit-report
 
 on:
   workflow_dispatch:
@@ -55,10 +55,12 @@ jobs:
 
 
       - name: Publish Test Report
-        uses: scacap/action-surefire-report@v1
+        uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
-       # with:
-       #   github_token: ${{ secrets.GH_TOKEN }}
+        with:
+          include_passed: true
+          job_summary: true
+          detailed_summary: true
 
         #  report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
