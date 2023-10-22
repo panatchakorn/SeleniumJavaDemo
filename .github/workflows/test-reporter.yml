@@ -73,6 +73,7 @@ jobs:
           only-summary: false
           list-suites: all
           list-tests: all
+          fail-on-error: false
           path: '**/target/surefire-reports/TEST-*.xml'
 
         #   path: '**/target/surefire-reports/junitreports/TEST-*.xml'
