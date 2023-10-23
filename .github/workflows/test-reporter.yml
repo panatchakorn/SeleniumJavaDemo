@@ -81,11 +81,13 @@ jobs:
 
      # - name: Setup Pages
      #   uses: actions/configure-pages@v3
+     
       - name: Upload artifact for github page
         uses: actions/upload-pages-artifact@v2
         with:
-          # Upload entire repository use path: '.'
+          name: 'github-pages'
           path: '/target/reports/'
+          retention-days: 1
 
   deploy:
     needs: build
