@@ -84,6 +84,7 @@ jobs:
      
       - name: Upload artifact for github page
         uses: actions/upload-pages-artifact@v2
+        if: always()
         with:
           name: 'github-pages'
           path: '/target/reports/'
