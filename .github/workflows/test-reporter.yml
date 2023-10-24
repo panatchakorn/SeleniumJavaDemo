@@ -85,6 +85,7 @@ jobs:
         if: success() || failure()
 
       - name: Print Setup Pages Output
+        if: success() || failure()
         run: |
           echo "base_url: ${{ steps.pages.outputs.base_url }}"
           echo "origin: ${{ steps.pages.outputs.origin }}"
