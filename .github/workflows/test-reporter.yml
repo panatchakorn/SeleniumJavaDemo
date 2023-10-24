@@ -91,11 +91,12 @@ jobs:
           path: '${{ github.workspace }}/target/reports/'
           retention-days: 1          
     outputs:
-      github_page_artifact_output: set-output ${{ steps.github_page_artifact.outcome }}
+      github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
       
   deployReport:
-    if: ${{ success() }} || ${{ failure() }}
-    needs: buildTest    
+  # if: ${{ success() }} || ${{ failure() }}
+    needs: buildTest
+    if: needs.buildTest.outputs.github_page_artifact_output == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
