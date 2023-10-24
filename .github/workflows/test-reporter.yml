@@ -80,8 +80,16 @@ jobs:
         #   path: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
       - name: Setup Pages
+        id: pages
         uses: actions/configure-pages@v3
         if: success() || failure()
+
+      - name: Print Setup Pages Output
+        run: |
+          echo "base_url: ${{ steps.pages.outputs.base_url }}"
+          echo "origin: ${{ steps.pages.outputs.origin }}"
+          echo "host: ${{ steps.pages.outputs.host }}"
+          echo "base_path ${{ steps.pages.outputs.base_path }}"
      
       - name: Upload artifact for github page
         id: github_page_artifact
