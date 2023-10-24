@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  buildTest:
 #    environment:
 #      name: github-pages
 #      url: ${{ steps.deployment.outputs.page_url }}
@@ -43,7 +43,7 @@ jobs:
 
 
       - name: Upload test reports
-        if: always()
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: test-reports
@@ -56,7 +56,7 @@ jobs:
           #  ./target/surefire-reports/
 
       - name: Upload surefire test reports
-        if: always()
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: surefire-test-reports
@@ -83,22 +83,27 @@ jobs:
      #   uses: actions/configure-pages@v3
      
       - name: Upload artifact for github page
+        id: github_page_artifact
         uses: actions/upload-pages-artifact@v2
-        if: always()
+        if: success() || failure()
         with:
           name: 'github-pages'
           path: '${{ github.workspace }}/target/reports/'
-          retention-days: 1
-
-  deploy:
-    needs: build
+          retention-days: 1          
+    outputs:
+      github_page_artifact_output: set-output ${{ steps.github_page_artifact.outcome }}
+      
+  deployReport:
+    # if: ${{ success() }} || ${{ failure() }}
+    # needs: buildTest
+    if: ${{ needs.buildTest.github_page_artifact_output }} == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
-        if: always()
+        # if: success()
         id: deployment
         uses: actions/deploy-pages@v2
 
