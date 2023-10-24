@@ -94,16 +94,15 @@ jobs:
       github_page_artifact_output: set-output ${{ steps.github_page_artifact.outcome }}
       
   deployReport:
-    # if: ${{ success() }} || ${{ failure() }}
-    # needs: buildTest
-    if: ${{ needs.buildTest.github_page_artifact_output }} == 'success'
+    if: ${{ success() }} || ${{ failure() }}
+    needs: buildTest    
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
-        # if: success()
+        if: ${{ buildTest.github_page_artifact_output }} == 'success'
         id: deployment
         uses: actions/deploy-pages@v2
 
