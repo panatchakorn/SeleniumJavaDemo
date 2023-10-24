@@ -103,7 +103,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
-        if: ${{ buildTest.github_page_artifact_output }} == 'success'
         id: deployment
         uses: actions/deploy-pages@v2
 
