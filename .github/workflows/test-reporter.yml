@@ -91,6 +91,15 @@ jobs:
           echo "origin: ${{ steps.pages.outputs.origin }}"
           echo "host: ${{ steps.pages.outputs.host }}"
           echo "base_path ${{ steps.pages.outputs.base_path }}"
+
+      - name: Prepare files for Github pages
+        if: success() || failure()
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/_site
+          mkdir -p $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+          cp -r target/reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+          cp -r target/surefire-reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+        working-directory: ${{ github.workspace }}
      
       - name: Upload artifact for github page
         id: github_page_artifact
@@ -98,7 +107,7 @@ jobs:
         if: success() || failure()
         with:
           name: 'github-pages'
-          path: '${{ github.workspace }}/target/'
+          path: '${{ github.workspace }}/_site/'
           retention-days: 1          
     outputs:
       github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
