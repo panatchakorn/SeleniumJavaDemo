@@ -75,9 +75,11 @@ jobs:
           list-suites: all
           list-tests: all
           fail-on-error: false
-          path: '**/target/surefire-reports/TEST-*.xml'
+          path: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
-        #   path: '**/target/surefire-reports/junitreports/TEST-*.xml'
+        #  path: '**/target/surefire-reports/TEST-*.xml'
+
+
 
       - name: Setup Pages
         id: pages
