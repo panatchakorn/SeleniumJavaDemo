@@ -66,6 +66,7 @@ jobs:
           #  ./target/surefire-reports/TEST*.xml
 
       - name: Publish Test Report
+        id: publish_report
         uses: dorny/test-reporter@v1
         if: success() || failure() # always run even if the previous step fails
         with:
@@ -79,7 +80,11 @@ jobs:
 
         #  path: '**/target/surefire-reports/TEST-*.xml'
 
-
+      - name: Print Test Report Url
+        if: success() || failure()
+        run: |
+          echo "url: ${{ steps.publish_report.outputs.url }}"
+          echo "url_html: ${{ steps.publish_report.outputs.url_html }}"
 
       - name: Setup Pages
         id: pages
