@@ -89,7 +89,17 @@ jobs:
           echo "Failed count: ${{ steps.publish_report.outputs.failed }}"
           echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
           echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"      
-      
+
+      - name: Test Results Summary
+        id: test_summary
+        run: |
+          echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+          echo "Total: XXX" >> $GITHUB_STEP_SUMMARY
+          echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
+          echo ":red_heavy_multiplication_x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
+          echo ":white_circle: Skipped: ${{ steps.publish_report.outputs.skipped }}" >> $GITHUB_STEP_SUMMARY
+          echo "Execution time (ms): ${{ steps.publish_report.outputs.time }}" >> $GITHUB_STEP_SUMMARY
           
       - name: Setup Pages
         id: pages
