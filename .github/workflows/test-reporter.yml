@@ -88,8 +88,21 @@ jobs:
           echo "Passed count: ${{ steps.publish_report.outputs.passed }}"
           echo "Failed count: ${{ steps.publish_report.outputs.failed }}"
           echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
-          echo "Execution time: ${{ steps.publish_report.outputs.time }}"
-
+          echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"
+          
+      - name: Publish Test Report Summary
+        id: publish_report_summary
+        uses: dorny/test-reporter@v1
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          name: Test Report Summary
+          reporter: java-junit
+          only-summary: true
+          list-suites: all
+          list-tests: all
+          fail-on-error: false
+          path: '**/target/surefire-reports/junitreports/TEST-*.xml'
+          
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
