@@ -57,10 +57,11 @@ jobs:
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
         if: success() || failure() # always run even if the previous step fails
-       # with:
+        with:
+          report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
        #   github_token: ${{ secrets.GH_TOKEN }}
 
-        #  report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
+          
 
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
