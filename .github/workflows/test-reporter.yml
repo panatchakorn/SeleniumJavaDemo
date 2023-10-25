@@ -80,11 +80,15 @@ jobs:
 
         #  path: '**/target/surefire-reports/TEST-*.xml'
 
-      - name: Print Test Report Url
+      - name: Print Test Report Output
         if: success() || failure()
         run: |
           echo "url: ${{ steps.publish_report.outputs.url }}"
           echo "url_html: ${{ steps.publish_report.outputs.url_html }}"
+          echo "Passed count: ${{ steps.publish_report.outputs.passed }}"
+          echo "Failed count: ${{ steps.publish_report.outputs.failed }}"
+          echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
+          echo "Execution time: ${{ steps.publish_report.outputs.time }}"
 
       - name: Setup Pages
         id: pages
