@@ -98,7 +98,7 @@ jobs:
         if: success() || failure()
         with:
           name: 'github-pages'
-          path: '${{ github.workspace }}/target/reports'
+          path: '${{ github.workspace }}/target/**/*'
           retention-days: 1          
     outputs:
       github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
