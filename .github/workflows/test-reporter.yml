@@ -95,7 +95,6 @@ jobs:
       - name: Prepare files for Github pages
         if: success() || failure()
         run: |
-          mkdir -p $GITHUB_WORKSPACE/_site
           mkdir -p $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
           cp -r target/reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
           cp -r target/surefire-reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
