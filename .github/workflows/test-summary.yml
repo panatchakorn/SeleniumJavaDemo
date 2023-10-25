@@ -61,18 +61,19 @@ jobs:
           paths: |
             **/target/surefire-reports/TEST*.xml
           show: "all"
-          output: "target/surefire-reports/testResults.md"
+
+#          output: "target/surefire-reports/testResults.md"
 
         #   github_token: ${{ secrets.GH_TOKEN }}
 
         #  report_paths: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
-      - name: Upload testResults.md
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-summary-md
-          path: target/surefire-reports/testResults.md
-        if: success() || failure()
+#      - name: Upload testResults.md
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: test-summary-md
+#          path: target/surefire-reports/testResults.md
+#        if: success() || failure()
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
