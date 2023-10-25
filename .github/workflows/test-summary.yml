@@ -59,7 +59,7 @@ jobs:
         if: success() || failure() # always run even if the previous step fails
         with:
           paths: |
-            **/target/surefire-reports/TEST*.xml
+            **/target/surefire-reports/junitreports/TEST*.xml
           show: "all"
 
 #          output: "target/surefire-reports/testResults.md"
