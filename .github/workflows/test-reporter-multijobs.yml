@@ -207,10 +207,12 @@ jobs:
   #    steps:
 
   upload_extend_reports_group_a:
+#    if: |
+#       (${{ success() }} || ${{ failure() }})
+#       && needs.test_group_a.outputs.test_results_output == 'success'
     if: |
-       (${{ success() }} || ${{ failure() }})
-       && needs.test_group_a.outputs.test_results_output == 'success'
-       needs: test_group_a
+      needs.test_group_a.outputs.test_results_output == 'success'
+    needs: test_group_a
     runs-on: ubuntu-latest
     steps:
       - name: Upload extent reports
@@ -228,9 +230,12 @@ jobs:
           path: ${{ env.GROUPA_RESULTS_DIR }}/target/surefire-reports/**/*
 
   upload_extend_reports_group_b:
-    if: |
-      (${{ success() }} || ${{ failure() }})
-      && needs.test_bundle_c.outputs.test_results_output == 'success' 
+#    if: |
+#      (${{ success() }} || ${{ failure() }})
+#      && needs.test_bundle_c.outputs.test_results_output == 'success'
+#      && needs.test_bundle_d.outputs.test_results_output == 'success'
+    if: |      
+      needs.test_bundle_c.outputs.test_results_output == 'success' 
       && needs.test_bundle_d.outputs.test_results_output == 'success'
       needs: [test_bundle_c, test_bundle_d]
     runs-on: ubuntu-latest
