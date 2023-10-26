@@ -22,7 +22,8 @@
                 <version>3.1.2</version> <!-- Use the latest version -->
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>${user.dir}/src/test/testsuite/smokeTest.xml</suiteXmlFile>
+                        <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+<!--                        <suiteXmlFile>${user.dir}/src/test/testsuite/smokeTest.xml</suiteXmlFile>-->
                     </suiteXmlFiles>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
