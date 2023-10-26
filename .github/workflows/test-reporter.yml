@@ -91,6 +91,7 @@ jobs:
           echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"      
 
       - name: CALCULATION
+        if: success() || failure()
         run: |
           numa=1
           numb=2
@@ -101,10 +102,10 @@ jobs:
         id: test_summary
         if: success() || failure()
         run: |
-          passed = ${{ steps.publish_report.outputs.passed }}
-          failed = ${{ steps.publish_report.outputs.failed }}
-          skipped =  ${{ steps.publish_report.outputs.skipped }}
-          total = $(( passed + failed  + skipped ))
+          passed=${{ steps.publish_report.outputs.passed }}
+          failed=${{ steps.publish_report.outputs.failed }}
+          skipped= ${{ steps.publish_report.outputs.skipped }}
+          total=$((passed+failed+skipped))
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line          
           echo "Total: $total" >> $GITHUB_STEP_SUMMARY
