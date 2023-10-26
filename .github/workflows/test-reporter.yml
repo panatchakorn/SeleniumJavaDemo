@@ -99,7 +99,7 @@ jobs:
           passed = ${{ steps.publish_report.outputs.passed }}
           failed = ${{ steps.publish_report.outputs.failed }}
           skipped =  ${{ steps.publish_report.outputs.skipped }}
-          total = $(( $passsed + $failed  + $skipped ))
+          total = $(( $passed + $failed  + $skipped ))
           echo "Total: $total" >> $GITHUB_STEP_SUMMARY
           echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
           echo ":x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
