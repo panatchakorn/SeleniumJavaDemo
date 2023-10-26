@@ -82,6 +82,7 @@ jobs:
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupA
           cp -r target/reports $GITHUB_WORKSPACE/results/groupA
         env:
+          working-directory: ${{ github.workspace }}
           GROUPA_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
 
       - name: Publish Test Report
@@ -129,6 +130,7 @@ jobs:
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
         env:
+          working-directory: ${{ github.workspace }}
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
       - name: Publish Test Report
@@ -176,6 +178,7 @@ jobs:
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/bundleB
           cp -r target/reports $GITHUB_WORKSPACE/results/bundleB
         env:
+          working-directory: ${{ github.workspace }}
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
       - name: Publish Test Report
