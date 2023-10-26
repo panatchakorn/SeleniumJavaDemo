@@ -131,8 +131,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
-          echo cd $GITHUB_WORKSPACE/results/groupB
-          ls -l
+          ls -l $GITHUB_WORKSPACE/results/groupB/target
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
@@ -178,13 +177,11 @@ jobs:
         id: copy_test_results
         if: success() || failure()
         run: |
-          mkdir -p $GITHUB_WORKSPACE/results/bundleB
-          cp -r target/surefire-reports $GITHUB_WORKSPACE/results/bundleB
-          cp -r target/reports $GITHUB_WORKSPACE/results/bundleB
-          echo cd $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
-          ls -l
-          echo cd $GITHUB_WORKSPACE/results/groupB/target/reports
-          ls-l
+          mkdir -p $GITHUB_WORKSPACE/results/groupB
+          cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB
+          cp -r target/reports $GITHUB_WORKSPACE/results/groupB
+          ls - l $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
+          ls -l $GITHUB_WORKSPACE/results/groupB/target/reports
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
