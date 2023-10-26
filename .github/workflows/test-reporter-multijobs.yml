@@ -84,6 +84,7 @@ jobs:
           cd $GITHUB_WORKSPACE/results/groupA
           ls
         env:
+          working-directory: ${{ github.workspace }}
           GROUPA_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
 
       - name: Publish Test Report
@@ -133,6 +134,7 @@ jobs:
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
           echo $GITHUB_WORKSPACE/results/groupB/target
         env:
+          working-directory: ${{ github.workspace }}
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
       - name: Publish Test Report
@@ -185,6 +187,7 @@ jobs:
           cd $GITHUB_WORKSPACE/results/groupB/target/reports
           ls
         env:
+          working-directory: ${{ github.workspace }}
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
       - name: Publish Test Report
