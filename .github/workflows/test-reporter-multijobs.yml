@@ -229,14 +229,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-a
-          path: ${{ test_group_a.outputs.test_results_dir }}/target/reports/*
+          path: ${{ env.GROUPA_RESULTS_DIR }}/target/reports/*
 
       - name: Upload surefire reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-a
-          path: ${{ test_group_a.outputs.test_results_dir }}/target/surefire-reports/**/*
+          path: ${{ env.GROUPA_RESULTS_DIR }}/target/surefire-reports/**/*
 
   upload_reports_group_b:
 #    if: |
