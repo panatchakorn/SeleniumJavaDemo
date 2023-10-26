@@ -81,8 +81,8 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupA
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupA
           cp -r target/reports $GITHUB_WORKSPACE/results/groupA
-          echo $GITHUB_WORKSPACE/results/groupA
-          ls -l $GITHUB_WORKSPACE/results/groupA
+          cd $GITHUB_WORKSPACE/results/groupA
+          ls
         env:
           GROUPA_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
 
@@ -101,7 +101,7 @@ jobs:
 
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
-      test_results_dir: ${{ steps.copy_test_results.outputs.GROUPA_RESULTS_DIR }}
+      test_results_dir: ${{ env.GROUPA_RESULTS_DIR }}
 
   test_bundle_c:
     needs: build
@@ -131,8 +131,8 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
-          echo $GITHUB_WORKSPACE/results/groupB
-          ls -l $GITHUB_WORKSPACE/results/groupB
+          echo cd $GITHUB_WORKSPACE/results/groupB
+          ls -l
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
@@ -151,7 +151,7 @@ jobs:
 
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
-      test_results_dir: ${{ steps.copy_test_results.outputs.GROUPB_RESULTS_DIR }}
+      test_results_dir: ${{ env.GROUPB_RESULTS_DIR }}
 
   test_bundle_d:
     needs: build
@@ -181,8 +181,10 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/bundleB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/bundleB
           cp -r target/reports $GITHUB_WORKSPACE/results/bundleB
-          echo $GITHUB_WORKSPACE/results/groupB
-          ls -l $GITHUB_WORKSPACE/results/groupB
+          echo cd $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
+          ls -l
+          echo cd $GITHUB_WORKSPACE/results/groupB/target/reports
+          ls-l
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
@@ -201,7 +203,7 @@ jobs:
 
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
-      test_results_dir: ${{ steps.copy_test_results.outputs.GROUPB_RESULTS_DIR }}
+      test_results_dir: ${{ env.GROUPB_RESULTS_DIR }}
 
   #  deployReport:
   #    if: |
