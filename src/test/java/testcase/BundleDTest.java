@@ -25,7 +25,14 @@ public class BundleDTest extends BaseTest {
         result.setThrowable(new SkipException("This test should skipped"));
     }
     @Test
-    public void bundleDFailedTest(){
+    public void bundleDFailed1Test(){
+        ExtentTest nodeSetup = getTest().createNode("Make the test Failed");
+        nodeSetup.log(Status.INFO,"Check for test failed");
+        Assert.assertEquals(false,true,"This test should failed");
+    }
+
+    @Test
+    public void bundleDFailed2Test(){
         ExtentTest nodeSetup = getTest().createNode("Make the test Failed");
         nodeSetup.log(Status.INFO,"Check for test failed");
         Assert.assertEquals(false,true,"This test should failed");

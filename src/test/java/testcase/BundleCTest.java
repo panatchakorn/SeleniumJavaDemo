@@ -11,12 +11,18 @@ import org.testng.annotations.Test;
 
 public class BundleCTest extends BaseTest {
     @Test
-    public void bundleCPassedTest(){
+    public void bundleCPassed1Test(){
         ExtentTest nodeSetup = getTest().createNode("Make the test Passed");
         nodeSetup.log(Status.INFO,"Check if true is true");
         Assert.assertEquals(true,true,"This test should passed");
     }
     @Test
+    public void bundleCPassed2Test(){
+        ExtentTest nodeSetup = getTest().createNode("Make the test Passed");
+        nodeSetup.log(Status.INFO,"Check if true is true");
+        Assert.assertEquals(true,true,"This test should passed");
+    }
+    @Test (enabled = false)
     public void bundleCSkippedTest(){
         ExtentTest nodeSetup = getTest().createNode("Make the test Skipped");
         nodeSetup.log(Status.INFO,"Check for test skipped");
