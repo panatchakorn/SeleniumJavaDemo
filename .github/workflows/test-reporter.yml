@@ -94,12 +94,12 @@ jobs:
         id: test_summary
         if: success() || failure()
         run: |
-          echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
           passed = ${{ steps.publish_report.outputs.passed }}
           failed = ${{ steps.publish_report.outputs.failed }}
           skipped =  ${{ steps.publish_report.outputs.skipped }}
-          total = $(( $passed + $failed  + $skipped ))
+          total = $(( passed + failed  + skipped ))
+          echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line          
           echo "Total: $total" >> $GITHUB_STEP_SUMMARY
           echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
           echo ":x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
