@@ -92,6 +92,7 @@ jobs:
 
       - name: Test Results Summary
         id: test_summary
+        if: success() || failure()
         run: |
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
