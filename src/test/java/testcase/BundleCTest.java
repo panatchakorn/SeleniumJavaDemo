@@ -7,6 +7,7 @@ import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.SkipException;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 public class BundleCTest extends BaseTest {
@@ -22,7 +23,7 @@ public class BundleCTest extends BaseTest {
         nodeSetup.log(Status.INFO,"Check if true is true");
         Assert.assertEquals(true,true,"This test should passed");
     }
-    @Test (enabled = false)
+    @Test @Ignore
     public void bundleCSkippedTest(){
         ExtentTest nodeSetup = getTest().createNode("Make the test Skipped");
         nodeSetup.log(Status.INFO,"Check for test skipped");
