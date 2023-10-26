@@ -237,7 +237,7 @@ jobs:
     if: |      
       needs.test_bundle_c.outputs.test_results_output == 'success' 
       && needs.test_bundle_d.outputs.test_results_output == 'success'
-      needs: [test_bundle_c, test_bundle_d]
+    needs: [test_bundle_c, test_bundle_d]
     runs-on: ubuntu-latest
     steps:
       - name: Upload extent reports
