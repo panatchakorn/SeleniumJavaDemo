@@ -90,6 +90,13 @@ jobs:
           echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
           echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"      
 
+      - name: CALCULATION
+        run: |
+          numa=1
+          numb=2
+          numc=$((numa + numb))
+          echo "numc = $numc"
+          
       - name: Test Results Summary
         id: test_summary
         if: success() || failure()
