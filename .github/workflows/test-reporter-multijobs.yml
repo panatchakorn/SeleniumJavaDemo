@@ -277,7 +277,7 @@ jobs:
   #    runs-on: ubuntu-latest
   #    steps:
 
-  check_upload_reports_group_a:
+  reports_group_a_uploaded:
     if: |
       (${{ success() }} || ${{ failure() }})
       needs.test_group_a.outputs.test_results_output == 'success'
@@ -293,7 +293,7 @@ jobs:
         run: |
           echo "reports are uploaded successfully"
 
-  upload_reports_group_b:
+  reports_group_b_uploaded:
     if: |
       (${{ success() }} || ${{ failure() }})
       needs.test_bundle_c.outputs.test_results_output == 'success'
