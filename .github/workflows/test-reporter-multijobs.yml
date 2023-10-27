@@ -78,12 +78,12 @@ jobs:
         id: copy_test_results
         if: success() || failure()
         run: |
-          mkdir -p ${{ github.workspace }}/results/groupA
+          mkdir -p results/groupA
           ls
-          cd ${{ github.workspace }}
-          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
+          #cd ${{ github.workspace }}
+          cp -r target/surefire-reports /results/groupA
           echo ============================
-          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
+          echo cd ${{ github.workspace }}/results/groupA/target/surefire-reports
           ls
         #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
         #          cp -r target/reports ${{ github.workspace }}/results/groupA
