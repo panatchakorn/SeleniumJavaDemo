@@ -231,9 +231,7 @@ jobs:
         id: check_reports_dir
         if: success() || failure()
         run: |
-          ls -R $GITHUB_WORKSPACE/results/groupA/target/surefire-reports
-          echo "============================"
-          ls -R $GITHUB_WORKSPACE/results/groupA/target/reports
+          ls -R $GITHUB_WORKSPACE/results/groupA
 
         #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
         #          cp -r target/reports ${{ github.workspace }}/results/groupA
