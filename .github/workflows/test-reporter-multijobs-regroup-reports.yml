@@ -325,7 +325,7 @@ jobs:
                cp -r ${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}/* results/groupB/extent-reports/
                cp -r ${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}/* results/groupB/extent-reports/
                
-               shell: bash
+        shell: bash
 
       - name: Upload extent reports
         if: success() || failure()
@@ -348,7 +348,7 @@ jobs:
                cp -r ${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}/* results/groupB/surefire-reports/
                cp -r ${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}/* results/groupB/surefire-reports/
                
-               shell: bash
+        shell: bash
 
       - name: Upload surefire reports
         if: success() || failure()
