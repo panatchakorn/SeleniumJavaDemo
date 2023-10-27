@@ -90,21 +90,21 @@ jobs:
         #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
         #          ls
 
-      #      - name: Upload extent reports
-      #        if: success() || failure()
-      #        uses: actions/upload-artifact@v3
-      #        with:
-      #          name: extent-reports-group-a
-      #          path: ${{ github.workspace }}/results/groupA/reports/
-      #          if-no-files-found: error
-      #
-      #      - name: Upload surefire reports
-      #        if: success() || failure()
-      #        uses: actions/upload-artifact@v3
-      #        with:
-      #          name: surefire-reports-group-a
-      #          path: ${{ github.workspace }}/results/groupA/surefire-reports/
-      #          if-no-files-found: error
+      - name: Upload extent reports
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: extent-reports-group-a
+          path: ${{ github.workspace }}/results/groupA/reports/
+          if-no-files-found: error
+
+      - name: Upload surefire reports
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-reports-group-a
+          path: ${{ github.workspace }}/results/groupA/surefire-reports/
+          if-no-files-found: error
 
       - name: Publish Test Report
         id: publish_report
@@ -144,31 +144,31 @@ jobs:
       - name: Run tests BundleC
         run: mvn test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/bundleCTest.xml"
 
-      - name: Copy test results
-        id: copy_test_results
-        if: success() || failure()
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/results/groupB/bundleC
-          cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB/bundleC/
-          cp -r target/reports $GITHUB_WORKSPACE/results/groupB/bundleC/
-          ls -R $GITHUB_WORKSPACE/results/groupB/bundleC/
-        env:
-          GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
+#      - name: Copy test results
+#        id: copy_test_results
+#        if: success() || failure()
+#        run: |
+#          mkdir -p $GITHUB_WORKSPACE/results/groupB/bundleC
+#          cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB/bundleC/
+#          cp -r target/reports $GITHUB_WORKSPACE/results/groupB/bundleC/
+#          ls -R $GITHUB_WORKSPACE/results/groupB/bundleC/
+#        env:
+#          GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
 
       - name: Upload extent reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
-          name: extent-reports-group-b
-          path: ${{ github.workspace }}/results/groupB/bundleC/reports/*
+          name: extent-reports-test-bundleC
+          path: "**/target/reports/*" #${{ github.workspace }}/results/groupB/bundleC/reports/*
           if-no-files-found: error
 
       - name: Upload surefire reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
-          name: surefire-reports-group-b
-          path: ${{ github.workspace }}/results/groupB/bundleC/surefire-reports/**/*
+          name: surefire-reports-test-bundleC
+          path: "**/target/surefire-reports/**/*"   #${{ github.workspace }}/results/groupB/bundleC/surefire-reports/**/*
           if-no-files-found: error
 
       - name: Publish Test Report
@@ -209,31 +209,31 @@ jobs:
       - name: Run tests BundleD
         run: mvn test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/bundleDTest.xml"
 
-      - name: Copy test results
-        id: copy_test_results
-        if: success() || failure()
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/results/groupB/bundleD
-          cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB/bundleD/
-          cp -r target/reports $GITHUB_WORKSPACE/results/groupB/bundleD/
-          ls -R $GITHUB_WORKSPACE/results/groupB/bundleD/
-        env:
-          GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
+#      - name: Copy test results
+#        id: copy_test_results
+#        if: success() || failure()
+#        run: |
+#          mkdir -p $GITHUB_WORKSPACE/results/groupB/bundleD
+#          cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB/bundleD/
+#          cp -r target/reports $GITHUB_WORKSPACE/results/groupB/bundleD/
+#          ls -R $GITHUB_WORKSPACE/results/groupB/bundleD/
+#        env:
+#          GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
 
       - name: Upload extent reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
-          name: extent-reports-group-b
-          path: ${{ github.workspace }}/results/groupB/bundleD/reports/*
+          name: extent-reports-test-bundleD
+          path: "**/target/reports/*"   #${{ github.workspace }}/results/groupB/bundleD/reports/*
           if-no-files-found: error
 
       - name: Upload surefire reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
-          name: surefire-reports-group-b
-          path: ${{ github.workspace }}/results/groupB/bundleD/surefire-reports/**/*
+          name: surefire-reports-test-bundleD
+          path: "**/target/surefire-reports/**/*"   #${{ github.workspace }}/results/groupB/bundleD/surefire-reports/**/*
           if-no-files-found: error
 
       - name: Publish Test Report
@@ -265,42 +265,42 @@ jobs:
   #    runs-on: ubuntu-latest
   #    steps:
 
-  upload_reports_group_a:
-    if: |
-      (${{ success() }} || ${{ failure() }})
-      needs.test_group_a.outputs.test_results_output == 'success'
-    needs: test_group_a
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: check reports directory
-        id: check_reports_dir
-        if: success() || failure()
-        run: |
-          ls -R $GITHUB_WORKSPACE/results/groupA/
-
-        #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
-        #          cp -r target/reports ${{ github.workspace }}/results/groupA
-        #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
-        #          ls
-
-      - name: Upload extent reports
-        if: success() || failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: extent-reports-group-a
-          path: ${{ github.workspace }}/results/groupA/reports/
-          if-no-files-found: error
-
-      - name: Upload surefire reports
-        if: success() || failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: surefire-reports-group-a
-          path: ${{ github.workspace }}/results/groupA/surefire-reports/
-          if-no-files-found: error
+#  upload_reports_group_a:
+#    if: |
+#      (${{ success() }} || ${{ failure() }})
+#      needs.test_group_a.outputs.test_results_output == 'success'
+#    needs: test_group_a
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: check reports directory
+#        id: check_reports_dir
+#        if: success() || failure()
+#        run: |
+#          ls -R $GITHUB_WORKSPACE/results/groupA/
+#
+#        #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
+#        #          cp -r target/reports ${{ github.workspace }}/results/groupA
+#        #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
+#        #          ls
+#
+#      - name: Upload extent reports
+#        if: success() || failure()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: extent-reports-group-a
+#          path: ${{ github.workspace }}/results/groupA/reports/
+#          if-no-files-found: error
+#
+#      - name: Upload surefire reports
+#        if: success() || failure()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: surefire-reports-group-a
+#          path: ${{ github.workspace }}/results/groupA/surefire-reports/
+#          if-no-files-found: error
 
   upload_reports_group_b:
     if: |
@@ -310,24 +310,75 @@ jobs:
     needs: [test_bundle_c, test_bundle_d]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+
+      - name: Download and bundle artifacts extend reports C and D into groupB
+        run: |          
+          mkdir -p results/groupB/extent-reports
+          
+          # Download and extract artifacts C and D
+          echo "Downloading and extracting artifact ..."          
+          echo "::set-output name=extent-reports-test-bundleC::${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}"
+          echo "::set-output name=extent-reports-test-bundleD::${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}"
+         
+          # Bundle artifacts C and D into groupB
+          cp -r ${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}/* results/groupB/extent-reports/
+          cp -r ${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}/* results/groupB/extent-reports/               
+
+        shell: bash
 
       - name: Upload extent reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-b
-          path: ${{ github.workspace }}/results/groupB/reports/*  #${{ needs.test_bundle_c.outputs.test_results_dir }}/reports/*
+          path: results/groupB/extent-reports/
           if-no-files-found: error
+
+      - name: Download and bundle artifacts surefire reports C and D into groupB
+        run: |
+            
+          mkdir -p results/groupB/surefire-reports
+            
+          # Download and extract artifacts C and D
+          echo "Downloading and extracting artifact ..."
+          echo "::set-output name=surefire-reports-test-bundleC::${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}"
+          echo "::set-output name=surefire-reports-test-bundleD::${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}"
+            
+          # Bundle artifacts C and D into groupB
+          cp -r ${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}/* results/groupB/surefire-reports/
+          cp -r ${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}/* results/groupB/surefire-reports/
+          
+        shell: bash
 
       - name: Upload surefire reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-b
-          path: ${{ github.workspace }}/results/groupB/surefire-reports/**/*
+          path: results/groupB/surefire-reports/
           if-no-files-found: error
+
+      - name: Delete artifacts extent reports C
+        uses: actions/delete-artifact@v2
+        with:
+          name: extent-reports-test-bundleC
+
+      - name: Delete artifact extent reports D
+        uses: actions/delete-artifact@v2
+        with:
+          name: extent-reports-test-bundleD
+
+      - name: Delete artifacts surefire reports C
+        uses: actions/delete-artifact@v2
+        with:
+          name: surefire-reports-test-bundleC
+
+      - name: Delete artifact surefire reports D
+        uses: actions/delete-artifact@v2
+        with:
+          name: surefire-reports-test-bundleD
 
           #      - name: Upload test reports
           #        if: success() || failure()
