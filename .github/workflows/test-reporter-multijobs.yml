@@ -83,7 +83,7 @@ jobs:
           cp -r target/reports $GITHUB_WORKSPACE/results/groupA/
           ls -R $GITHUB_WORKSPACE/results/groupA/
         env:
-          GROUPA_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
+          GROUPA_RESULTS_DIR: ${{ github.workspace }}/results/groupA
 
         #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
         #          cp -r target/reports ${{ github.workspace }}/results/groupA
@@ -153,7 +153,7 @@ jobs:
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB/bundleC/
           ls -R $GITHUB_WORKSPACE/results/groupB/bundleC/
         env:
-          GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
+          GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
 
       - name: Upload extent reports
         if: success() || failure()
@@ -218,7 +218,7 @@ jobs:
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB/bundleD/
           ls -R $GITHUB_WORKSPACE/results/groupB/bundleD/
         env:
-          GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
+          GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
 
       - name: Upload extent reports
         if: success() || failure()
