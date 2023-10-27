@@ -312,71 +312,66 @@ jobs:
       #      - name: Checkout code
       #        uses: actions/checkout@v3
 
-      - name: Download and bundle artifacts extend reports C and D into groupB
-        run: |
-               mkdir -p results/groupB/extent-reports
+    - name: Download and bundle artifacts extend reports C and D into groupB
+      run: |
+        mkdir -p results/groupB/extent-reports     
+        echo "Downloading and extracting artifact ..."
+        echo "::set-output name=extent-reports-test-bundleC::${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}"
+        echo "::set-output name=extent-reports-test-bundleD::${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}"
           
-          # Download and extract artifacts C and D
-               echo "Downloading and extracting artifact ..."
-               echo "::set-output name=extent-reports-test-bundleC::${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}"
-               echo "::set-output name=extent-reports-test-bundleD::${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}"
+        cp -r ${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}/* results/groupB/extent-reports/
+        cp -r ${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}/* results/groupB/extent-reports/
+      shell: bash
+
+    - name: Upload extent reports
+      if: success() || failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: extent-reports-group-b
+        path: results/groupB/extent-reports/
+        if-no-files-found: error
+
+    - name: Download and bundle artifacts surefire reports C and D into groupB
+      run: |
+        mkdir -p results/groupB/surefire-reports          
+        # Download and extract artifacts C and D
+        echo "Downloading and extracting artifact ..."
+        echo "::set-output name=surefire-reports-test-bundleC::${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}"
+        echo "::set-output name=surefire-reports-test-bundleD::${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}"
           
-          # Bundle artifacts C and D into groupB
-               cp -r ${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}/* results/groupB/extent-reports/
-               cp -r ${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}/* results/groupB/extent-reports/
+        # Bundle artifacts C and D into groupB
+        cp -r ${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}/* results/groupB/surefire-reports/
+        cp -r ${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}/* results/groupB/surefire-reports/
                
-        shell: bash
+      shell: bash
 
-      - name: Upload extent reports
-        if: success() || failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: extent-reports-group-b
-          path: results/groupB/extent-reports/
-          if-no-files-found: error
+    - name: Upload surefire reports
+      if: success() || failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: surefire-reports-group-b
+        path: results/groupB/surefire-reports/
+        if-no-files-found: error
 
-      - name: Download and bundle artifacts surefire reports C and D into groupB
-        run: |
-               mkdir -p results/groupB/surefire-reports
-          
-          # Download and extract artifacts C and D
-               echo "Downloading and extracting artifact ..."
-               echo "::set-output name=surefire-reports-test-bundleC::${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}"
-               echo "::set-output name=surefire-reports-test-bundleD::${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}"
-          
-          # Bundle artifacts C and D into groupB
-               cp -r ${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}/* results/groupB/surefire-reports/
-               cp -r ${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}/* results/groupB/surefire-reports/
-               
-        shell: bash
+    - name: Delete artifacts extent reports C
+      uses: actions/delete-artifact@v2
+      with:
+        name: extent-reports-test-bundleC
 
-      - name: Upload surefire reports
-        if: success() || failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: surefire-reports-group-b
-          path: results/groupB/surefire-reports/
-          if-no-files-found: error
+    - name: Delete artifact extent reports D
+      uses: actions/delete-artifact@v2
+      with:
+        name: extent-reports-test-bundleD
 
-      - name: Delete artifacts extent reports C
-        uses: actions/delete-artifact@v2
-        with:
-          name: extent-reports-test-bundleC
+    - name: Delete artifacts surefire reports C
+      uses: actions/delete-artifact@v2
+      with:
+        name: surefire-reports-test-bundleC
 
-      - name: Delete artifact extent reports D
-        uses: actions/delete-artifact@v2
-        with:
-          name: extent-reports-test-bundleD
-
-      - name: Delete artifacts surefire reports C
-        uses: actions/delete-artifact@v2
-        with:
-          name: surefire-reports-test-bundleC
-
-      - name: Delete artifact surefire reports D
-        uses: actions/delete-artifact@v2
-        with:
-          name: surefire-reports-test-bundleD
+    - name: Delete artifact surefire reports D
+      uses: actions/delete-artifact@v2
+      with:
+        name: surefire-reports-test-bundleD
 
           #      - name: Upload test reports
           #        if: success() || failure()
