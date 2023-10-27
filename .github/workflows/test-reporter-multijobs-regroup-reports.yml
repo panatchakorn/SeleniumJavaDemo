@@ -353,25 +353,25 @@ jobs:
         path: results/groupB/surefire-reports/
         if-no-files-found: error
 
-    - name: Delete artifacts extent reports C
-      uses: actions/delete-artifact@v2
-      with:
-        name: extent-reports-test-bundleC
-
-    - name: Delete artifact extent reports D
-      uses: actions/delete-artifact@v2
-      with:
-        name: extent-reports-test-bundleD
-
-    - name: Delete artifacts surefire reports C
-      uses: actions/delete-artifact@v2
-      with:
-        name: surefire-reports-test-bundleC
-
-    - name: Delete artifact surefire reports D
-      uses: actions/delete-artifact@v2
-      with:
-        name: surefire-reports-test-bundleD
+#    - name: Delete artifacts extent reports C
+#      uses: actions/delete-artifact@v2
+#      with:
+#        name: extent-reports-test-bundleC
+#
+#    - name: Delete artifact extent reports D
+#      uses: actions/delete-artifact@v2
+#      with:
+#        name: extent-reports-test-bundleD
+#
+#    - name: Delete artifacts surefire reports C
+#      uses: actions/delete-artifact@v2
+#      with:
+#        name: surefire-reports-test-bundleC
+#
+#    - name: Delete artifact surefire reports D
+#      uses: actions/delete-artifact@v2
+#      with:
+#        name: surefire-reports-test-bundleD
 
           #      - name: Upload test reports
           #        if: success() || failure()
