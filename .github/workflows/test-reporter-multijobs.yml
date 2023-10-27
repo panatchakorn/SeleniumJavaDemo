@@ -82,7 +82,7 @@ jobs:
           ls
           cp -r target/surefire-reports results/groupA/
           echo ============================
-          echo cd ${{ github.workspace }}/results/groupA/target/surefire-reports
+          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
           ls
         #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
         #          cp -r target/reports ${{ github.workspace }}/results/groupA
@@ -138,7 +138,6 @@ jobs:
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
           echo $GITHUB_WORKSPACE/results/groupB/target
         env:
-          working-directory: ${{ github.workspace }}
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
       - name: Publish Test Report
@@ -186,12 +185,8 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
-          cd $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
-          ls
-          cd $GITHUB_WORKSPACE/results/groupB/target/reports
-          ls
+          echo $GITHUB_WORKSPACE/results/groupB/target
         env:
-          working-directory: ${{ github.workspace }}
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
       - name: Publish Test Report
@@ -233,12 +228,28 @@ jobs:
     needs: test_group_a
     runs-on: ubuntu-latest
     steps:
+      - name: check reports directory
+        id: check_reports_dir
+        if: success() || failure()
+        run: |
+          ls
+          echo ============================
+          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
+          ls
+        #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
+        #          cp -r target/reports ${{ github.workspace }}/results/groupA
+        #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
+        #          ls
+        env:
+          GROUPA_RESULTS_DIR: ${{ github.workspace }}/results/groupA
+
       - name: Upload extent reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-a
           path: ${{ env.GROUPA_RESULTS_DIR }}/target/reports/*
+          if-no-files-found: error
 
       - name: Upload surefire reports
         if: success() || failure()
@@ -246,6 +257,7 @@ jobs:
         with:
           name: surefire-reports-group-a
           path: ${{ env.GROUPA_RESULTS_DIR }}/target/surefire-reports/**/*
+          if-no-files-found: error
 
   upload_reports_group_b:
 #    if: |
@@ -265,6 +277,7 @@ jobs:
         with:
           name: extent-reports-group-b
           path: ${{ needs.test_bundle_c.outputs.test_results_dir }}/target/reports/*
+          if-no-files-found: error
 
       - name: Upload surefire reports
         if: success() || failure()
@@ -272,6 +285,7 @@ jobs:
         with:
           name: surefire-reports-group-b
           path: ${{ needs.test_bundle_c.outputs.test_results_dir }}/target/surefire-reports/**/*
+          if-no-files-found: error
 
 #      - name: Upload test reports
 #        if: success() || failure()
