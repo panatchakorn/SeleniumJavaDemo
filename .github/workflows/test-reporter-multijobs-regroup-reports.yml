@@ -1,5 +1,5 @@
 
-name: test-reporter-multi-jobs
+name: test-reporter-multi-jobs-regroup-reports
 on:
   workflow_dispatch:
   #push:
@@ -90,23 +90,21 @@ jobs:
         #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
         #          ls
 
-      - name: Upload extent reports
-        id: upload_extent_reports
-        if: success() || failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: extent-reports-group-a
-          path: ${{ github.workspace }}/results/groupA/reports/
-          if-no-files-found: error
-
-      - name: Upload surefire reports
-        id: upload_surefire_reports
-        if: success() || failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: surefire-reports-group-a
-          path: ${{ github.workspace }}/results/groupA/surefire-reports/
-          if-no-files-found: error
+      #      - name: Upload extent reports
+      #        if: success() || failure()
+      #        uses: actions/upload-artifact@v3
+      #        with:
+      #          name: extent-reports-group-a
+      #          path: ${{ github.workspace }}/results/groupA/reports/
+      #          if-no-files-found: error
+      #
+      #      - name: Upload surefire reports
+      #        if: success() || failure()
+      #        uses: actions/upload-artifact@v3
+      #        with:
+      #          name: surefire-reports-group-a
+      #          path: ${{ github.workspace }}/results/groupA/surefire-reports/
+      #          if-no-files-found: error
 
       - name: Publish Test Report
         id: publish_report
@@ -124,8 +122,6 @@ jobs:
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
       test_results_dir: ${{ env.GROUPA_RESULTS_DIR }}
-      upload_reports_output: ${{ steps.upload_extent_reports.outcome }}
-      upload_surefire_reports_output: ${{ steps.upload_surefire_reports.outcome }}
 
   test_bundle_c:
     needs: build
@@ -160,7 +156,6 @@ jobs:
           GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
 
       - name: Upload extent reports
-        id: upload_extent_reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
@@ -169,7 +164,6 @@ jobs:
           if-no-files-found: error
 
       - name: Upload surefire reports
-        id: upload_surefire_reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
@@ -193,8 +187,6 @@ jobs:
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
       test_results_dir: ${{ env.GROUPB_RESULTS_DIR }}
-      upload_reports_output: ${{ steps.upload_extent_reports.outcome }}
-      upload_surefire_reports_output: ${{ steps.upload_surefire_reports.outcome }}
 
   test_bundle_d:
     needs: build
@@ -229,7 +221,6 @@ jobs:
           GROUPB_RESULTS_DIR: ${{ github.workspace }}/results/groupB
 
       - name: Upload extent reports
-        id: upload_extent_reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
@@ -238,7 +229,6 @@ jobs:
           if-no-files-found: error
 
       - name: Upload surefire reports
-        id: upload_surefire_reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
@@ -262,8 +252,6 @@ jobs:
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
       test_results_dir: ${{ env.GROUPB_RESULTS_DIR }}
-      upload_reports_output: ${{ steps.upload_extent_reports.outcome }}
-      upload_surefire_reports_output: ${{ steps.upload_surefire_reports.outcome }}
 
   #  deployReport:
   #    if: |
@@ -277,154 +265,181 @@ jobs:
   #    runs-on: ubuntu-latest
   #    steps:
 
-  check_upload_reports_group_a:
+  upload_reports_group_a:
     if: |
       (${{ success() }} || ${{ failure() }})
       needs.test_group_a.outputs.test_results_output == 'success'
-      && needs.test_group_a.outputs.upload_reports_output == 'success'
-      && needs.test_group_a.outputs.upload_surefire_reports_output == 'success'
     needs: test_group_a
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: check reports uploaded
+      - name: check reports directory
         id: check_reports_dir
         if: success() || failure()
         run: |
-          echo "reports are uploaded successfully"
+          ls -R $GITHUB_WORKSPACE/results/groupA/
+
+        #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
+        #          cp -r target/reports ${{ github.workspace }}/results/groupA
+        #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
+        #          ls
+
+      - name: Upload extent reports
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: extent-reports-group-a
+          path: ${{ github.workspace }}/results/groupA/reports/
+          if-no-files-found: error
+
+      - name: Upload surefire reports
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-reports-group-a
+          path: ${{ github.workspace }}/results/groupA/surefire-reports/
+          if-no-files-found: error
 
   upload_reports_group_b:
     if: |
       (${{ success() }} || ${{ failure() }})
       needs.test_bundle_c.outputs.test_results_output == 'success'
       && needs.test_bundle_d.outputs.test_results_output == 'success'
-      && needs.test_bundle_c.outputs.upload_reports_output == 'success'
-      && needs.test_bundle_d.outputs.upload_reports_output == 'success'
-      && needs.test_bundle_c.outputs.upload_surefire_reports_output == 'success'
-      && needs.test_bundle_d.outputs.upload_surefire_reports_output == 'success'
     needs: [test_bundle_c, test_bundle_d]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: check reports uploaded
-        id: check_reports_dir
+      - name: Upload extent reports
         if: success() || failure()
-        run: |
-          echo "reports are uploaded successfully"
+        uses: actions/upload-artifact@v3
+        with:
+          name: extent-reports-group-b
+          path: ${{ github.workspace }}/results/groupB/reports/*  #${{ needs.test_bundle_c.outputs.test_results_dir }}/reports/*
+          if-no-files-found: error
 
-     
+      - name: Upload surefire reports
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-reports-group-b
+          path: ${{ github.workspace }}/results/groupB/surefire-reports/**/*
+          if-no-files-found: error
 
-#      - name: Upload test reports
-#        if: success() || failure()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: test-reports
-#          path: |
-#            **/target/logs/*
-#            **/target/reports/*
+          #      - name: Upload test reports
+          #        if: success() || failure()
+          #        uses: actions/upload-artifact@v3
+          #        with:
+          #          name: test-reports
+          #          path: |
+          #            **/target/logs/*
+          #            **/target/reports/*
 
           #  ./target/logs/
           #  .target/reports/
           #  ./target/surefire-reports/
 
-#      - name: Upload surefire test reports
-#        if: success() || failure()
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: surefire-test-reports
-#          path: |
-#            **/target/surefire-reports/**/*
+          #      - name: Upload surefire test reports
+          #        if: success() || failure()
+          #        uses: actions/upload-artifact@v3
+          #        with:
+          #          name: surefire-test-reports
+          #          path: |
+          #            **/target/surefire-reports/**/*
 
           #  ./target/surefire-reports/TEST*.xml
 
-#      - name: Publish Test Report
-#        id: publish_report
-#        uses: dorny/test-reporter@v1
-#        if: success() || failure() # always run even if the previous step fails
-#        with:
-#          name: Test Report
-#          reporter: java-junit
-#          only-summary: false
-#          list-suites: all
-#          list-tests: all
-#          fail-on-error: false
-#          path: '**/target/surefire-reports/junitreports/TEST-*.xml'
+        #      - name: Publish Test Report
+        #        id: publish_report
+        #        uses: dorny/test-reporter@v1
+        #        if: success() || failure() # always run even if the previous step fails
+        #        with:
+        #          name: Test Report
+        #          reporter: java-junit
+        #          only-summary: false
+        #          list-suites: all
+        #          list-tests: all
+        #          fail-on-error: false
+        #          path: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
         #  path: '**/target/surefire-reports/TEST-*.xml'
 
-#      - name: Print Test Report Output
-#        if: success() || failure()
-#        run: |
-#          echo "url: ${{ steps.publish_report.outputs.url }}"
-#          echo "url_html: ${{ steps.publish_report.outputs.url_html }}"
-#          echo "Passed count: ${{ steps.publish_report.outputs.passed }}"
-#          echo "Failed count: ${{ steps.publish_report.outputs.failed }}"
-#          echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
-#          echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"
-#
-#      - name: Test Results Summary
-#        id: test_summary
-#        if: success() || failure()
-#        run: |
-#          passed=${{ steps.publish_report.outputs.passed }}
-#          failed=${{ steps.publish_report.outputs.failed }}
-#          skipped=${{ steps.publish_report.outputs.skipped }}
-#          total=$((passed+failed+skipped))
-#          echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
-#          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-#          echo "Total: $total" >> $GITHUB_STEP_SUMMARY
-#          echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
-#          echo ":x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
-#          echo ":white_circle: Skipped: ${{ steps.publish_report.outputs.skipped }}" >> $GITHUB_STEP_SUMMARY
-#          echo "Execution time (ms): ${{ steps.publish_report.outputs.time }}" >> $GITHUB_STEP_SUMMARY
+        #      - name: Print Test Report Output
+        #        if: success() || failure()
+        #        run: |
+        #          echo "url: ${{ steps.publish_report.outputs.url }}"
+        #          echo "url_html: ${{ steps.publish_report.outputs.url_html }}"
+        #          echo "Passed count: ${{ steps.publish_report.outputs.passed }}"
+        #          echo "Failed count: ${{ steps.publish_report.outputs.failed }}"
+        #          echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
+        #          echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"
+        #
+        #      - name: Test Results Summary
+        #        id: test_summary
+        #        if: success() || failure()
+        #        run: |
+        #          passed=${{ steps.publish_report.outputs.passed }}
+        #          failed=${{ steps.publish_report.outputs.failed }}
+        #          skipped=${{ steps.publish_report.outputs.skipped }}
+        #          total=$((passed+failed+skipped))
+        #          echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+        #          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+        #          echo "Total: $total" >> $GITHUB_STEP_SUMMARY
+        #          echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
+        #          echo ":x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
+        #          echo ":white_circle: Skipped: ${{ steps.publish_report.outputs.skipped }}" >> $GITHUB_STEP_SUMMARY
+        #          echo "Execution time (ms): ${{ steps.publish_report.outputs.time }}" >> $GITHUB_STEP_SUMMARY
 
-#      - name: Setup Pages
-#        id: pages
-#        uses: actions/configure-pages@v3
-#        if: success() || failure()
-#
-#      - name: Print Setup Pages Output
-#        if: success() || failure()
-#        run: |
-#          echo "base_url: ${{ steps.pages.outputs.base_url }}"
-#          echo "origin: ${{ steps.pages.outputs.origin }}"
-#          echo "host: ${{ steps.pages.outputs.host }}"
-#          echo "base_path ${{ steps.pages.outputs.base_path }}"
+        #      - name: Setup Pages
+        #        id: pages
+        #        uses: actions/configure-pages@v3
+        #        if: success() || failure()
+        #
+        #      - name: Print Setup Pages Output
+        #        if: success() || failure()
+        #        run: |
+        #          echo "base_url: ${{ steps.pages.outputs.base_url }}"
+        #          echo "origin: ${{ steps.pages.outputs.origin }}"
+        #          echo "host: ${{ steps.pages.outputs.host }}"
+        #          echo "base_path ${{ steps.pages.outputs.base_path }}"
 
-#      - name: Prepare files for Github pages
-#        if: success() || failure()
-#        run: |
-#          mkdir -p $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
-#          cp -r target/reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
-#          cp -r target/surefire-reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
-#        working-directory: ${{ github.workspace }}
-#
-#      - name: Upload artifact for github page
-#        id: github_page_artifact
-#        uses: actions/upload-pages-artifact@v2
-#        if: success() || failure()
-#        with:
-#          name: 'github-pages'
-#          path: '${{ github.workspace }}/_site/'
-#          retention-days: 1
-#    outputs:
-#      github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
-#
-#  deployReport:
-#    if: |
-#      (${{ success() }} || ${{ failure() }})
-#      && needs.buildTest.outputs.github_page_artifact_output == 'success'
-#    needs: buildTest
-#
-#    environment:
-#      name: github-pages
-#      url: ${{ steps.deployment.outputs.page_url }}
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Deploy to GitHub Pages
+        #      - name: Prepare files for Github pages
+        #        if: success() || failure()
+        #        run: |
+        #          mkdir -p $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+        #          cp -r target/reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+        #          cp -r target/surefire-reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+        #        working-directory: ${{ github.workspace }}
+        #
+        #      - name: Upload artifact for github page
+        #        id: github_page_artifact
+        #        uses: actions/upload-pages-artifact@v2
+        #        if: success() || failure()
+        #        with:
+        #          name: 'github-pages'
+        #          path: '${{ github.workspace }}/_site/'
+        #          retention-days: 1
+        #    outputs:
+        #      github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
+        #
+        #  deployReport:
+        #    if: |
+        #      (${{ success() }} || ${{ failure() }})
+        #      && needs.buildTest.outputs.github_page_artifact_output == 'success'
+        #    needs: buildTest
+        #
+        #    environment:
+        #      name: github-pages
+        #      url: ${{ steps.deployment.outputs.page_url }}
+        #    runs-on: ubuntu-latest
+        #    steps:
+        #      - name: Deploy to GitHub Pages
         #    if: needs.buildTest.outputs.github_page_artifact_output == 'success'
-#        id: deployment
-#        uses: actions/deploy-pages@v2
+    #        id: deployment
+    #        uses: actions/deploy-pages@v2
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
