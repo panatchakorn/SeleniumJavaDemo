@@ -81,7 +81,7 @@ jobs:
           mkdir -p results/groupA
           ls
           cp -r target/surefire-reports results/groupA/
-          echo ============================
+          echo "============================"
           cd ${{ github.workspace }}/results/groupA/target/surefire-reports
           ls
         #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
