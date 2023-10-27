@@ -81,9 +81,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupA
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupA/
           cp -r target/reports $GITHUB_WORKSPACE/results/groupA/
-          ls -R $GITHUB_WORKSPACE/results/groupA/target/surefire-reports
-          echo "============================"
-          ls -R $GITHUB_WORKSPACE/results/groupA/target/reports
+          ls -R $GITHUB_WORKSPACE/results/groupA/
         env:
           GROUPA_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
 
@@ -137,9 +135,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB/
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB/
-          ls -R $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
-          echo "============================"
-          ls -R cd $GITHUB_WORKSPACE/results/groupB/target/reports
+          ls -R $GITHUB_WORKSPACE/results/groupB/
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
@@ -188,9 +184,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB/
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB/
-          ls -R $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
-          echo "============================"
-          ls -R $GITHUB_WORKSPACE/results/groupB/target/reports
+          ls -R $GITHUB_WORKSPACE/results/groupB/
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
