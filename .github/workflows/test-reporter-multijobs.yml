@@ -95,7 +95,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-a
-          path: ${{ env.GROUPA_RESULTS_DIR }}/target/reports/
+          path: ${{ github.workspace }}/results/groupA/target/reports/
           if-no-files-found: error
 
       - name: Upload surefire reports
@@ -103,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-a
-          path: ${{ env.GROUPA_RESULTS_DIR }}/target/surefire-reports/
+          path: ${{ github.workspace }}/results/groupA/target/surefire-reports/
           if-no-files-found: error
 
       - name: Publish Test Report
@@ -160,7 +160,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-b
-          path: ${{ env.GROUPB_RESULTS_DIR }}/bundleC/target/reports/
+          path: ${{ github.workspace }}/results/groupB/bundleC/target/reports/
           if-no-files-found: error
 
       - name: Upload surefire reports
@@ -168,7 +168,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-b
-          path: ${{ env.GROUPB_RESULTS_DIR }}/bundleC/target/surefire-reports/
+          path: ${{ github.workspace }}/results/groupB/bundleC/target/surefire-reports/
           if-no-files-found: error
 
       - name: Publish Test Report
@@ -225,7 +225,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-b
-          path: ${{ env.GROUPB_RESULTS_DIR }}/bundleD/target/reports/*
+          path: ${{ github.workspace }}/results/groupB/bundleD/target/reports/*
           if-no-files-found: error
 
       - name: Upload surefire reports
@@ -233,7 +233,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-b
-          path: ${{ env.GROUPB_RESULTS_DIR }}/bundleD/target/surefire-reports/**/*
+          path: ${{ github.workspace }}/results/groupB/bundleD/target/surefire-reports/**/*
           if-no-files-found: error
 
       - name: Publish Test Report
