@@ -78,14 +78,13 @@ jobs:
         id: copy_test_results
         if: success() || failure()
         run: |
-          mkdir -p $GITHUB_WORKSPACE/results/groupA
-          cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupA
-          cp -r target/reports $GITHUB_WORKSPACE/results/groupA
-          cd $GITHUB_WORKSPACE/results/groupA
+          mkdir -p ${{ github.workspace }}/results/groupA
+          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
+          cp -r target/reports ${{ github.workspace }}/results/groupA
+          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
           ls
         env:
-          working-directory: ${{ github.workspace }}
-          GROUPA_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
+          GROUPA_RESULTS_DIR: ${{ github.workspace }}/results/groupA
 
       - name: Publish Test Report
         id: publish_report
