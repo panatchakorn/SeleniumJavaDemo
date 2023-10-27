@@ -80,7 +80,9 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/results/groupA
           ls
-          cd ${{ github.workspace }}/target/surefire-reports
+          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
+          echo ============================
+          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
           ls
 #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
 #          cp -r target/reports ${{ github.workspace }}/results/groupA
