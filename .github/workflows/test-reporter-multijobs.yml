@@ -272,6 +272,9 @@ jobs:
     needs: test_group_a
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: check reports directory
         id: check_reports_dir
         if: success() || failure()
@@ -288,7 +291,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-a
-          path: ${{ env.GROUPA_RESULTS_DIR }}/reports/
+          path: ${{ github.workspace }}/results/groupA/reports/
           if-no-files-found: error
 
       - name: Upload surefire reports
@@ -296,7 +299,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-a
-          path: ${{ env.GROUPA_RESULTS_DIR }}/surefire-reports/
+          path: ${{ github.workspace }}/results/groupA/surefire-reports/
           if-no-files-found: error
 
   upload_reports_group_b:
@@ -307,12 +310,15 @@ jobs:
     needs: [test_bundle_c, test_bundle_d]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Upload extent reports
         if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-b
-          path: ${{ needs.test_bundle_c.outputs.test_results_dir }}/reports/*
+          path: ${{ github.workspace }}/results/groupB/reports/*  #${{ needs.test_bundle_c.outputs.test_results_dir }}/reports/*
           if-no-files-found: error
 
       - name: Upload surefire reports
@@ -320,7 +326,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-b
-          path: ${{ needs.test_bundle_c.outputs.test_results_dir }}/surefire-reports/**/*
+          path: ${{ github.workspace }}/results/groupB/surefire-reports/**/*
           if-no-files-found: error
 
 #      - name: Upload test reports
