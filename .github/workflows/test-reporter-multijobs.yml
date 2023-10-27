@@ -85,10 +85,10 @@ jobs:
           echo ============================
           cd ${{ github.workspace }}/results/groupA/target/surefire-reports
           ls
-#          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
-#          cp -r target/reports ${{ github.workspace }}/results/groupA
-#          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
-#          ls
+        #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
+        #          cp -r target/reports ${{ github.workspace }}/results/groupA
+        #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
+        #          ls
         env:
           GROUPA_RESULTS_DIR: ${{ github.workspace }}/results/groupA
 
