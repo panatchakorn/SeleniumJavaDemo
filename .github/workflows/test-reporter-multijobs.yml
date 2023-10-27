@@ -81,19 +81,16 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupA
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupA
           cp -r target/reports $GITHUB_WORKSPACE/results/groupA
-          cd $GITHUB_WORKSPACE/results/groupA/target/surefire-reports
-          ls
+          ls -R $GITHUB_WORKSPACE/results/groupA/target/surefire-reports
           echo "============================"
-          cd $GITHUB_WORKSPACE/results/groupA/target/reports
-          ls
-          env:
-            GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
+          ls -R $GITHUB_WORKSPACE/results/groupA/target/reports
+        env:
+          GROUPA_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupA
+
         #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
         #          cp -r target/reports ${{ github.workspace }}/results/groupA
         #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
         #          ls
-        env:
-          GROUPA_RESULTS_DIR: ${{ github.workspace }}/results/groupA
 
       - name: Publish Test Report
         id: publish_report
@@ -140,11 +137,9 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
-          cd $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
-          ls
+          ls -R $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
           echo "============================"
-          cd $GITHUB_WORKSPACE/results/groupB/target/reports
-          ls
+          ls -R cd $GITHUB_WORKSPACE/results/groupB/target/reports
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WORKSPACE/results/groupB
 
@@ -193,11 +188,9 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/results/groupB
           cp -r target/surefire-reports $GITHUB_WORKSPACE/results/groupB
           cp -r target/reports $GITHUB_WORKSPACE/results/groupB
-          cd $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
-          ls
+          ls -R $GITHUB_WORKSPACE/results/groupB/target/surefire-reports
           echo "============================"
-          cd $GITHUB_WORKSPACE/results/groupB/target/reports
-          ls
+          ls -R $GITHUB_WORKSPACE/results/groupB/target/reports
         env:
           GROUPB_RESULTS_DIR: $GITHUB_WOcho $GITHUB_WORKSPACE/results/groupB/targetRKSPACE/results/groupB
 
@@ -244,11 +237,10 @@ jobs:
         id: check_reports_dir
         if: success() || failure()
         run: |
-          cd $GITHUB_WORKSPACE/results/groupA/target/surefire-reports
-          ls
+          ls -R $GITHUB_WORKSPACE/results/groupA/target/surefire-reports
           echo "============================"
-          cd $GITHUB_WORKSPACE/results/groupA/target/reports
-          ls
+          ls -R $GITHUB_WORKSPACE/results/groupA/target/reports
+
         #          cp -r target/surefire-reports ${{ github.workspace }}/results/groupA
         #          cp -r target/reports ${{ github.workspace }}/results/groupA
         #          cd ${{ github.workspace }}/results/groupA/target/surefire-reports
