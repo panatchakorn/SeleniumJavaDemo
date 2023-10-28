@@ -369,8 +369,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-              // const { data: artifacts } = github.rest.actions.listWorkflowRunArtifacts({
-              var artifacts = github.rest.actions.listWorkflowRunArtifacts({
+              var { data: artifacts } = github.rest.actions.listWorkflowRunArtifacts({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 run_id: ${{ github.run_id }}
