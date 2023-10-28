@@ -374,17 +374,17 @@ jobs:
                 repo: context.repo.repo,
                 run_id: ${{ github.run_id }}
               });
-            // Check if 'artifacts' is defined
+                // Check if 'artifacts' is defined
               if (artifacts && artifacts.artifacts) {
                 // Define the names of the artifacts to delete
                 const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
               
                 for (const artifact of artifacts.artifacts) {
                   if (artifactNamesToDelete.includes(artifact.name)) {
-                    await github.actions.deleteArtifact({
+                    await github.rest.actions.deleteArtifact({
                       owner: context.repo.owner,
                       repo: context.repo.repo,
-                     artifact_id: artifact.id
+                      artifact_id: artifact.id
                   });
                 }
               }
