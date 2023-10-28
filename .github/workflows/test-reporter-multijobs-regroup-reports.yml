@@ -340,7 +340,7 @@ jobs:
 #        shell: bash
 
       - name: Upload group B extent reports
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: extent-reports-group-b
           path: ${{ github.workspace }}/results/groupB/extent-reports/
@@ -358,7 +358,7 @@ jobs:
           path: results/groupB/surefire-reports/
 
       - name: Upload group B surefire reports
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: surefire-reports-group-b
           path: ${{ github.workspace }}/results/groupB/surefire-reports/
