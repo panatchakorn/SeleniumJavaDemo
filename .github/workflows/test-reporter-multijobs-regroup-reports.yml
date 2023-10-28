@@ -371,7 +371,8 @@ jobs:
           script: |
               const { data: artifacts } = github.rest.actions.listWorkflowRunArtifacts({
                 owner: context.repo.owner,
-                repo: context.repo.repo
+                repo: context.repo.repo,
+                run_id: ${{github.event.workflow_run.id }}
               });
               
               // Define the names of the artifacts to delete
