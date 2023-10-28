@@ -309,51 +309,65 @@ jobs:
     needs: [ test_bundle_c, test_bundle_d ]
     runs-on: ubuntu-latest
     steps:
-      #      - name: Checkout code
-      #        uses: actions/checkout@v3
+#      - name: Create folder to store reports
+#        run: |
+#          mkdir -p results/groupB/extent-reports
+#
+      - name: Download artifacts extent reports C
+        uses: actions/download-artifact@v3
+        with:
+          name: extent-reports-test-bundleC
+          path: results/groupB/extent-reports/
+          if-no-files-found: error
 
-    - name: Download and bundle artifacts extend reports C and D into groupB
-      run: |
-        mkdir -p results/groupB/extent-reports     
-        echo "Downloading and extracting artifact ..."
-        echo "::set-output name=extent-reports-test-bundleC::${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}"
-        echo "::set-output name=extent-reports-test-bundleD::${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}"
-          
-        cp -r ${{ steps.test_bundle_c.outputs.extent-reports-test-bundleC }}/* results/groupB/extent-reports/
-        cp -r ${{ steps.test_bundle_d.outputs.extent-reports-test-bundleD }}/* results/groupB/extent-reports/
-      shell: bash
+      - name: Download artifacts extent reports D
+        uses: actions/download-artifact@v3
+        with:
+          name: extent-reports-test-bundleD
+          path: results/groupB/extent-reports/
+          if-no-files-found: error
 
-    - name: Upload extent reports
-      if: success() || failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: extent-reports-group-b
-        path: results/groupB/extent-reports/
-        if-no-files-found: error
+      - name: Zip GroupB Folder
+        run: |
+          # Ensure the 'zip' utility is installed
+          sudo apt-get update
+          sudo apt-get install -y zip
+            
+          # Create a zip archive of the 'groupB' folder and its subdirectories
+          zip -r groupB.zip results/groupB
+            
+          # Move the zip archive to the GitHub workspace
+          mv groupB.zip $GITHUB_WORKSPACE
 
-    - name: Download and bundle artifacts surefire reports C and D into groupB
-      run: |
-        mkdir -p results/groupB/surefire-reports          
-        # Download and extract artifacts C and D
-        echo "Downloading and extracting artifact ..."
-        echo "::set-output name=surefire-reports-test-bundleC::${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}"
-        echo "::set-output name=surefire-reports-test-bundleD::${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}"
-          
-        # Bundle artifacts C and D into groupB
-        cp -r ${{ steps.test_bundle_c.outputs.surefire-reports-test-bundleC }}/* results/groupB/surefire-reports/
-        cp -r ${{ steps.test_bundle_d.outputs.surefire-reports-test-bundleD }}/* results/groupB/surefire-reports/
-               
-      shell: bash
+        shell: bash
 
-    - name: Upload surefire reports
-      if: success() || failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: surefire-reports-group-b
-        path: results/groupB/surefire-reports/
-        if-no-files-found: error
+      - name: Upload Zip Archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: extent-reports-group-b
+          path: $GITHUB_WORKSPACE/groupB.zip
 
-#    - name: Delete artifacts extent reports C
+      - name: Delete old artifacts
+        uses: actions/github-script@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const ctx = context;
+            const artifacts = ctx.github.rest.repos.artifact.nodes.list({
+            'owner': ctx.repo.owner,
+            'repo': ctx.repo.repo,
+            });
+            for (const artifact of artifacts) {
+              if (artifact.name === 'extent-reports-test-bundleC' || artifact.name === 'extent-reports-test-bundleD') {
+                ctx.github.rest.repos.artifact.nodes.delete({
+                'owner': ctx.repo.owner,
+                'repo': ctx.repo.repo,
+                'artifact_id': artifact.id,
+                });
+              }
+            }
+
+          #    - name: Delete artifacts extent reports C
 #      uses: actions/delete-artifact@v2
 #      with:
 #        name: extent-reports-test-bundleC
