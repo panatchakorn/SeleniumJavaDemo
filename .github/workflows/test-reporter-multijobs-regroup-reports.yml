@@ -374,7 +374,8 @@ jobs:
                 repo: context.repo.repo,
                 run_id: ${{ github.run_id }}
               });
-              
+            // Check if 'artifacts' is defined
+              if (artifacts && artifacts.artifacts) {
               // Define the names of the artifacts to delete
               const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
               
@@ -387,6 +388,9 @@ jobs:
                   });
                 }
               }
+            } else{
+            console.log('No artifacts found for the current workflow run.');
+            }
 
 #      - name: Delete old artifacts
 #        uses: actions/github-script@v4
