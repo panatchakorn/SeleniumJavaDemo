@@ -367,7 +367,7 @@ jobs:
       - name: Delete Artifacts reports C and D
         uses: actions/github-script@v6
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
             
