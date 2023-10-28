@@ -381,7 +381,7 @@ jobs:
               
                 for (const artifact of artifacts.artifacts) {
                   if (artifactNamesToDelete.includes(artifact.name)) {
-                    await github.rest.actions.deleteArtifact({
+                    await github.actions.deleteArtifact({
                       owner: context.repo.owner,
                       repo: context.repo.repo,
                       artifact_id: artifact.id
