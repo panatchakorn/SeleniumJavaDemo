@@ -337,7 +337,7 @@ jobs:
           zip -r groupB.zip results/groupB
             
           # Move the zip archive to the GitHub workspace
-          mv groupB.zip $GITHUB_WORKSPACE
+          # mv groupB.zip $GITHUB_WORKSPACE
 
         shell: bash
 
