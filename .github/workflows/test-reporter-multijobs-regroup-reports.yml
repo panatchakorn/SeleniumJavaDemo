@@ -347,25 +347,48 @@ jobs:
           name: extent-reports-group-b
           path: ${{ github.workspace }}/results/groupB/extent-reports/
 
-      - name: Delete old artifacts
+      - name: Delete Artifacts extent reports C and D
         uses: actions/github-script@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const ctx = context;
-            const artifacts = ctx.github.rest.repos.artifact.nodes.list({
-            'owner': ctx.repo.owner,
-            'repo': ctx.repo.repo,
-            });
-            for (const artifact of artifacts) {
-              if (artifact.name === 'extent-reports-test-bundleC' || artifact.name === 'extent-reports-test-bundleD') {
-                ctx.github.rest.repos.artifact.nodes.delete({
-                'owner': ctx.repo.owner,
-                'repo': ctx.repo.repo,
-                'artifact_id': artifact.id,
-                });
+              const { data: artifacts } = await github.actions.listArtifactsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo
+              });
+              
+              // Define the names of the artifacts to delete
+              const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD'];
+              
+              for (const artifact of artifacts.artifacts) {
+                if (artifactNamesToDelete.includes(artifact.name)) {
+                  await github.actions.deleteArtifact({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    artifact_id: artifact.id
+                  });
+                }
               }
-            }
+
+#      - name: Delete old artifacts
+#        uses: actions/github-script@v4
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          script: |
+#            const ctx = context;
+#            const artifacts = ctx.github.rest.repos.artifact.nodes.list({
+#            'owner': ctx.repo.owner,
+#            'repo': ctx.repo.repo,
+#            });
+#            for (const artifact of artifacts) {
+#              if (artifact.name === 'extent-reports-test-bundleC' || artifact.name === 'extent-reports-test-bundleD') {
+#                ctx.github.rest.repos.artifact.nodes.delete({
+#                'owner': ctx.repo.owner,
+#                'repo': ctx.repo.repo,
+#                'artifact_id': artifact.id,
+#                });
+#              }
+#            }
 
           #    - name: Delete artifacts extent reports C
 #      uses: actions/delete-artifact@v2
