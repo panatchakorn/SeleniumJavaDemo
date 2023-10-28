@@ -1,4 +1,4 @@
-name: test-reporter-multi-jobs-regroup-reports
+name: test-reporter-multijobs-regroup-reports
 on:
   workflow_dispatch:
   #push:
