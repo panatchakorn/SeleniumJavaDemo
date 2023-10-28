@@ -327,25 +327,25 @@ jobs:
           path: results/groupB/extent-reports/
           if-no-files-found: error
 
-      - name: Zip GroupB Folder
-        run: |
-          # Ensure the 'zip' utility is installed
-          sudo apt-get update
-          sudo apt-get install -y zip
-            
-          # Create a zip archive of the 'groupB' folder and its subdirectories
-          zip -r groupB.zip results/groupB
-            
-          # Move the zip archive to the GitHub workspace
-          # mv groupB.zip $GITHUB_WORKSPACE
+#      - name: Zip GroupB Folder
+#        run: |
+#          # Ensure the 'zip' utility is installed
+#          sudo apt-get update
+#          sudo apt-get install -y zip
+#
+#          # Create a zip archive of the 'groupB' folder and its subdirectories
+#          zip -r groupB.zip results/groupB
+#
+#          # Move the zip archive to the GitHub workspace
+#          # mv groupB.zip $GITHUB_WORKSPACE
+#
+#        shell: bash
 
-        shell: bash
-
-      - name: Upload Zip Archive
+      - name: Upload group B extent reports
         uses: actions/upload-artifact@v2
         with:
           name: extent-reports-group-b
-          path: ${{ github.workspace }}/groupB.zip
+          path: ${{ github.workspace }}/results/groupB/extent-reports/
 
       - name: Delete old artifacts
         uses: actions/github-script@v4
