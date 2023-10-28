@@ -373,7 +373,8 @@ jobs:
             
             const artifacts = await github.rest.actions.listArtifactsForRepo({
               owner: context.repo.owner,
-              repo: context.repo.repo
+              repo: context.repo.repo,
+              run_id: context.runId
             });
             
             for (const artifact of artifacts.data.artifacts) {
