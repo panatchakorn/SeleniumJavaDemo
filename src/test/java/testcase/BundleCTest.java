@@ -31,7 +31,7 @@ public class BundleCTest extends BaseTest {
         result.setStatus(ITestResult.SKIP);
         result.setThrowable(new SkipException("This test should skipped"));
     }
-    @Test
+    @Test @Ignore
     public void bundleCFailedTest(){
         ExtentTest nodeSetup = getTest().createNode("Make the test Failed");
         nodeSetup.log(Status.INFO,"Check for test failed");

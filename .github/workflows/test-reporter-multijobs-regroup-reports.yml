@@ -310,23 +310,20 @@ jobs:
     needs: [ test_bundle_c, test_bundle_d ]
     runs-on: ubuntu-latest
     steps:
-#      - name: Create folder to store reports
-#        run: |
-#          mkdir -p results/groupB/extent-reports
-#
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Download artifacts extent reports C
         uses: actions/download-artifact@v3
         with:
           name: extent-reports-test-bundleC
           path: results/groupB/extent-reports/
-          if-no-files-found: error
 
       - name: Download artifacts extent reports D
         uses: actions/download-artifact@v3
         with:
           name: extent-reports-test-bundleD
           path: results/groupB/extent-reports/
-          if-no-files-found: error
 
 #      - name: Zip GroupB Folder
 #        run: |
@@ -353,19 +350,17 @@ jobs:
         with:
           name: surefire-reports-test-bundleC
           path: results/groupB/surefire-reports/
-          if-no-files-found: error
 
       - name: Download artifacts surefire reports D
         uses: actions/download-artifact@v3
         with:
           name: surefire-reports-test-bundleD
           path: results/groupB/surefire-reports/
-          if-no-files-found: error
 
       - name: Upload group B surefire reports
         uses: actions/upload-artifact@v2
         with:
-          name: extent-reports-group-b
+          name: surefire-reports-group-b
           path: ${{ github.workspace }}/results/groupB/surefire-reports/
 
 
