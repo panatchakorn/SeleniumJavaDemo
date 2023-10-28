@@ -345,7 +345,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: extent-reports-group-b
-          path: $GITHUB_WORKSPACE/groupB.zip
+          path: ${{ github.workspace }}/groupB.zip
 
       - name: Delete old artifacts
         uses: actions/github-script@v4
