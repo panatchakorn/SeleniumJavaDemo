@@ -369,7 +369,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-              const { data: artifacts } = await github.actions.listArtifactsForRepo({
+              const { data: artifacts } = github.rest.actions.listWorkflowRunArtifacts{
                 owner: context.repo.owner,
                 repo: context.repo.repo
               });
