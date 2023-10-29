@@ -368,6 +368,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          debug: true
+          retry: 2
           script: |
             const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
             
@@ -377,7 +379,10 @@ jobs:
               run_id: context.runId
             });
             
+            console.log('Deleting artifacts from workflow run ${context.runId}');
+            
             for (const artifact of artifacts.data.artifacts) {
+            console.log('Artifact id: ${artifact.id} , name: ${artifact.name}');
               if (artifactNamesToDelete.includes(artifact.name)) {
                 await github.rest.actions.deleteArtifact({
                   owner: context.repo.owner,
