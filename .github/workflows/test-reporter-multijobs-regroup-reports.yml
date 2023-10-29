@@ -379,6 +379,23 @@ jobs:
               repo: context.repo.repo,
               run_id: context.runId
             });
+            // Check if artifacts were retrieved
+            if (artifacts.status === 200) {
+              const artifactList = artifacts.data.artifacts;
+      
+              if (artifactList.length > 0) {
+                console.log("List of Artifacts:");
+      
+                // Iterate through artifacts and log ID and name
+                for (const artifact of artifactList) {
+                  console.log(`Artifact ID: ${artifact.id}, Name: ${artifact.name}`);
+                }
+              } else {
+                console.log("No artifacts found for the current run.");
+              }
+            } else {
+              console.log("Failed to retrieve artifacts.");
+            }
             
 #            console.log('Deleting artifacts from workflow run ' + context.runId);
 #
