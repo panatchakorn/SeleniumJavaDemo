@@ -365,11 +365,12 @@ jobs:
 
 
       - name: Delete Artifacts reports C and D
+        id: delete_artifacts
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           debug: true
-          retry: 2
+          retries: 2
           script: |
             const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
             
@@ -379,10 +380,10 @@ jobs:
               run_id: context.runId
             });
             
-            console.log('Deleting artifacts from workflow run ${context.runId}');
+            console.log('Deleting artifacts from workflow run ' + context.runId);
             
             for (const artifact of artifacts.data.artifacts) {
-            console.log('Artifact id: ${artifact.id} , name: ${artifact.name}');
+            console.log('Artifact id: ' + artifact.id + ', name: ' + artifact.name +');
               if (artifactNamesToDelete.includes(artifact.name)) {
                 await github.rest.actions.deleteArtifact({
                   owner: context.repo.owner,
@@ -392,8 +393,12 @@ jobs:
               }
             }
           
+      - name: Get Display Delete Artifacts Result
+        run: |
+          echo "${{ steps.delete_artifacts.outputs.result }}"
 
-          #            const runsResponse = await github.request("GET /repos/${{ github.repository }}/actions/runs")
+
+#            const runsResponse = await github.request("GET /repos/${{ github.repository }}/actions/runs")
 #            for (workflow_run of runsResponse.data.workflow_runs) {
 #              if (workflow_run.name == "${{ github.workflow }}" && workflow_run.status !== "in_progress") {
 #                console.log(`Deleting artifacts from workflow run ${workflow_run.id}`)
