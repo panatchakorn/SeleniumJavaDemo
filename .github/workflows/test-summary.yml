@@ -60,7 +60,7 @@ jobs:
         with:
           paths: |
             **/target/surefire-reports/junitreports/TEST*.xml
-          show: "all"
+          show: "fail"   #"all"
 
 #          output: "target/surefire-reports/testResults.md"
 
