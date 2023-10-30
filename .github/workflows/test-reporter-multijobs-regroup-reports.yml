@@ -459,7 +459,7 @@ jobs:
           
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-          echo "Total: $total test" >> $GITHUB_STEP_SUMMARY
+          echo "Total: $total tests" >> $GITHUB_STEP_SUMMARY
           echo ":heavy_check_mark: $passed_percentage% Passed: $passed"  >> $GITHUB_STEP_SUMMARY
           echo ":x: $failed_percentage% Failed: $failed" >> $GITHUB_STEP_SUMMARY
           echo ":white_circle: $skipped_percentage% Skipped: $skipped" >> $GITHUB_STEP_SUMMARY
