@@ -449,7 +449,7 @@ jobs:
         if: success() || failure()
         run: |
           passed=${{ steps.test_group_a.outputs.passed }} + ${{ steps.test_bundle_c.outputs.passed }} + ${{ steps.test_bundle_d.outputs.passed }}
-          failed=${{ ${{ steps.test_group_a.outputs.failed }} + ${{ steps.test_bundle_c.outputs.failed }} + ${{ steps.test_bundle_d.outputs.failed }}
+          failed=${{ steps.test_group_a.outputs.failed }} + ${{ steps.test_bundle_c.outputs.failed }} + ${{ steps.test_bundle_d.outputs.failed }}
           skipped=${{ steps.test_group_a.outputs.skipped }} + ${{ steps.test_bundle_c.outputs.skipped }} + ${{ steps.test_bundle_d.outputs.skipped }}
           total=$((passed+failed+skipped))
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
