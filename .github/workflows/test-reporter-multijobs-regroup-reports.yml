@@ -373,42 +373,17 @@ jobs:
           script: |
             const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
             
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+            const response = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
               run_id: context.runId
             });
-            console.log('Artifacts Value: ' + artifacts.value);
+            console.log('Artifacts Length: ' + response.length);
             
-            artifacts.value[0].artifacts.forEach(artifact => {
-              if (artifactNamesToDelete.includes(artifact.name)) {
-                console.log(`Deleting artifact with id ${artifact.id}`)
-                github.rest.actions.deleteArtifact({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  artifact_id: artifact.id
-                });
-              }
-            });
-            
-            // Check if artifacts were retrieved
-            if (artifacts.status === 200) {
-              //const artifactList = artifacts.data.artifacts;              
-      
-              if (artifacts.count > 0) {
-                console.log("List of Artifacts:");
-      
-                // Iterate through artifacts and log ID and name
-                for (const artifact of artifacts) {
-                  console.log(`Artifact ID: ${artifact.id}, Name: ${artifact.name}`);
-                }
-              } else {
-                console.log("No artifacts found for the current run.");
-              }
-            } else {
-              console.log("Failed to retrieve artifacts.");
-            }
-            
+            const artifactIds = response.artifacts.map(artifact => artifact.id);
+            console.log("List of Artifacts Id:");
+            artifactIds.forEach(artifactId => { console.log(artifactId) });
+
 #            console.log('Deleting artifacts from workflow run ' + context.runId);
 #
 #            for (const artifact of artifacts.data.artifacts) {
