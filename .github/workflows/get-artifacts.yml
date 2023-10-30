@@ -27,12 +27,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Delete Artifacts reports C and D
-        id: delete_artifacts
+      - name: Get Artifacts By Run ID
+        id: get_artifacts
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          debug: true
+          debug: trueget
           retries: 2
           script: |
             const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
@@ -51,19 +51,3 @@ jobs:
                 console.log("id: " + id + " name: " + name);
               }
             });
-
-#                github.rest.actions.deleteArtifact({
-#                owner: context.repo.owner,
-#                repo: context.repo.repo,
-#                artifact_id: id,
-
-            
-#            console.log("IDs of all artifacts:");
-#            console.log("id: " + response.artifacts[0].id + " name: " + response.artifacts[0].name);
-
-#            console.log("IDs of all artifacts:");
-#            response.artifacts.forEach(artifact => {
-#                if (artifact.id !== undefined) {
-#                  console.log(artifact.id);
-#                }
-#              });
