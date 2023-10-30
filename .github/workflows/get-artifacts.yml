@@ -1,0 +1,54 @@
+name: get-artifacts
+on:
+  workflow_dispatch:
+  #push:
+  #  branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: write
+  checks: write
+  actions: write
+#  pages: write
+#  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+#concurrency:
+#  group: "pages"
+#  cancel-in-progress: false
+
+jobs:
+  build:
+    #    environment:
+    #      name: github-pages
+    #      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete Artifacts reports C and D
+        id: delete_artifacts
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          debug: true
+          retries: 2
+          script: |
+            const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
+
+            const response = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: 6688005839
+            });
+            
+            console.log("IDs of all artifacts:");
+            console.log("id: " + response.artifacts[0].id + " name: " + response.artifacts[0].name);
+
+#            console.log("IDs of all artifacts:");
+#            response.artifacts.forEach(artifact => {
+#                if (artifact.id !== undefined) {
+#                  console.log(artifact.id);
+#                }
+#              });
