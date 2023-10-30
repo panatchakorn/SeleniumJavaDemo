@@ -439,18 +439,18 @@ jobs:
         run: |
           echo "url: ${{ steps.publish_report.outputs.url }}"
           echo "url_html: ${{ steps.publish_report.outputs.url_html }}"
-          echo "Passed count: ${{ steps.test_group_a.outputs.passed }} + ${{ steps.test_bundle_c.outputs.passed }} + ${{ steps.test_bundle_d.outputs.passed }}"
-          echo "Failed count: ${{ steps.test_group_a.outputs.failed }} + ${{ steps.test_bundle_c.outputs.failed }} + ${{ steps.test_bundle_d.outputs.failed }}"
-          echo "Skipped count: ${{ steps.test_group_a.outputs.skipped }} + ${{ steps.test_bundle_c.outputs.skipped }} + ${{ steps.test_bundle_d.outputs.skipped }}"
-          echo "Execution time ms: ${{ steps.test_group_a.outputs.time }} + ${{ steps.test_bundle_c.outputs.time }} + ${{ steps.test_bundle_d.outputs.time }}"
+          echo "Passed count: ${{ test_group_a.outputs.passed }} + ${{ test_bundle_c.outputs.passed }} + ${{ test_bundle_d.outputs.passed }}"
+          echo "Failed count: ${{ test_group_a.outputs.failed }} + ${{ test_bundle_c.outputs.failed }} + ${{ test_bundle_d.outputs.failed }}"
+          echo "Skipped count: ${{ test_group_a.outputs.skipped }} + ${{ test_bundle_c.outputs.skipped }} + ${{ test_bundle_d.outputs.skipped }}"
+          echo "Execution time ms: ${{ test_group_a.outputs.time }} + ${{ test_bundle_c.outputs.time }} + ${{ test_bundle_d.outputs.time }}"
 
       - name: Test Results Summary
         id: test_summary
         if: success() || failure()
         run: |
-          passed=${{ steps.test_group_a.outputs.passed }} + ${{ steps.test_bundle_c.outputs.passed }} + ${{ steps.test_bundle_d.outputs.passed }}
-          failed=${{ steps.test_group_a.outputs.failed }} + ${{ steps.test_bundle_c.outputs.failed }} + ${{ steps.test_bundle_d.outputs.failed }}
-          skipped=${{ steps.test_group_a.outputs.skipped }} + ${{ steps.test_bundle_c.outputs.skipped }} + ${{ steps.test_bundle_d.outputs.skipped }}
+          passed=${{ test_group_a.outputs.passed }} + ${{ test_bundle_c.outputs.passed }} + ${{ test_bundle_d.outputs.passed }}
+          failed=${{ test_group_a.outputs.failed }} + ${{ test_bundle_c.outputs.failed }} + ${{ test_bundle_d.outputs.failed }}
+          skipped=${{ test_group_a.outputs.skipped }} + ${{ test_bundle_c.outputs.skipped }} + ${{ test_bundle_d.outputs.skipped }}
           total=$((passed+failed+skipped))
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
