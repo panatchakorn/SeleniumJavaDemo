@@ -16,24 +16,15 @@ jobs:
   get-run-id:
     runs-on: ubuntu-latest
     steps:
-      - name: Download Run ID Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: run-id-artifact
-          path: .
-
-      - name: Set Run ID as Environment Variable
+      - name: Get Reports Workflow Run ID
+        id: get-report-workflow-run-id
         run: |
-          # Read the run ID from run-id.txt and set it as an environment variable
-          export RUN_ID=$(cat run-id.txt)
-          echo "Run ID: $RUN_ID"
-        shell: bash
+          echo "The workflow run ID is ${{ github.event.workflow_run.id }}"
+        env: RUN_ID = ${{ github.event.workflow_run.id }}
 
   delete-artifacts:
     runs-on: ubuntu-latest
     needs: get-run-id
-    env:
-      RUN_ID: ${{ needs.get-run-id.outputs.RUN_ID }}
     steps:
       - name: Delete Artifacts reports C and D
         id: delete_report_artifacts

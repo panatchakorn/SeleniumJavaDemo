@@ -444,19 +444,21 @@ jobs:
 #        run: |
 #          echo "${{ steps.delete_artifacts.outputs.result }}"
 
-  capture-run-id:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Capture Run ID
-      id: capture-run-id
-      run: |
-        echo "Run ID: ${{ github.run_id }}" > run-id.txt
 
-    - name: Upload Run ID Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: run-id-artifact
-        path: run-id.txt
+
+#  capture-run-id:
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: Capture Run ID
+#      id: capture-run-id
+#      run: |
+#        echo "Run ID: ${{ github.run_id }}" > run-id.txt
+#
+#    - name: Upload Run ID Artifact
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: run-id-artifact
+#        path: run-id.txt
 
 #            const runsResponse = await github.request("GET /repos/${{ github.repository }}/actions/runs")
 #            for (workflow_run of runsResponse.data.workflow_runs) {
