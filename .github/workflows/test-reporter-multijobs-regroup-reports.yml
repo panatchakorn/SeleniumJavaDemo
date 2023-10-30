@@ -384,7 +384,7 @@ jobs:
                   console.log(artifact.id);
                 }
               });
-            }
+            
             
             
 #            if (response.artifacts && Array.isArray(response.artifacts)) {
