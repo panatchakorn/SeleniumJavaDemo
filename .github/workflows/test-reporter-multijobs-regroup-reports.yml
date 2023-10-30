@@ -381,6 +381,13 @@ jobs:
             
             console.log(JSON.stringify(response));
             
+            response.data.artifacts
+              .forEach(({ id, name}) => {
+              if (artifactNamesToDelete.includes(name)) {
+                console.log("id: " + id + " name: " + name);
+              }
+            });
+            
             const deletionPromises = response.data.artifacts
               .filter(({ name }) => artifactNamesToDelete.includes(name))
               .map(({ id, name }) => {
