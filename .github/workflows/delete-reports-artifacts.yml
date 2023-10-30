@@ -15,7 +15,6 @@ permissions:
 jobs:
   delete-artifacts:
     runs-on: ubuntu-latest
-    needs: get-run-id
     steps:
       - name: Cleanup unused reports artifacts
         id: delete_report_artifacts
