@@ -382,7 +382,7 @@ jobs:
             if (artifacts.status === 200) {
               //const artifactList = artifacts.data.artifacts;              
       
-              if (artifacts.length > 0) {
+              if (artifacts.count > 0) {
                 console.log("List of Artifacts:");
       
                 // Iterate through artifacts and log ID and name
