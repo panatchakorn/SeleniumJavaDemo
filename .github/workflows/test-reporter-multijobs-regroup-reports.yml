@@ -378,17 +378,25 @@ jobs:
               repo: context.repo.repo,
               run_id: context.runId
             });
-            
-            if (response.artifacts && Array.isArray(response.artifacts)) {
-              console.log("IDs of all artifacts:");
-              response.artifacts.forEach(artifact => {
+            console.log("IDs of all artifacts:");
+            response.artifacts.forEach(artifact => {
                 if (artifact.id !== undefined) {
                   console.log(artifact.id);
                 }
               });
-            } else {
-                console.log("No artifacts found in the response.");
             }
+            
+            
+#            if (response.artifacts && Array.isArray(response.artifacts)) {
+#              console.log("IDs of all artifacts:");
+#              response.artifacts.forEach(artifact => {
+#                if (artifact.id !== undefined) {
+#                  console.log(artifact.id);
+#                }
+#              });
+#            } else {
+#                console.log("No artifacts found in the response.");
+#            }
 
 #            console.log('Deleting artifacts from workflow run ' + context.runId);
 #
