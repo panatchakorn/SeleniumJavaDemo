@@ -46,8 +46,10 @@ jobs:
             console.log(JSON.stringify(response));
             
             response.data.artifacts
-              .forEach(({ id }) => {
-                console.log("id: " + id);
+              .forEach(({ id, name}) => {
+              if (artifactNamesToDelete.includes(name)) {
+                console.log("id: " + id + " name: " + name);
+              }
             });
 
 #                github.rest.actions.deleteArtifact({
