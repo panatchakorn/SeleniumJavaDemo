@@ -363,7 +363,6 @@ jobs:
           name: surefire-reports-group-b
           path: ${{ github.workspace }}/results/groupB/surefire-reports/
 
-
       - name: Delete Artifacts reports C and D
         id: delete_artifacts
         uses: actions/github-script@v6
@@ -381,13 +380,13 @@ jobs:
             });
             // Check if artifacts were retrieved
             if (artifacts.status === 200) {
-              const artifactList = artifacts.data.artifacts;
+              //const artifactList = artifacts.data.artifacts;              
       
-              if (artifactList.length > 0) {
+              if (artifacts.length > 0) {
                 console.log("List of Artifacts:");
       
                 // Iterate through artifacts and log ID and name
-                for (const artifact of artifactList) {
+                for (const artifact of artifacts) {
                   console.log(`Artifact ID: ${artifact.id}, Name: ${artifact.name}`);
                 }
               } else {
