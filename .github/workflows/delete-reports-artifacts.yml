@@ -1,0 +1,68 @@
+name: delete-reports-artifacts
+
+on:
+  workflow_run:
+    workflows: ["test-reporter-multijobs-regroup-reports"]
+    types:
+      - completed
+
+jobs:
+  get-run-id:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Run ID Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: run-id-artifact
+          path: .
+
+      - name: Set Run ID as Environment Variable
+        run: |
+          # Read the run ID from run-id.txt and set it as an environment variable
+          export RUN_ID=$(cat run-id.txt)
+          echo "Run ID: $RUN_ID"
+        shell: bash
+
+  delete-artifacts:
+    runs-on: ubuntu-latest
+    needs: get-run-id
+    env:
+      RUN_ID: ${{ needs.get-run-id.outputs.RUN_ID }}
+    steps:
+      - name: Delete Artifacts reports C and D
+        id: delete_report_artifacts
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          debug: true
+          retries: 2
+          script: |
+            const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
+            const response = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ env.RUN_ID }}
+            });
+
+            console.log(JSON.stringify(response));
+
+            response.data.artifacts
+              .forEach(({ id, name}) => {
+              if (artifactNamesToDelete.includes(name)) {
+                console.log("id: " + id + " name: " + name);
+              }
+            });
+            
+            const deletionPromises = response.data.artifacts
+              .filter(({ name }) => artifactNamesToDelete.includes(name))
+              .map(({ id, name }) => {
+                console.log("Deleting Artifact id: " + id + " name: " + name);
+                return github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: id
+                });
+              });
+
+            const deletionResponses = await Promise.all(deletionPromises);
+            console.log("Deletion responses:", JSON.stringify(deletionResponses));

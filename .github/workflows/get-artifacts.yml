@@ -51,3 +51,18 @@ jobs:
                 console.log("id: " + id + " name: " + name);
               }
             });
+            
+
+      #            const deletionPromises = response.data.artifacts
+      #              .filter(({ name }) => artifactNamesToDelete.includes(name))
+      #              .map(({ id, name }) => {
+      #                console.log("Deleting Artifact id: " + id + " name: " + name);
+      #                return github.rest.actions.deleteArtifact({
+      #                  owner: context.repo.owner,
+      #                   repo: context.repo.repo,
+      #                   artifact_id: id
+      #                });
+      #              });
+      #
+      #            const deletionResponses = await Promise.all(deletionPromises);
+      #            console.log("Deletion responses:", JSON.stringify(deletionResponses));
