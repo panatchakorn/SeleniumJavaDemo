@@ -453,19 +453,31 @@ jobs:
           skipped=$((${{ needs.test_group_a.outputs.skipped }}+${{ needs.test_bundle_c.outputs.skipped }}+${{ needs.test_bundle_d.outputs.skipped }}))
           time=$((${{ needs.test_group_a.outputs.time }}+${{ needs.test_bundle_c.outputs.time }}+${{ needs.test_bundle_d.outputs.time }}))
           total=$((passed+failed+skipped))
-          passed_percentage=$(printf "%.2f" "$(echo "scale=2; $passed * 100 / $total" | bc)")
-          failed_percentage=$(printf "%.2f" "$(echo "scale=2; $failed * 100 / $total" | bc)")
-          skipped_percentage=$(printf "%.2f" "$(echo "scale=2; $skipped * 100 / $total" | bc)")
-
+          passed_percentage=$((passed * 100 / total))
+          failed_percentage=$((failed * 100 / total))
+          skipped_percentage=$((skipped * 100 / total))
+          
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-          echo "Total: $total" >> $GITHUB_STEP_SUMMARY
-          echo "| Results | Count | Percentage | " >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| :heavy_check_mark: Passed: | $passed | $passed_percentage% |"  >> $GITHUB_STEP_SUMMARY
-          echo "| :x: Failed: | $failed | $failed_percentage% |" >> $GITHUB_STEP_SUMMARY
-          echo "| :white_circle: Skipped: | $skipped | $skipped_percentage% |" >> $GITHUB_STEP_SUMMARY
-          echo "Execution time (ms): $time" >> $GITHUB_STEP_SUMMARY
+          echo "Total: $total test" >> $GITHUB_STEP_SUMMARY
+          echo ":heavy_check_mark: $passed_percentage% Passed: $passed"  >> $GITHUB_STEP_SUMMARY
+          echo ":x: $failed_percentage% Failed: $failed" >> $GITHUB_STEP_SUMMARY
+          echo ":white_circle: $skipped_percentage% Skipped: $skipped" >> $GITHUB_STEP_SUMMARY
+          
+
+#          passed_percentage=$(printf "%.2f" "$(echo "scale=2; $passed * 100 / $total" | bc)")
+#          failed_percentage=$(printf "%.2f" "$(echo "scale=2; $failed * 100 / $total" | bc)")
+#          skipped_percentage=$(printf "%.2f" "$(echo "scale=2; $skipped * 100 / $total" | bc)")
+#
+#          echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+#          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+#          echo "Total: $total" >> $GITHUB_STEP_SUMMARY
+#          echo "| Results | Count | Percentage | " >> $GITHUB_STEP_SUMMARY
+#          echo "| --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
+#          echo "| :heavy_check_mark: Passed: | $passed | $passed_percentage% |"  >> $GITHUB_STEP_SUMMARY
+#          echo "| :x: Failed: | $failed | $failed_percentage% |" >> $GITHUB_STEP_SUMMARY
+#          echo "| :white_circle: Skipped: | $skipped | $skipped_percentage% |" >> $GITHUB_STEP_SUMMARY
+#          echo "Execution time (ms): $time" >> $GITHUB_STEP_SUMMARY
 
         #      - name: Setup Pages
         #        id: pages
