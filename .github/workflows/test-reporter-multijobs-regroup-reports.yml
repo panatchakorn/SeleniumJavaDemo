@@ -378,6 +378,19 @@ jobs:
               repo: context.repo.repo,
               run_id: context.runId
             });
+            console.log('Artifacts Count: ' + artifacts.count);
+            
+            artifacts.value[0].artifacts.forEach(artifact => {
+              if (artifactNamesToDelete.includes(artifact.name)) {
+                console.log(`Deleting artifact with id ${artifact.id}`)
+                github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id
+                });
+              }
+            });
+            
             // Check if artifacts were retrieved
             if (artifacts.status === 200) {
               //const artifactList = artifacts.data.artifacts;              
