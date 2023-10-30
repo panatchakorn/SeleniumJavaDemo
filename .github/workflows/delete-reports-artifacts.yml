@@ -13,21 +13,11 @@ permissions:
   actions: write
 
 jobs:
-  get-run-id:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Reports Workflow Run ID
-        id: get-report-workflow-run-id
-        run: |
-          echo "The workflow run ID for reports is ${{ github.event.workflow_run.id }}"
-        env:
-          RUN_ID: ${{ github.event.workflow_run.id }}
-
   delete-artifacts:
     runs-on: ubuntu-latest
     needs: get-run-id
     steps:
-      - name: Delete Artifacts reports C and D
+      - name: Cleanup unused reports artifacts
         id: delete_report_artifacts
         uses: actions/github-script@v6
         with:
@@ -47,7 +37,7 @@ jobs:
             response.data.artifacts
               .forEach(({ id, name}) => {
               if (artifactNamesToDelete.includes(name)) {
-                console.log("id: " + id + " name: " + name);
+                console.log("Artifact id: " + id + " name: " + name);
               }
             });
             
