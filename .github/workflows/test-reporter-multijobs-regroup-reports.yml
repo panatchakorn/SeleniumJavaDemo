@@ -378,12 +378,21 @@ jobs:
               repo: context.repo.repo,
               run_id: context.runId
             });
-            console.log("IDs of all artifacts:");
-            response.artifacts.forEach(artifact => {
-                if (artifact.id !== undefined) {
-                  console.log(artifact.id);
-                }
-              });
+            
+            console.log(JSON.stringify(response));
+            
+            response.data.artifacts
+              .forEach(({ id, name}) => {
+              if (artifactNamesToDelete.includes(name)) {
+                console.log("Deleting Artifact id: " + id + " name: " + name);
+                const deleteResponse = await github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: id
+                });
+                console.log(JSON.stringify(deleteResponse));
+              }
+            });
             
             
             
