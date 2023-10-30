@@ -1,10 +1,11 @@
 name: delete-reports-artifacts
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["test-reporter-multijobs-regroup-reports"]
-    types:
-      - completed
+    types: [completed]
+    branches: [ "master" ]
 
 permissions:
   contents: write
