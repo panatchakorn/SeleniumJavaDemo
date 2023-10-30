@@ -381,17 +381,31 @@ jobs:
             
             console.log(JSON.stringify(response));
             
-            response.data.artifacts
-              .forEach(({ id, name}) => {
-              if (artifactNamesToDelete.includes(name)) {
+            const deletionPromises = response.data.artifacts
+              .filter(({ name }) => artifactNamesToDelete.includes(name))
+              .map(({ id, name }) => {
                 console.log("Deleting Artifact id: " + id + " name: " + name);
-                await github.rest.actions.deleteArtifact({
+                return github.rest.actions.deleteArtifact({
                   owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  artifact_id: id
-                });                
-              }
-            });
+                   repo: context.repo.repo,
+                   artifact_id: id
+                });
+              });
+
+            const deletionResponses = await Promise.all(deletionPromises);
+            console.log("Deletion responses:", JSON.stringify(deletionResponses));
+            
+#            response.data.artifacts
+#              .forEach(({ id, name}) => {
+#              if (artifactNamesToDelete.includes(name)) {
+#                console.log("Deleting Artifact id: " + id + " name: " + name);
+#                await github.rest.actions.deleteArtifact({
+#                  owner: context.repo.owner,
+#                  repo: context.repo.repo,
+#                  artifact_id: id
+#                });
+#              }
+#            });
             
             
             
