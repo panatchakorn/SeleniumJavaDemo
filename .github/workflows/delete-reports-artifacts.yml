@@ -6,6 +6,11 @@ on:
     types:
       - completed
 
+permissions:
+  contents: write
+  checks: write
+  actions: write
+
 jobs:
   get-run-id:
     runs-on: ubuntu-latest
