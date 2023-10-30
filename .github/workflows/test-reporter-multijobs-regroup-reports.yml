@@ -448,9 +448,9 @@ jobs:
         id: test_summary
         if: success() || failure()
         run: |
-          passed=${{ needs.test_group_a.outputs.passed }} + ${{ needs.test_bundle_c.outputs.passed }} + ${{ needs.test_bundle_d.outputs.passed }}
-          failed=${{ needs.test_group_a.outputs.failed }} + ${{ needs.test_bundle_c.outputs.failed }} + ${{ needs.test_bundle_d.outputs.failed }}
-          skipped=${{ needs.test_group_a.outputs.skipped }} + ${{ needs.test_bundle_c.outputs.skipped }} + ${{ needs.test_bundle_d.outputs.skipped }}
+          passed=$((${{ needs.test_group_a.outputs.passed }}+${{ needs.test_bundle_c.outputs.passed }}+${{ needs.test_bundle_d.outputs.passed }}))
+          failed=$((${{ needs.test_group_a.outputs.failed }}+${{ needs.test_bundle_c.outputs.failed }}+${{ needs.test_bundle_d.outputs.failed }}))
+          skipped=$((${{ needs.test_group_a.outputs.skipped }}+${{ needs.test_bundle_c.outputs.skipped }}+${{ needs.test_bundle_d.outputs.skipped }}))
           total=$((passed+failed+skipped))
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
