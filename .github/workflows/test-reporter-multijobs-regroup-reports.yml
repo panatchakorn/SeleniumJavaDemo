@@ -122,6 +122,11 @@ jobs:
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
       test_results_dir: ${{ env.GROUPA_RESULTS_DIR }}
+      publish_report_output: ${{ steps.publish_report.outcome}}
+      passed: ${{ steps.publish_report.outputs.passed }}
+      failed: ${{ steps.publish_report.outputs.failed }}
+      skipped: ${{ steps.publish_report.outputs.skipped }}
+      time: ${{ steps.publish_report.outputs.time }}
 
   test_bundle_c:
     needs: build
@@ -187,6 +192,11 @@ jobs:
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
       test_results_dir: ${{ env.GROUPB_RESULTS_DIR }}
+      publish_report_output: ${{ steps.publish_report.outcome}}
+      passed: ${{ steps.publish_report.outputs.passed }}
+      failed: ${{ steps.publish_report.outputs.failed }}
+      skipped: ${{ steps.publish_report.outputs.skipped }}
+      time: ${{ steps.publish_report.outputs.time }}
 
   test_bundle_d:
     needs: build
@@ -252,6 +262,11 @@ jobs:
     outputs:
       test_results_output: ${{ steps.copy_test_results.outcome }}
       test_results_dir: ${{ env.GROUPB_RESULTS_DIR }}
+      publish_report_output: ${{ steps.publish_report.outcome}}
+      passed: ${{ steps.publish_report.outputs.passed }}
+      failed: ${{ steps.publish_report.outputs.failed }}
+      skipped: ${{ steps.publish_report.outputs.skipped }}
+      time: ${{ steps.publish_report.outputs.time }}
 
   #  deployReport:
   #    if: |
@@ -389,27 +404,30 @@ jobs:
   publish_report_summary:
     if: |
       (${{ success() }} || ${{ failure() }})
-      needs.test_group_a.outputs.test_results_output == 'success'
-      && needs.test_bundle_c.outputs.test_results_output == 'success'
-      && needs.test_bundle_d.outputs.test_results_output == 'success'
+      needs.test_group_a.outputs.publish_report_output == 'success'
+      && needs.test_bundle_c.outputs.publish_report_output == 'success'
+      && needs.test_bundle_d.outputs.publish_report_output == 'success'
+#      needs.test_group_a.outputs.test_results_output == 'success'
+#      && needs.test_bundle_c.outputs.test_results_output == 'success'
+#      && needs.test_bundle_d.outputs.test_results_output == 'success'
     needs: [ test_group_a, test_bundle_c, test_bundle_d ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+#      - name: Checkout code
+#        uses: actions/checkout@v3
 
-      - name: Publish Test Report
-        id: publish_report
-        uses: dorny/test-reporter@v1
-        if: success() || failure() # always run even if the previous step fails
-        with:
-         name: Test Report
-         reporter: java-junit
-         only-summary: true
-         list-suites: all
-         list-tests: none
-         fail-on-error: false
-         path: '**/target/surefire-reports/TEST-*.xml'
+#      - name: Publish Test Report
+#        id: publish_report
+#        uses: dorny/test-reporter@v1
+#        if: success() || failure() # always run even if the previous step fails
+#        with:
+#         name: Test Report
+#         reporter: java-junit
+#         only-summary: true
+#         list-suites: all
+#         list-tests: none
+#         fail-on-error: false
+#         path: '**/target/surefire-reports/TEST-*.xml'
 
 
         # path: '**/target/surefire-reports/junitreports/TEST-*.xml'
@@ -421,26 +439,26 @@ jobs:
         run: |
           echo "url: ${{ steps.publish_report.outputs.url }}"
           echo "url_html: ${{ steps.publish_report.outputs.url_html }}"
-          echo "Passed count: ${{ steps.publish_report.outputs.passed }}"
-          echo "Failed count: ${{ steps.publish_report.outputs.failed }}"
-          echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
-          echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"
+          echo "Passed count: ${{ steps.test_group_a.outputs.passed }} + ${{ steps.test_bundle_c.outputs.passed }} + ${{ steps.test_bundle_d.outputs.passed }}"
+          echo "Failed count: ${{ steps.test_group_a.outputs.failed }} + ${{ steps.test_bundle_c.outputs.failed }} + ${{ steps.test_bundle_d.outputs.failed }}"
+          echo "Skipped count: ${{ steps.test_group_a.outputs.skipped }} + ${{ steps.test_bundle_c.outputs.skipped }} + ${{ steps.test_bundle_d.outputs.skipped }}"
+          echo "Execution time ms: ${{ steps.test_group_a.outputs.time }} + ${{ steps.test_bundle_c.outputs.time }} + ${{ steps.test_bundle_d.outputs.time }}"
 
       - name: Test Results Summary
         id: test_summary
         if: success() || failure()
         run: |
-          passed=${{ steps.publish_report.outputs.passed }}
-          failed=${{ steps.publish_report.outputs.failed }}
-          skipped=${{ steps.publish_report.outputs.skipped }}
+          passed=${{ steps.test_group_a.outputs.passed }} + ${{ steps.test_bundle_c.outputs.passed }} + ${{ steps.test_bundle_d.outputs.passed }}
+          failed=${{ ${{ steps.test_group_a.outputs.failed }} + ${{ steps.test_bundle_c.outputs.failed }} + ${{ steps.test_bundle_d.outputs.failed }}
+          skipped=${{ steps.test_group_a.outputs.skipped }} + ${{ steps.test_bundle_c.outputs.skipped }} + ${{ steps.test_bundle_d.outputs.skipped }}
           total=$((passed+failed+skipped))
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
           echo "Total: $total" >> $GITHUB_STEP_SUMMARY
-          echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
-          echo ":x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
-          echo ":white_circle: Skipped: ${{ steps.publish_report.outputs.skipped }}" >> $GITHUB_STEP_SUMMARY
-          echo "Execution time (ms): ${{ steps.publish_report.outputs.time }}" >> $GITHUB_STEP_SUMMARY
+          echo ":heavy_check_mark: Passed: $passed" >> $GITHUB_STEP_SUMMARY
+          echo ":x: Failed: $failed" >> $GITHUB_STEP_SUMMARY
+          echo ":white_circle: Skipped: $skipped" >> $GITHUB_STEP_SUMMARY
+          echo "Execution time (ms): $time" >> $GITHUB_STEP_SUMMARY
 
         #      - name: Setup Pages
         #        id: pages
