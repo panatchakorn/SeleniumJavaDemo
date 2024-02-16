@@ -1,0 +1,78 @@
+
+name: test-summary
+
+on:
+  workflow_dispatch:
+  #push:
+  #  branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      checks: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn clean test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/smokeTest.xml"
+        #run: mvn -B package --file pom.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            **/target/logs/*
+            **/target/reports/*
+          
+
+          #  ./target/logs/
+          #  .target/reports/
+          #  ./target/surefire-reports/
+
+
+      - name: Upload surefire test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-test-reports
+          path: |
+            **/target/surefire-reports/**/*
+
+          #  ./target/surefire-reports/TEST*.xml
+
+
+      - name: Publish Test Report
+        uses: test-summary/action@v2
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          paths: |
+            **/target/surefire-reports/junitreports/TEST*.xml
+          show: "all"
+
+      - name: Run LiquidJS
+        id: run-liquidjs
+        uses: ./.
+        with:
+          variables: '{"hello": "Hello LiquidJS"}'
+          template-string: "{{ hello }}"
+          output-name: "rendered-result"
+
+      - name: A/B Check
+        if: ${{ steps.run-liquidjs.outputs.rendered-result != 'Hello LiquidJS' }}
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.setFailed("A/B Check failed, 'steps.run-liquidjs.outputs.rendered-result' should be 'Hello LiquidJS'")
