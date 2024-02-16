@@ -55,7 +55,7 @@ jobs:
 
       - name: LiquidJS Action
         id: run-liquidjs
-        uses: actions/checkout@v2
+        uses: ntsd/liquidjs-action@main
         if: success() || failure() # always run even if the previous step fails
         with:
           variables: '{"hello": "Hello LiquidJS"}'
