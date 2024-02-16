@@ -53,9 +53,9 @@ jobs:
 
           #  ./target/surefire-reports/TEST*.xml
 
-      - name: Run LiquidJS
+      - name: LiquidJS Action
         id: run-liquidjs
-        uses: ./.
+        uses: actions/checkout@v2
         if: success() || failure() # always run even if the previous step fails
         with:
           variables: '{"hello": "Hello LiquidJS"}'
