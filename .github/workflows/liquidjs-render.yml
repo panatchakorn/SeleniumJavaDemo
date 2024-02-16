@@ -62,6 +62,9 @@ jobs:
           template-string: "{{ hello }}"
           output-name: "rendered-result"
 
+      - name: Echo output
+        run: echo "The rendered result is '${{ steps.run-liquidjs.outputs.result }}'"
+
       - name: A/B Check
         if: ${{ steps.run-liquidjs.outputs.rendered-result != 'Hello LiquidJS' }}
         uses: actions/github-script@v3
