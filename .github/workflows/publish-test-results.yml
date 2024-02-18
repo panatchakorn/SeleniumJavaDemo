@@ -60,8 +60,10 @@ jobs:
         with:
           name: Test Report
           files: |
-            target/surefire-reports/junitreports/TEST-*.xml
+            target/surefire-reports/TEST-*.xml
           report_suite_logs: any
+
+          #target/surefire-reports/junitreports/TEST-*.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
