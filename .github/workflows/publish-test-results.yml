@@ -61,7 +61,6 @@ jobs:
           name: Test Report
           files: |
             target/surefire-reports/TEST-*.xml
-          report_suite_logs: any
 
           #target/surefire-reports/junitreports/TEST-*.xml
 
