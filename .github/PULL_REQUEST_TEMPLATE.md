@@ -10,7 +10,6 @@
 <!-- Please add any additional information that would be helpful for reviewers. -->
 
 ## Checklist 
-<!-- To mark a task as complete, use [x] -->
 - [ ] The PR has a descriptive title.
 - [ ] The description provided has enough information.
 - [ ] My code follows the coding style guidelines of this project.
