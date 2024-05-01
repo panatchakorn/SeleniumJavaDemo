@@ -1,17 +1,15 @@
 **Please provide enough information so that others can review your pull request.**
 ## Description
-`Describe the changes you made in this pull request. 
-Any relevant context or background information that might help understand the proposed changes.
-Include any relevant links. - Remove this info guide and add a description.`
+<!-- Describe the changes you made in this pull request. Any relevant context or background information that might help understand the proposed changes. Include any relevant links. -->
 
 ## How has the change been tested to ensure it works as expected?
 
 ## Screenshots (if appropriate)
 
 ## Additional Notes
-`Please add any additional information that would be helpful for reviewers. - Remove this section or replace it with notes.`
+<!-- Please add any additional information that would be helpful for reviewers. -->
 
-## Checklist
+## Checklist 
 - [ ] The PR has a descriptive title.
 - [ ] The description provided has enough information.
 - [ ] My code follows the coding style guidelines of this project.
