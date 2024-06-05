@@ -48,10 +48,10 @@ jobs:
 
       - name: Set up JDK 17
         shell: powershell
-          run: |
-            $env:JAVA_HOME = "C:\Program Files\Java\17.0.11\x64"
-            $env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
-            java -version
+        run: |
+          $env:JAVA_HOME = "C:\Program Files\Java\17.0.11\x64"
+          $env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
+          java -version
 
       - name: Print Maven version
         run: mvn -v
