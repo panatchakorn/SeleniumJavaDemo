@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: toolchain
-          path: "C:\Users\runneradmin\.m2\toolchains.xml"
+          path: "C:\\Users\\runneradmin\\.m2\\toolchains.xml"
 
       - name: Create directory and copy files
         run: |
