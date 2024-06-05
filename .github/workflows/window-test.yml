@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "Commit message: $(git log -1 --pretty=format:"%h %s")"
 
-      -name: Print Maven version
+      - name: Print Maven version
         run: mvn -v
 
 
