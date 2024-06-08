@@ -1,5 +1,4 @@
-name test-json-inputs
-
+name: test-json-inputs
 on:
   workflow_dispatch:
 
