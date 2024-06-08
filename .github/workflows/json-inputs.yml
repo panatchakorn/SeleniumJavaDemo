@@ -18,5 +18,7 @@ jobs:
         run: echo "${{ inputs.refRepo }}"
 
       - name: getJson
-        run: echo ${{ fromJSON(inputs.refRepo).ABC || 'master' }}
+        run: |
+          echo ${{ fromJSON(inputs.refRepo).ABC || 'feature/abc' }}
+          echo ${{ fromJSON(inputs.refRepo).DEF || 'main' }}
       
