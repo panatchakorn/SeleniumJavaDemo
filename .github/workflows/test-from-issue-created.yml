@@ -1,0 +1,110 @@
+
+name: test-from-issue-created
+run-name: triggered by @${{ github.triggering_actor }}
+
+on:
+  workflow_dispatch:
+  issues:
+    types: [opened]
+  #push:
+  #  branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+#  inputs:
+#    requester:
+#      description: 'Requester'
+#      required: true
+#      default: 'Someone'
+#    java-version:
+#      description: 'Java version'
+#      required: true
+#      default: '17'
+#    message:
+#      description: 'Message'
+#      required: true
+#      default: 'Test from issue created'
+
+
+jobs:
+  run-test-issue-request:
+    name: Run Test from Issue Request
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'issueops:run-test')
+
+    permissions:
+      contents: read
+      id-token: write
+
+    outputs:
+      request: ${{ steps.parse.outputs.json }}
+
+    steps:
+      - name: Parse inputs
+        id: parse
+        uses: actions/parser@v1.0.0
+        with:
+          body: ${{ github.event.issue.body }}
+          issue-form-template: run-test-workflow.yml
+
+      - name: Validate Issue
+        id: validate
+        uses: issue-ops/validator@v1.0.0
+        with:
+          issue-form-template: run-test-workflow.yml
+          parsed-issue-body: ${{ steps.parse.outputs.json }}
+
+  build-test:
+    runs-on: ubuntu-latest
+    needs: run-test-issue-request
+    if: contains(github.event.issue.labels.*.name, 'issueops:run-test')
+
+    permissions:
+      contents: write
+      checks: write
+      id-token: write
+
+    steps:
+
+      - uses: actions/create-github-app-token@v1.10.1
+        id: token
+        with:
+          app_id: ${{ secrets.CREATE_ISSUE_APP_ID }}
+          private_key: ${{ secrets.CREATE_ISSUE_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - uses: actions/checkout@v3
+
+      - name: Echo Request Inputs
+        run: |
+          echo "request: ${{ needs.run-test-issue-request.outputs.request }}"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ fromJSON(needs.run-test-issue-request.outputs.request).java-version }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn test
+        #run: mvn -B package --file pom.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            ./target/logs/
+            .target/reports/
+            ./target/surefire-reports/
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          detailed_summary: true
+    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+    #- name: Update dependency graph
+    #  uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
