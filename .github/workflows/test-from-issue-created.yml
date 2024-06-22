@@ -5,7 +5,7 @@ run-name: triggered by @${{ github.triggering_actor }}
 on:
   workflow_dispatch:
   issues:
-    types: [opened]
+    types: [opened,reopened]
   #push:
   #  branches: [ "master" ]
 #  pull_request:
@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Parse inputs
         id: parse
-        uses: actions/parser@v1.0.0
+        uses: issue-ops/parser@v1.0.0
         with:
           body: ${{ github.event.issue.body }}
           issue-form-template: run-test-workflow.yml
