@@ -44,7 +44,6 @@ jobs:
         uses: issue-ops/parser@v1.0.0
         with:
           body: ${{ github.event.issue.body }}
-          issue-form-template: .github/ISSUE_TEMPLATE/run-test-workflow.yml
 
       - name: Validate Issue
         id: validate
