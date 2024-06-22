@@ -44,13 +44,16 @@ jobs:
         uses: issue-ops/parser@v1.0.0
         with:
           body: ${{ github.event.issue.body }}
+          issue-form-template: run-test-workflow.yml
+          workflow: ${{ github.workspace }}
 
       - name: Validate Issue
         id: validate
         uses: issue-ops/validator@v1.0.0
         with:
-          issue-form-template: .github/ISSUE_TEMPLATE/run-test-workflow.yml
+          issue-form-template: run-test-workflow.yml
           parsed-issue-body: ${{ steps.parse.outputs.json }}
+          workflow: ${{ github.workspace }}
 
   build-test:
     runs-on: ubuntu-latest
