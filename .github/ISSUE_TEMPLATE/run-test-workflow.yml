@@ -1,8 +1,7 @@
 name: Run Test Workflow
 description: Submit a request to run GitHub Workflow test
 title: '[Request] Run test'
-labels:
-  - issueops:run-test
+labels: ['run-test']
 
 body:
 # Markdown type fields are not included in the submitted issue body

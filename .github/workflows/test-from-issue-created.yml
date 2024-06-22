@@ -29,7 +29,7 @@ jobs:
   run-test-issue-request:
     name: Run Test from Issue Request
     runs-on: ubuntu-latest
-    if: contains(github.event.issue.labels.*.name, 'issueops:run-test')
+    if: contains(github.event.issue.labels.*.name, 'run-test')
 
     permissions:
       contents: read
@@ -56,7 +56,7 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     needs: run-test-issue-request
-    if: contains(github.event.issue.labels.*.name, 'issueops:run-test')
+    if: contains(github.event.issue.labels.*.name, 'run-test')
 
     permissions:
       contents: write
