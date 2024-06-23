@@ -63,7 +63,7 @@ jobs:
           github-token: ${{ steps.token.outputs.token }}
           issue-form-template: run-test-workflow.yml
           parsed-issue-body: ${{ steps.parse.outputs.json }}
-          workflow: ${{ github.workspace }}
+          workspace: ${{ github.workspace }}
 
       - name: Output Validation Results
         id: output
@@ -89,6 +89,7 @@ jobs:
           app-id: ${{ secrets.CREATE_ISSUE_APP_ID }}
           private-key: ${{ secrets.CREATE_ISSUE_APP_KEY }}
           owner: ${{ github.repository_owner }}
+          repositories: ${{ github.repository }}
 
       - uses: actions/checkout@v3
 
