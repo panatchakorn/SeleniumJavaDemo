@@ -50,10 +50,10 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - uses: actions/create-github-app-token@v1.10.1
-          id: token
-          with:
-            app_id: ${{ secrets.CREATE_ISSUE_APP_ID }}
-            private_key: ${{ secrets.CREATE_ISSUE_APP_KEY }}
+        id: token
+        with:
+          app_id: ${{ secrets.CREATE_ISSUE_APP_ID }}
+          private_key: ${{ secrets.CREATE_ISSUE_APP_KEY }}
 
       - name: Validate Issue
         id: validate
@@ -65,10 +65,10 @@ jobs:
           workflow: ${{ github.workspace }}
 
       - name: Output Validation Results
-          id: output
-          run: |
-            echo "Result: ${{ steps.validate.outputs.result }}"
-            echo "Errors: ${{ steps.validate.outputs.errors }}"
+        id: output
+        run: |
+          echo "Result: ${{ steps.validate.outputs.result }}"
+          echo "Errors: ${{ steps.validate.outputs.errors }}"
 
   build-test:
     runs-on: ubuntu-latest
