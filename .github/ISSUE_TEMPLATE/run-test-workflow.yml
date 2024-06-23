@@ -4,38 +4,47 @@ title: '[Request] Run test'
 labels: ['run-test']
 
 body:
-# Markdown type fields are not included in the submitted issue body
-- type: markdown
-  attributes:
-    value:
-      Welcome to GitHub! Please fill out the information below to run test-from-issue-crated workflow
+  # Markdown type fields are not included in the submitted issue body
+  - type: markdown
+    attributes:
+      value:
+        Welcome to GitHub! Please fill out the information below to run test-from-issue-crated workflow
 
-- type: input
-  id: requester
-  attributes:
-    label: Requester
-    description: The name of the requester.
-    placeholder: Me
-  validations:
-    required: true
+  - type: input
+      id: name
+      attributes:
+        label: Repository Name
+        description: The name of the repository you would like to create.
+        placeholder: octorepo
+      validations:
+        required: true
 
-- type: dropdown
-  id: java-version
-  attributes:
-    label: Java Version
-    description: Select the Java version to use.
-    multiple: false
-    options:
-      - 17
-      - 11
-  validations:
-    required: true
+  - type: input
+    id: requester
+    attributes:
+      label: Requester
+      description: The name of the requester.
+      placeholder: Me
+    validations:
+      required: true
 
-- type: input
-  id: message
-  attributes:
-    label: Message
-    description: Message to identity test run.
-    placeholder: My message
-  validations:
-    required: true
+  - type: dropdown
+    id: java-version
+    attributes:
+      label: Java Version
+      description: Select the Java version to use.
+      multiple: false
+      options:
+        - 17
+        - 11
+    validations:
+      required: true
+
+  - type: input
+    id: message
+    attributes:
+      label: Message
+      description: Message to identity test run.
+      placeholder: My message
+    validations:
+      required: true

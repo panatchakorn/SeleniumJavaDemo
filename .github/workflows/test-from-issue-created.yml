@@ -43,15 +43,9 @@ jobs:
         id: parse
         uses: issue-ops/parser@v1.0.0
         with:
-          schema: |
-            requester: string
-            java-version: string
-            message: string
-            
-
-#          body: ${{ github.event.issue.body }}
-#          issue-form-template: run-test-workflow.yml
-#          workflow: ${{ github.workspace }}
+          body: ${{ github.event.issue.body }}
+          issue-form-template: run-test-workflow.yml
+          workflow: ${{ github.workspace }}
 
       - name: Validate Issue
         id: validate
