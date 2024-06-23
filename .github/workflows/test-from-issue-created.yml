@@ -101,7 +101,7 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ fromJSON(needs.run-test-issue-request.outputs.request).java-version }}
+          java-version: ${{ fromJSON(needs.run-test-issue-request.outputs.request).java_version }}
           distribution: 'temurin'
           cache: maven
 
