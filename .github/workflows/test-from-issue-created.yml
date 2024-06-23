@@ -151,20 +151,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          issue_number=${{ github.event.issue.number }}  # Replace with your issue number
+          issue_number=${{ github.event.issue.number }}
           artifact_file=test-reports.zip
-  
+      
           # Create a comment on the issue
           comment_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             -X POST \
             -d "{\"body\":\"Attached artifact from the latest workflow run.\"}" \
             https://api.github.com/repos/${{ github.repository }}/issues/$issue_number/comments)
-  
+      
           # Extract the comment ID
           comment_id=$(echo $comment_response | jq .id)
-  
+          echo "Comment ID: $comment_id"
+      
           # Upload the file to the comment
-          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          upload_response=$(curl -s -w "%{http_code}" -o /dev/null -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/zip" \
             --data-binary @"$artifact_file" \
-            "https://uploads.github.com/repos/${{ github.repository }}/issues/comments/$comment_id/attachments?name=test-reports.zip"
+            "https://uploads.github.com/repos/${{ github.repository }}/issues/comments/$comment_id/attachments?name=test-reports.zip")
+      
+          echo "Upload status code: $upload_response"
