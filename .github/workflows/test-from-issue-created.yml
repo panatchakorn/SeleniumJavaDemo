@@ -60,6 +60,7 @@ jobs:
         id: validate
         uses: issue-ops/validator@v1.0.0
         with:
+          add-comment: false
           github-token: ${{ steps.token.outputs.token }}
           issue-form-template: run-test-workflow.yml
           parsed-issue-body: ${{ steps.parse.outputs.json }}
