@@ -45,7 +45,7 @@ jobs:
         with:
           body: ${{ github.event.issue.body }}
           issue-form-template: run-test-workflow.yml
-          workflow: ${{ github.workspace }}
+          workspace: ${{ github.workspace }}
 
       - name: Validate Issue
         id: validate
