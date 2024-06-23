@@ -39,6 +39,8 @@ jobs:
       request: ${{ steps.parse.outputs.json }}
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Parse inputs
         id: parse
         uses: issue-ops/parser@v1.0.0
