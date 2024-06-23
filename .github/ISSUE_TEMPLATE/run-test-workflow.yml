@@ -19,15 +19,12 @@ body:
     validations:
       required: true
 
-  - type: dropdown
+  - type: input
     id: java-version
     attributes:
       label: Java Version
-      description: Select the Java version to use.
-      multiple: false
-      options:
-        - 17
-        - 11
+      description: Java version to use.
+      placeholder: 17
     validations:
       required: true
 
