@@ -11,15 +11,6 @@ body:
         Welcome to GitHub! Please fill out the information below to run test-from-issue-crated workflow
 
   - type: input
-      id: name
-      attributes:
-        label: Repository Name
-        description: The name of the repository you would like to create.
-        placeholder: octorepo
-      validations:
-        required: true
-
-  - type: input
     id: requester
     attributes:
       label: Requester
