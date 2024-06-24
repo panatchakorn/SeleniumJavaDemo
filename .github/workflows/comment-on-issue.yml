@@ -9,6 +9,39 @@ jobs:
   comment-on-issue:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Get repo and run_id
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const repo = context.repo.repo;
+            const run_id = context.runId;
+            console.log(`Repo: ${repo}`);
+            console.log(`Run ID: ${run_id}`);
+            return { repo, run_id };
+
+      - name: Set repo and run_id as env variables
+        run: |
+          echo "REPO=${{ steps.get-repo-and-run-id.outputs.result.repo }}" >> $GITHUB_ENV
+          echo "RUN_ID=${{ steps.get-repo-and-run-id.outputs.result.run_id }}" >> $GITHUB_ENV
+
+      - name: Get artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ env.REPO }}
+          RUN_ID: ${{ env.RUN_ID }}
+        run: |
+          # Get the artifacts
+          ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+                           -H "Accept: application/vnd.github.v3+json" \
+                           "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts")
+      
+          echo $ARTIFACTS
+      
+          ARTIFACT_IDS=$(echo $ARTIFACTS | jq '.artifacts[].id')
+          echo $ARTIFACT_IDS
+
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
