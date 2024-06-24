@@ -14,7 +14,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
+          script: |            
             const repo = context.repo;
             const run_id = context.runId;
             console.log(`Repo: ${repo}`);
@@ -35,7 +35,7 @@ jobs:
           # Get the artifacts
           ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
                            -H "Accept: application/vnd.github.v3+json" \
-                           "https://api.github.com/repos/${{ env.REPO }}/actions/runs/${{ env.RUN_ID }}/artifacts")
+                           "https://api.github.com/repos/${{ github.repo }}/actions/runs/${{ env.RUN_ID }}/artifacts")
       
           echo $ARTIFACTS
       
