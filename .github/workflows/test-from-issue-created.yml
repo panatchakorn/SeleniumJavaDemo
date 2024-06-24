@@ -179,22 +179,23 @@ jobs:
     if: always()
 
     steps:
-      - name: Get list of artifacts
-        id: get-artifacts
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const run_id = context.runId;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner,
-              repo,
-              run_id
-            });
-            console.log(JSON.stringify(artifacts));
-            return artifacts.data.artifacts.map(artifact => artifact.id);
+      - name: Get artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}  # Replace with your issue number
+          OWNER=${{ github.repository_owner }}
+          REPO=${{ github.repository }}
+          RUN_ID=${{ github.run_id }}
+          
+          ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+                           -H "Accept: application/vnd.github.v3+json" \
+                           "https://api.github.com/repos/$OWNER/$REPO/actions/runs/$RUN_ID/artifacts")
+
+          echo $ARTIFACTS
+
+          ARTIFACT_IDS=$(echo $ARTIFACTS | jq '.artifacts[].id')
+          echo $ARTIFACT_IDS
 
       - name: Create Issue Comment with Artifact URL
         uses: actions/github-script@v6
