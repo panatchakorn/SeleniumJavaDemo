@@ -172,54 +172,76 @@ jobs:
 #
 #          echo "Upload status code: $upload_response"
 
+  create-artifact-for-issue:
+      needs: build-test
+      runs-on: ubuntu-latest
+      if: always()
+      steps:
+        - name: Create artifact
+          uses: actions/github-script@v6
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            script: |
+              const issue_number = ${{ github.event.issue.number }};
+              const repo = ${{ github.repository }};
+              const run_id = ${{ github.run_id }};
+              const data = { issue_number, repo, run_id };
+              const fs = require('fs');
+              fs.writeFileSync('data.json', JSON.stringify(data));
 
-  comment-on-issue:
-    runs-on: ubuntu-latest
-    needs: build-test
-    if: always()
+        - name: Upload artifact
+          uses: actions/upload-artifact@v3
+          with:
+            name: data-for-issue-comment
+            path: data-for-issue-comment.json
 
-    steps:
-      - name: Get artifacts
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          ISSUE_NUMBER=${{ github.event.issue.number }}  # Replace with your issue number
-          OWNER=${{ github.repository_owner }}
-          REPO=${{ github.repository }}
-          RUN_ID=${{ github.run_id }}
-          
-          ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
-                           -H "Accept: application/vnd.github.v3+json" \
-                           "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts")
-
-          echo $ARTIFACTS
-
-          ARTIFACT_IDS=$(echo $ARTIFACTS | jq '.artifacts[].id')
-          echo $ARTIFACT_IDS
-
-      - name: Create Issue Comment with Artifact URL
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const artifacts = ${{ steps.get-artifacts.outputs.result }};
-            const issue_number = ${{ github.event.issue.number }}; // Replace with your issue number
-      
-            for (const artifact of artifacts) {
-              const artifact_id = artifact.id;
-              const artifact_name = artifact.name;
-              const artifact_url = 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';      
-              const comment_body = 'Artifact [${artifact_name}](${artifact_url}) from the latest workflow run.';
-              
-              const artifact_url2 = 'https://github.com/${{ github.owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';
-              const comment_body2 = '[ Artifact2 ](${artifact_url2}) from the latest workflow run.';
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue_number,
-                body: comment_body comment_body2
-              });
-            }   
+#  comment-on-issue:
+#    runs-on: ubuntu-latest
+#    needs: build-test
+#    if: always()
+#
+#    steps:
+#      - name: Get artifacts
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          ISSUE_NUMBER=${{ github.event.issue.number }}  # Replace with your issue number
+#          OWNER=${{ github.repository_owner }}
+#          REPO=${{ github.repository }}
+#          RUN_ID=${{ github.run_id }}
+#
+#          ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+#                           -H "Accept: application/vnd.github.v3+json" \
+#                           "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts")
+#
+#          echo $ARTIFACTS
+#
+#          ARTIFACT_IDS=$(echo $ARTIFACTS | jq '.artifacts[].id')
+#          echo $ARTIFACT_IDS
+#
+#      - name: Create Issue Comment with Artifact URL
+#        uses: actions/github-script@v6
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          script: |
+#            const artifacts = ${{ steps.get-artifacts.outputs.result }};
+#            const issue_number = ${{ github.event.issue.number }}; // Replace with your issue number
+#
+#            for (const artifact of artifacts) {
+#              const artifact_id = artifact.id;
+#              const artifact_name = artifact.name;
+#              const artifact_url = 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';
+#              const comment_body = 'Artifact [${artifact_name}](${artifact_url}) from the latest workflow run.';
+#
+#              const artifact_url2 = 'https://github.com/${{ github.owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';
+#              const comment_body2 = '[ Artifact2 ](${artifact_url2}) from the latest workflow run.';
+#              await github.rest.issues.createComment({
+#                owner: context.repo.owner,
+#                repo: context.repo.repo,
+#                issue_number: issue_number,
+#                body: comment_body comment_body2
+#              });
+#            }
 
 #      - name: Get Workflow Run Artifacts
 #        id: get-artifacts
