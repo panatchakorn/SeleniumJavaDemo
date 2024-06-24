@@ -30,7 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ env.REPO }}
-          RUN_ID: ${{ env.RUN_ID }}
+          RUN_ID: 9643164692  #${{ env.RUN_ID }}
         run: |
           # Get the artifacts
           ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
