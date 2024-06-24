@@ -179,7 +179,7 @@ jobs:
     if: always()
 
     steps:
-      - name: Get Workflow Run Artifacts
+      - name: Get list of artifacts
         id: get-artifacts
         uses: actions/github-script@v6
         with:
@@ -194,28 +194,69 @@ jobs:
               run_id
             });
             console.log(JSON.stringify(artifacts));
-            
-            return artifacts.data.artifacts;
+            return artifacts.data.artifacts.map(artifact => artifact.id);
 
-      - name: Create Comment with Artifact URL
-        if: steps.get-artifacts.outputs.count > 0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          ARTIFACT_NAME=test-reports
-          ARTIFACT_ID=$(echo '${{ steps.get-artifacts.outputs.result }}' | jq -r '.[] | select(.name == "'$ARTIFACT_NAME'") | .id')
-          ISSUE_NUMBER=${{ github.event.issue.number }}  # Replace with your issue number
+      - name: Create Issue Comment with Artifact URL
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const artifacts = ${{ steps.get-artifacts.outputs.result }};
+            const issue_number = ${{ github.event.issue.number }}; // Replace with your issue number
+      
+            for (const artifact of artifacts) {
+              const artifact_id = artifact.id;
+              const artifact_name = artifact.name;
+              const artifact_url = 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';      
+              const comment_body = 'Artifact [${artifact_name}](${artifact_url}) from the latest workflow run.';
+              
+              const artifact_url2 = 'https://github.com/${{ github.owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';
+              const comment_body2 = '[ Artifact2 ](${artifact_url2}) from the latest workflow run.';
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                body: comment_body comment_body2
+              });
+            }   
 
-          if [ -n "$ARTIFACT_ID" ]; then
-            DOWNLOAD_URL="https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip"
-            DOWNLOAD_URL2="https://github.com/${{ github.owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/$ARTIFACT_ID"
-            COMMENT_BODY="Attached artifact from the latest workflow run. [Download Artifact]($DOWNLOAD_URL). [Download artifact 2]($DOWNLOAD_URL2)"
-
-            curl -H "Authorization: token $GITHUB_TOKEN" \
-                 -X POST \
-                 -d "{\"body\":\"$COMMENT_BODY\"}" \
-                 https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments
-          else
-            echo "Artifact not found"
-          fi
-          
+#      - name: Get Workflow Run Artifacts
+#        id: get-artifacts
+#        uses: actions/github-script@v6
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          script: |
+#            const run_id = context.runId;
+#            const owner = context.repo.owner;
+#            const repo = context.repo.repo;
+#            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+#              owner,
+#              repo,
+#              run_id
+#            });
+#            console.log(JSON.stringify(artifacts));
+#
+#            return artifacts.data.artifacts;
+#
+#      - name: Create Comment with Artifact URL
+#        if: steps.get-artifacts.outputs.count > 0
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          ARTIFACT_NAME=test-reports
+#          ARTIFACT_ID=$(echo '${{ steps.get-artifacts.outputs.result }}' | jq -r '.[] | select(.name == "'$ARTIFACT_NAME'") | .id')
+#          ISSUE_NUMBER=${{ github.event.issue.number }}  # Replace with your issue number
+#
+#          if [ -n "$ARTIFACT_ID" ]; then
+#            DOWNLOAD_URL="https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip"
+#            DOWNLOAD_URL2="https://github.com/${{ github.owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/$ARTIFACT_ID"
+#            COMMENT_BODY="Attached artifact from the latest workflow run. [Download Artifact]($DOWNLOAD_URL). [Download artifact 2]($DOWNLOAD_URL2)"
+#
+#            curl -H "Authorization: token $GITHUB_TOKEN" \
+#                 -X POST \
+#                 -d "{\"body\":\"$COMMENT_BODY\"}" \
+#                 https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments
+#          else
+#            echo "Artifact not found"
+#          fi
+#
