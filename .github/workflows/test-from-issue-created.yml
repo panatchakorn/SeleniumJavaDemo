@@ -187,7 +187,7 @@ jobs:
               const run_id = ${{ github.run_id }};
               const data = { issue_number, repo, run_id };
               const fs = require('fs');
-              fs.writeFileSync('data.json', JSON.stringify(data));
+              fs.writeFileSync('data-for-issue-comment.json', JSON.stringify(data));
 
         - name: Upload artifact
           uses: actions/upload-artifact@v3
