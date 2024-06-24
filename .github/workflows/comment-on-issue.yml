@@ -15,7 +15,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const repo = context.repo.repo;
+            const repo = context.repo;
             const run_id = context.runId;
             console.log(`Repo: ${repo}`);
             console.log(`Run ID: ${run_id}`);
