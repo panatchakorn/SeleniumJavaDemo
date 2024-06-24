@@ -183,7 +183,7 @@ jobs:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             script: |
               const issue_number = ${{ github.event.issue.number }};
-              const repo = ${{ github.repository }};
+              const repo = '${{ github.repository }}';
               const run_id = ${{ github.run_id }};
               const data = { issue_number, repo, run_id };
               const fs = require('fs');
