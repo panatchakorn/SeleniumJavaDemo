@@ -11,6 +11,8 @@ public class BrowserOptions {
         ChromeOptions options = new ChromeOptions();
         options.setAcceptInsecureCerts(true);
         options.addArguments("--incognito");
+        options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
+        options.addArguments("--no-sandbox"); // Bypass OS security model
         return options;
     }
 
