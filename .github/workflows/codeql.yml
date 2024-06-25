@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: './SeleniumJavaDemo/'
+        working-directory: 'SeleniumJavaDemo/'
     timeout-minutes: 60
     permissions:
       actions: read
