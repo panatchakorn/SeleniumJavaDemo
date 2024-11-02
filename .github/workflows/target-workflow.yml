@@ -1,0 +1,52 @@
+name: Target workflow
+run-name: ${{ github.event.inputs.Description }}
+
+on:
+  repository_dispatch:
+    types: [ test-event ]
+  workflow_dispatch:
+    inputs:
+      Runner:
+        description: "runner to use"
+        required: true
+        type: choice
+        default: ubuntu-latest
+        options:
+        - ubuntu-latest
+        - runner2
+      Environment:
+        type: choice
+        description: "environment to use"
+        default: env1
+        options:
+        - env1
+        - env2
+        - env3
+      Description:
+        type: string
+        description: 'A description of the run'
+        default: Test run
+
+jobs:
+  test:
+    runs-on: ${{ inputs.Runner }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+#      with:
+#        ref: ${{ github.event.client_payload.sha }} # This is the commit SHA to checkout
+
+    - name: Echo repository_dispatch inputs
+      if: github.event_name == 'repository_dispatch'
+      run: |
+        echo "Event type: ${{ github.event.action }}"
+        echo "Runner: ${{ github.event.client_payload.Runner }}"
+        echo "Environment: ${{ github.event.client_payload.Environment }}"
+        echo "Description: ${{ github.event.client_payload.Description }}"
+
+    - name: Echo workflow_dispatch inputs
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        echo "Runner: ${{ github.event.inputs.Runner }}"
+        echo "Environment: ${{ github.event.inputs.Environment }}"
+        echo "Description: ${{ github.event.inputs.Description }}"
