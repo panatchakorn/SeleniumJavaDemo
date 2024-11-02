@@ -29,7 +29,8 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ inputs.Runner }}
+#    runs-on: ${{ inputs.Runner }}
+    runs-on: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.Runner || github.event.inputs.Runner }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
