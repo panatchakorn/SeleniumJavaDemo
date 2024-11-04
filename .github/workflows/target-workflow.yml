@@ -4,6 +4,9 @@ run-name: ${{ github.event.inputs.Description }}
 on:
   repository_dispatch:
     types: [ test-event ]
+
+  workflow_call:
+
   workflow_dispatch:
     inputs:
       Runner:
