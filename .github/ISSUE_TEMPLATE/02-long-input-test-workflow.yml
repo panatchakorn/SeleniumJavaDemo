@@ -1,0 +1,167 @@
+name: Long Form Run Test Workflow
+description: Submit a request to run GitHub Workflow test
+title: '[Request] Run long test'
+labels: ['run-long-test']
+
+body:
+  # Markdown type fields are not included in the submitted issue body
+  - type: markdown
+    attributes:
+      value:
+        Please fill out the information below to run test-long-form-issue-created workflow
+
+  - type: input
+    id: Branch
+    attributes:
+      label: Branch
+      description: Branch to run the test
+      placeholder: 'master'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: Runner
+    attributes:
+      label: Runner
+      description: Runner to use to run the test
+      multiple: false
+      options:
+        - ubuntu-latest
+        - runner2
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: Environment
+    attributes:
+      label: Environment
+      description: Environment to use
+      options:
+        - env1
+        - env2
+        - env3
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: InvocationCount
+    attributes:
+      label: InvocationCount
+      description: Invocation Count. Normal range 1-500
+      placeholder: '1'
+    validations:
+      required: true
+
+  - type: input
+    id: RetryCount
+    attributes:
+      label: RetryCount
+      description: Retry Count. Normal range 0-5
+      placeholder: '3'
+    validations:
+      required: true
+
+  - type: input
+    id: Description
+    attributes:
+      label: Description
+      description: A description of the run
+      placeholder: 'Test run'
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: StagesToRun
+    attributes:
+      label: StagesToRun
+      description: StagesToRun will be converted to JSON payload
+      options:
+        - label: 'Stage 1'
+          required: true
+        - label: 'Stage 2'
+          required: true
+        - label: 'Stage 3'
+          required: false
+        - label: 'Stage 4'
+          required: false
+        - label: 'Stage 5'
+          required: true
+        - label: 'Stage 6'
+          required: true
+        - label: 'Stage 7'
+          required: true
+        - label: 'Stage 8'
+          required: true
+        - label: 'Stage 9'
+          required: true
+        - label: 'Stage 10'
+          required: true
+        - label: 'Stage 11'
+          required: true
+        - label: 'Stage 12'
+          required: true
+        - label: 'Stage 13'
+          required: true
+        - label: 'Stage 14'
+          required: true
+        - label: 'Stage 15'
+          required: true
+        - label: 'Stage 16'
+          required: true
+        - label: 'Stage 17'
+          required: true
+        - label: 'Stage 18'
+          required: true
+        - label: 'Stage 19'
+          required: true
+        - label: 'Stage 20'
+          required: true
+        - label: 'Stage 21'
+          required: true
+        - label: 'Stage 22'
+          required: true
+        - label: 'Stage 23'
+          required: true
+        - label: 'Stage 24'
+          required: true
+        - label: 'Stage 25'
+          required: true
+        - label: 'Stage 26'
+          required: true
+        - label: 'Stage 27'
+          required: true
+        - label: 'Stage 28'
+          required: true
+        - label: 'Stage 29'
+          required: true
+        - label: 'Stage 30'
+          required: true
+        - label: 'Stage 31'
+          required: true
+        - label: 'Stage 32'
+          required: true
+        - label: 'Stage 33'
+          required: true
+        - label: 'Stage 34'
+          required: true
+        - label: 'Stage 35'
+          required: true
+        - label: 'Stage 36'
+          required: true
+        - label: 'Stage 37'
+          required: true
+        - label: 'Stage 38'
+          required: true
+        - label: 'Stage 39'
+          required: true
+        - label: 'Stage 40'
+          required: true
+        - label: 'Stage 41'
+          required: true
+        - label: 'Stage 42'
+          required: true
+        - label: 'Stage 43'
+          required: true
+
