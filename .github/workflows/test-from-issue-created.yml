@@ -46,7 +46,7 @@ jobs:
         uses: issue-ops/parser@v1.0.0
         with:
           body: ${{ github.event.issue.body }}
-          issue-form-template: run-test-workflow.yml
+          issue-form-template: 01-run-test-workflow.yml
           workspace: ${{ github.workspace }}
 
       - uses: actions/create-github-app-token@v1.10.1
@@ -62,7 +62,7 @@ jobs:
         with:
           add-comment: false
           github-token: ${{ steps.token.outputs.token }}
-          issue-form-template: run-test-workflow.yml
+          issue-form-template: 01-run-test-workflow.yml
           parsed-issue-body: ${{ steps.parse.outputs.json }}
           workspace: ${{ github.workspace }}
 
