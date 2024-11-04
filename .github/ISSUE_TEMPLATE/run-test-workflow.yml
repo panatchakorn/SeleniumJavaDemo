@@ -24,7 +24,7 @@ body:
     attributes:
       label: Java Version
       description: Java version to use.
-      placeholder: 17
+      placeholder: '17'
     validations:
       required: true
 
