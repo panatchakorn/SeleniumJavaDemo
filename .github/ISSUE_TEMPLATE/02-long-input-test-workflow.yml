@@ -83,9 +83,9 @@ body:
         - label: 'Stage 2'
           required: true
         - label: 'Stage 3'
-          required: true
+          required: false
         - label: 'Stage 4'
-          required: true
+          required: false
         - label: 'Stage 5'
           required: true
         - label: 'Stage 6'
