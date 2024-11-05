@@ -4,6 +4,25 @@ run-name: ${{ github.event.inputs.Description }}
 on:
   repository_dispatch:
     types: [ test-event ]
+
+  workflow_call:
+    inputs:
+      Runner:
+        description: "runner to use"
+        required: true
+        type: string
+        default: ubuntu-latest
+      Environment:        
+        description: "environment to use"
+        required: true
+        type: string
+        default: env4
+      Description:
+        description: 'A description of the run'
+        required: true
+        type: string
+        default: Test run
+
   workflow_dispatch:
     inputs:
       Runner:
@@ -48,6 +67,13 @@ jobs:
 
     - name: Echo workflow_dispatch inputs
       if: github.event_name == 'workflow_dispatch'
+      run: |
+        echo "Runner: ${{ github.event.inputs.Runner }}"
+        echo "Environment: ${{ github.event.inputs.Environment }}"
+        echo "Description: ${{ github.event.inputs.Description }}"
+
+    - name: Echo workflow_call inputs
+      if: github.event_name == 'workflow_call'
       run: |
         echo "Runner: ${{ github.event.inputs.Runner }}"
         echo "Environment: ${{ github.event.inputs.Environment }}"
