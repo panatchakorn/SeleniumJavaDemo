@@ -49,7 +49,7 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Output Validation Results
-        id: output
+        id: output-validation
         run: |
           echo "Result: ${{ steps.validate.outputs.result }}"
           echo "Errors: ${{ steps.validate.outputs.errors }}"
