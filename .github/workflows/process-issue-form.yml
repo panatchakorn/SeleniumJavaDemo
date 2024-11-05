@@ -1,0 +1,72 @@
+name: Process Issue Form
+run-name: triggered by @${{ github.triggering_actor }}
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+jobs:
+  test-request:
+    name: Test Run Request
+    runs-on: ubuntu-latest
+
+    # Run this job for request types
+    if: |
+      contains(github.event.issue.labels.*.name, 'run-long-test')
+
+    permissions:
+      contents: read
+      issues: write
+
+    outputs:
+      request: ${{ steps.parse.outputs.json }}
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v3
+
+      - name: Parse Issue
+        id: parse
+        uses: issue-ops/parser@v3.0.0
+        with:
+          body: ${{ github.event.issue.body }}
+          issue-form-template: 02-long-input-test-workflow.yml
+          workspace: ${{ github.workspace }}
+
+      - name: Output the Parsed Issue
+        id: output
+        run: echo ${{ steps.parse.outputs.json }}
+
+      - name: Validate Issue
+        id: validate
+        uses: issue-ops/validator@v3.0.0
+        with:
+          issue-form-template: 02-long-input-test-workflow.yml
+          parsed-issue-body: ${{ steps.parse.outputs.json }}
+          workspace: ${{ github.workspace }}
+
+      - name: Output Validation Results
+        id: output
+        run: |
+          echo "Result: ${{ steps.validate.outputs.result }}"
+          echo "Errors: ${{ steps.validate.outputs.errors }}"
+
+
+
+
+#      - name: Remove User from Team
+#        id: remove
+#        uses: actions/github-script@vX.X.X
+#        with:
+#          github-token: ${{ secrets.MY_TOKEN }}
+#          script: |
+#            const request = JSON.parse('${{ needs.team-request.outputs.request }}')
+#
+#            await github.rest.teams.removeMembershipForUserInOrg({
+#              org: request.org,
+#              team_slug: request.team,
+#              username: request.user
+#            })
