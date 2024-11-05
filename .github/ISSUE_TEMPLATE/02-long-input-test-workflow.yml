@@ -80,6 +80,7 @@ body:
       options:
         - label: 'Stage 1'
           required: true
+          checked: true
         - label: 'Stage 2'
           required: true
         - label: 'Stage 3'
