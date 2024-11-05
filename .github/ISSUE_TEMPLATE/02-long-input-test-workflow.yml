@@ -79,90 +79,89 @@ body:
       description: StagesToRun will be converted to JSON payload
       options:
         - label: 'Stage 1'
-          required: true
           checked: true
         - label: 'Stage 2'
-          required: true
+          checked: true
         - label: 'Stage 3'
-          required: false
+          checked: false
         - label: 'Stage 4'
-          required: false
+          checked: false
         - label: 'Stage 5'
-          required: true
+          checked: true
         - label: 'Stage 6'
-          required: true
+          checked: true
         - label: 'Stage 7'
-          required: true
+          checked: true
         - label: 'Stage 8'
-          required: true
+          checked: true
         - label: 'Stage 9'
-          required: true
+          checked: true
         - label: 'Stage 10'
-          required: true
+          checked: true
         - label: 'Stage 11'
-          required: true
+          checked: true
         - label: 'Stage 12'
-          required: true
+          checked: true
         - label: 'Stage 13'
-          required: true
+          checked: true
         - label: 'Stage 14'
-          required: true
+          checked: true
         - label: 'Stage 15'
-          required: true
+          checked: true
         - label: 'Stage 16'
-          required: true
+          checked: true
         - label: 'Stage 17'
-          required: true
+          checked: true
         - label: 'Stage 18'
-          required: true
+          checked: true
         - label: 'Stage 19'
-          required: true
+          checked: true
         - label: 'Stage 20'
-          required: true
+          checked: true
         - label: 'Stage 21'
-          required: true
+          checked: true
         - label: 'Stage 22'
-          required: true
+          checked: true
         - label: 'Stage 23'
-          required: true
+          checked: true
         - label: 'Stage 24'
-          required: true
+          checked: true
         - label: 'Stage 25'
-          required: true
+          checked: true
         - label: 'Stage 26'
-          required: true
+          checked: true
         - label: 'Stage 27'
-          required: true
+          checked: true
         - label: 'Stage 28'
-          required: true
+          checked: true
         - label: 'Stage 29'
-          required: true
+          checked: true
         - label: 'Stage 30'
-          required: true
+          checked: true
         - label: 'Stage 31'
-          required: true
+          checked: true
         - label: 'Stage 32'
-          required: true
+          checked: true
         - label: 'Stage 33'
-          required: true
+          checked: true
         - label: 'Stage 34'
-          required: true
+          checked: true
         - label: 'Stage 35'
-          required: true
+          checked: true
         - label: 'Stage 36'
-          required: true
+          checked: true
         - label: 'Stage 37'
-          required: true
+          checked: true
         - label: 'Stage 38'
-          required: true
+          checked: true
         - label: 'Stage 39'
-          required: true
+          checked: true
         - label: 'Stage 40'
-          required: true
+          checked: true
         - label: 'Stage 41'
-          required: true
+          checked: true
         - label: 'Stage 42'
-          required: true
+          checked: true
         - label: 'Stage 43'
-          required: true
+          checked: true
 
