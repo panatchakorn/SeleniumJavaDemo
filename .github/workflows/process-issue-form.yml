@@ -50,22 +50,6 @@ jobs:
         id: output
         run: echo ${{ steps.parse.outputs.json }}
 
-      - name: Parse form data
-        id: parse_form_data
-        run: |
-          echo "branch="${{ toJson(github.event.issue.body.Branch) }}" >> $GITHUB_ENV
-          echo "runner: ${{ toJson(github.event.issue.body.Runner) }}" >> $GITHUB_ENV
-          echo "environment: ${{ toJson(github.event.issue.body.Environment) }}" >> $GITHUB_ENV
-          echo "invocationCount: ${{ toJson(github.event.issue.body.InvocationCount) }}" >> $GITHUB_ENV
-          echo "description: ${{ toJson(github.event.issue.body.Description) }}" >> $GITHUB_ENV
-          echo "stagesToRun: ${{ toJson(github.event.issue.body.StagesToRun) }}" >> $GITHUB_ENV
-          echo "Branch: ${{ toJson(github.event.issue.body.Branch) }}"
-          echo "Runner: ${{ toJson(github.event.issue.body.Runner) }}"
-          echo "Environment: ${{ toJson(github.event.issue.body.Environment) }}"
-          echo "InvocationCount: ${{ toJson(github.event.issue.body.InvocationCount) }}"
-          echo "Description: ${{ toJson(github.event.issue.body.Description) }}"
-          echo "StagesToRun: ${{ toJson(github.event.issue.body.StagesToRun) }}"
-
       - name: Validate Issue
         id: validate
         uses: issue-ops/validator@v3.0.0
