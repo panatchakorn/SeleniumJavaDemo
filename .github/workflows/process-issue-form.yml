@@ -24,6 +24,16 @@ jobs:
       request: ${{ steps.parse.outputs.json }}
 
     steps:
+      - name: Remove Labels
+        id: remove-label
+        uses: issue-ops/labeler@v2.1.0
+        with:
+          action: remove
+          issue_number: ${{ github.event.issue.number }}
+          labels: |
+            issueops:validated
+            issueops:submitted
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v3
@@ -40,6 +50,22 @@ jobs:
         id: output
         run: echo ${{ steps.parse.outputs.json }}
 
+      - name: Parse form data
+        id: parse_form_data
+        run: |
+          echo "branch="${{ toJson(github.event.issue.body.Branch) }}" >> $GITHUB_ENV
+          echo "runner: ${{ toJson(github.event.issue.body.Runner) }}" >> $GITHUB_ENV
+          echo "environment: ${{ toJson(github.event.issue.body.Environment) }}" >> $GITHUB_ENV
+          echo "invocationCount: ${{ toJson(github.event.issue.body.InvocationCount) }}" >> $GITHUB_ENV
+          echo "description: ${{ toJson(github.event.issue.body.Description) }}" >> $GITHUB_ENV
+          echo "stagesToRun: ${{ toJson(github.event.issue.body.StagesToRun) }}" >> $GITHUB_ENV
+          echo "Branch: ${{ toJson(github.event.issue.body.Branch) }}"
+          echo "Runner: ${{ toJson(github.event.issue.body.Runner) }}"
+          echo "Environment: ${{ toJson(github.event.issue.body.Environment) }}"
+          echo "InvocationCount: ${{ toJson(github.event.issue.body.InvocationCount) }}"
+          echo "Description: ${{ toJson(github.event.issue.body.Description) }}"
+          echo "StagesToRun: ${{ toJson(github.event.issue.body.StagesToRun) }}"
+
       - name: Validate Issue
         id: validate
         uses: issue-ops/validator@v3.0.0
@@ -54,7 +80,53 @@ jobs:
           echo "Result: ${{ steps.validate.outputs.result }}"
           echo "Errors: ${{ steps.validate.outputs.errors }}"
 
+      - if: ${{ steps.validate.outputs.result == 'success' }}
+        name: Add Validated Label
+        id: add-label
+        uses: issue-ops/labeler@v2.1.0
+        with:
+          action: add
+          issue_number: ${{ github.event.issue.number }}
+          labels: |
+            issueops:validated
 
+#      - if: ${{ steps.approve.outputs.continue == 'true' }}
+      - if: ${{ steps.add-label.outputs.result == 'success' }}
+        name: Trigger test workflow
+        id: trigger-test
+        uses: actions/github-script@v7.0.1
+        with:
+#        github-token: ${{ secrets.MY_TOKEN }}
+          script: |
+            const request = JSON.parse('${{ needs.validate.outputs.request }}')
+            const response = await github.rest.actions.createWorkflowDispatch({
+              owner: '${{ github.repository_owner }}',
+              repo: '${{ github.event.repository.name }}',
+              workflow_id: 'target-workflow.yml',
+              ref: 'master',
+              inputs: {
+                Runner: request.Runner,
+                Environment: request.Environment,
+                InvocationCount: request.InvocationCount,
+                RetryCount: request.RetryCount
+                Description: request.StagesToRun
+              }
+            })
+        
+        
+        
+
+#        script: |
+#          const request = JSON.parse('${{ needs.validate.outputs.request }}')
+#          await github.rest.repos.createInOrg({
+#            org: '${{ github.repository_owner }}',
+#            name: request.name,
+#          })
+
+#      - if: ${{ steps.approve.outputs.continue == 'true' }}
+#      name: Close Issue
+#      id: close
+#      run: gh issue close ${{ github.event.issue.number }} --reason completed
 
 
 #      - name: Remove User from Team
