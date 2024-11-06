@@ -63,6 +63,8 @@ jobs:
         run: |
           echo "Result: ${{ steps.validate.outputs.result }}"
           echo "Errors: ${{ steps.validate.outputs.errors }}"
+      
+      
 
       - if: ${{ steps.validate.outputs.result == 'success' }}
         name: Add Validated Label
@@ -72,7 +74,7 @@ jobs:
           action: add
           issue_number: ${{ github.event.issue.number }}
           labels: |
-            issueops:validated
+            issueops:validated            
 
 #      - if: ${{ steps.approve.outputs.continue == 'true' }}
       - if: ${{ steps.validate.outputs.result == 'success' }}
@@ -83,6 +85,9 @@ jobs:
           github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
           script: | 
             const request = ${{ steps.parse.outputs.json }}
+            console.log("Runner: ", request.Runner);
+            console.log("Environment: ", request.Environment);
+            console.log("Description: ", request.StagesToRun);
             const response = await github.rest.actions.createWorkflowDispatch({
               owner: '${{ github.repository_owner }}',
               repo: '${{ github.event.repository.name }}',
