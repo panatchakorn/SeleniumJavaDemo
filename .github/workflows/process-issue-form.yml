@@ -75,7 +75,7 @@ jobs:
             issueops:validated
 
 #      - if: ${{ steps.approve.outputs.continue == 'true' }}
-      - if: ${{ steps.add-label.outputs.result == 'success' }}
+      - if: ${{ steps.validate.outputs.result == 'success' }}
         name: Trigger test workflow
         id: trigger-test
         uses: actions/github-script@v7.0.1
