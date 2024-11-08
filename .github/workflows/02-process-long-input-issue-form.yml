@@ -1,0 +1,89 @@
+name: Process Long Input Issue Form
+run-name: triggered by @${{ github.triggering_actor }}
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+jobs:
+  test-request:
+    name: Test Run Request
+    runs-on: ubuntu-latest
+
+    # Run this job for request types
+    if: |
+      contains(github.event.issue.labels.*.name, 'run-long-test')
+
+    permissions:
+      contents: read
+      issues: write
+
+#    outputs:
+#      request: ${{ steps.parse.outputs.json }}
+
+    steps:
+
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v3
+
+      - name: Print Form Body
+        run: echo ${{ github.event.issue.body }}
+
+      - name: Convert Issue Body to JSON
+        id: convert-to-json
+        run: |
+          echo "${{ github.event.issue.body }}" | jq -R 'split("\n") | map(select(length > 0)) | map(split(": ")) | map({(.[0]): .[1]}) | add' > issue.json
+        shell: bash
+
+      - name: Output the Parsed Issue
+        run: cat issue.json
+
+      - name: Trigger test workflow
+        id: trigger-test
+        uses: actions/github-script@v7.0.1
+        with:
+          github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
+          script: |
+            const fs = require('fs');
+            const issue = JSON.parse(fs.readFileSync('issue.json', 'utf8'));
+            console.log("Runner: ", issue.Runner);
+            console.log("Environment: ", issue.Environment);
+            console.log("Description: ", issue.StagesToRun);
+            const response = await github.rest.actions.createWorkflowDispatch({
+              owner: '${{ github.repository_owner }}',
+              repo: '${{ github.event.repository.name }}',
+              workflow_id: 'target-workflow.yml',
+              ref: 'master',
+              inputs: {
+                Runner: issue.Runner,
+                Environment: issue.Environment,
+                Description: issue.Description
+              }
+            });      
+
+#      - name: Trigger test workflow
+#        id: trigger-test
+#        uses: actions/github-script@v7.0.1
+#        with:
+#          github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
+#          script: |
+#            const request = ${{ steps.parse.outputs.json }}
+#            console.log("Runner: ", request.Runner);
+#            console.log("Environment: ", request.Environment);
+#            console.log("Description: ", request.StagesToRun);
+#            const response = await github.rest.actions.createWorkflowDispatch({
+#              owner: '${{ github.repository_owner }}',
+#              repo: '${{ github.event.repository.name }}',
+#              workflow_id: 'target-workflow.yml',
+#              ref: 'master',
+#              inputs: {
+#                Runner: request.Runner,
+#                Environment: request.Environment,
+#                Description: request.StagesToRun
+#              }
+#            })
+
+
