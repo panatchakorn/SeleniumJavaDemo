@@ -33,10 +33,28 @@ jobs:
         run: |
           printf "%s\n" "${{ github.event.issue.body }}"
 
+#      - name: Convert Issue Body to JSON
+#        id: convert-to-json
+#        run: |
+#          echo "${{ github.event.issue.body }}" | jq -R 'split("\n") | map(select(length > 0)) | map(split(": ")) | map({(.[0]): .[1]}) | add' > issue.json
+#        shell: bash
+
       - name: Convert Issue Body to JSON
         id: convert-to-json
         run: |
-          echo "${{ github.event.issue.body }}" | jq -R 'split("\n") | map(select(length > 0)) | map(split(": ")) | map({(.[0]): .[1]}) | add' > issue.json
+          echo "${{ github.event.issue.body }}" | jq -R '
+            split("\n\n") | 
+            map(select(length > 0)) | 
+            map(split("\n")) | 
+            map({
+              (.[0] | gsub("### "; "")): 
+              if .[0] == "### StagesToRun" then 
+                [.[1:] | map(gsub("^- \\[.\\] "; "")) | map(split(" ")) | map({(.[0]): (.[1] == "X")})] | add 
+              else 
+                .[1] 
+              end
+            }) | 
+            add' > issue.json
         shell: bash
 
       - name: Output the Parsed Issue
