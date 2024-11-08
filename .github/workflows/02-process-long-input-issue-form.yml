@@ -27,10 +27,11 @@ jobs:
 
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
 
       - name: Print Form Body
-        run: echo ${{ github.event.issue.body }}
+        run: |
+          printf "%s\n" "${{ github.event.issue.body }}"
 
       - name: Convert Issue Body to JSON
         id: convert-to-json
