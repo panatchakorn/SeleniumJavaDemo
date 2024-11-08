@@ -43,12 +43,12 @@ jobs:
         id: convert-to-json
         run: |
           echo "${{ github.event.issue.body }}" | jq -R '
-            split("\n\n") | 
-            map(select(length > 0)) | 
-            map(split("\n")) | 
+            split("\n\n") |
+            map(select(length > 0)) |
+            map(split("\n")) |
             map({
               (.[0] | gsub("### "; "")): 
-              if .[0] == "### StagesToRun" then 
+              if (.[0] | gsub("### "; "")) == "StagesToRun" then 
                 [.[1:] | map(gsub("^- \\[.\\] "; "")) | map(split(" ")) | map({(.[0]): (.[1] == "X")})] | add 
               else 
                 .[1] 
