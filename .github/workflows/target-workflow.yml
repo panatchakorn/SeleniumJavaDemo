@@ -22,6 +22,11 @@ on:
         required: true
         type: string
         default: Test run
+      StagesToRun:
+        type: string
+        description: 'Stages to run'
+        required: true
+        default: '{"Stage 1":true, "Stage 2": false, "Stage 3": true}'
 
   workflow_dispatch:
     inputs:
