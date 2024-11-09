@@ -45,6 +45,11 @@ on:
         type: string
         description: 'A description of the run'
         default: Test run
+      StagesToRun:
+        type: string
+        description: 'Stages to run'
+        required: true
+        default: '{"Stage 1:true,"Stage 2": false, "Stage 3": true}'
 
 jobs:
   test:
@@ -64,6 +69,7 @@ jobs:
         echo "Runner: ${{ github.event.client_payload.Runner }}"
         echo "Environment: ${{ github.event.client_payload.Environment }}"
         echo "Description: ${{ github.event.client_payload.Description }}"
+        echo "StagesToRun: ${{ github.event.client_payload.StagesToRun }}"
 
     - name: Echo workflow_dispatch inputs
       if: github.event_name == 'workflow_dispatch'
@@ -71,6 +77,7 @@ jobs:
         echo "Runner: ${{ github.event.inputs.Runner }}"
         echo "Environment: ${{ github.event.inputs.Environment }}"
         echo "Description: ${{ github.event.inputs.Description }}"
+        echo "StagesToRun: ${{ github.event.inputs.StagesToRun }}"
 
     - name: Echo workflow_call inputs
       if: github.event_name == 'workflow_call'
@@ -78,3 +85,4 @@ jobs:
         echo "Runner: ${{ github.event.inputs.Runner }}"
         echo "Environment: ${{ github.event.inputs.Environment }}"
         echo "Description: ${{ github.event.inputs.Description }}"
+        echo "StagesToRun: ${{ github.event.inputs.StagesToRun }}"
