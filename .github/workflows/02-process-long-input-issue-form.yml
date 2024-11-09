@@ -47,11 +47,13 @@ jobs:
         uses: actions/github-script@v7.0.1
         with:
           script: |
-#            core = require('@actions/core');
+
             github = require('@actions/github');
             const inputData = github.context.payload.issue.body;
             console.log('Input data:', inputData);
-            
+
+#            core = require('@actions/core');
+
 #            function parseToJSON(inputData) {
 #              const lines = inputData.split('\n').map(line => line.trim());
 #              const jsonData = {
