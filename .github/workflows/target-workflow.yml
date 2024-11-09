@@ -49,7 +49,7 @@ on:
         type: string
         description: 'Stages to run'
         required: true
-        default: '{"Stage 1:true,"Stage 2": false, "Stage 3": true}'
+        default: '{"Stage 1":true, "Stage 2": false, "Stage 3": true}'
 
 jobs:
   test:
