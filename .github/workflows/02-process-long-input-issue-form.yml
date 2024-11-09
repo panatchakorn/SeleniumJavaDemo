@@ -84,14 +84,14 @@ jobs:
                     }
                   }
                 }
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+                console.log('Raw json data:', jsonData);
+              
+                jsonData.StagesToRun = `'${jsonData.StagesToRun}`;
+              
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+                console.log('Raw json data after apply single quotes to StagesToRun:', jsonData);
              });
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-              console.log('Raw json data:', jsonData);
-            
-              jsonData.StagesToRun = `'${jsonData.StagesToRun}`;
-            
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-              console.log('Raw json data after apply single quotes to StagesToRun:', jsonData);
             
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
               console.log('Parsed JSON data:', JSON.stringify(jsonData, null, 2));
