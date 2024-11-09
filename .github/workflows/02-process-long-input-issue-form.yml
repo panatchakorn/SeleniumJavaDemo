@@ -93,7 +93,9 @@ jobs:
             const parsedData = parseToJSON(inputData);
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Parsed data:', parsedData);
-            core.setOutput('parsedData', JSON.stringify(parsedData));
+            core.setOutput('parsedData', parsedData);
+
+#            core.setOutput('parsedData', JSON.stringify(parsedData));
           
       - name: Trigger second workflow
         id: trigger_second_workflow
@@ -101,6 +103,8 @@ jobs:
         with:
           script: |            
             const parsedData = JSON.parse(  core.getInput('parsedData'));
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+            console.log('Retrieve parsed data:', parsedData)
 
             await github.rest.actions.createWorkflowDispatch({
               owner: github.context.repo.owner,
