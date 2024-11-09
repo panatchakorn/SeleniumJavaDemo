@@ -48,6 +48,7 @@ jobs:
         with:
           script: |
             const inputData = github.context.payload.issue.body;
+            console.log('Input data:', inputData);
             
             function parseToJSON(inputData) {
               const lines = inputData.split('\n').map(line => line.trim());
