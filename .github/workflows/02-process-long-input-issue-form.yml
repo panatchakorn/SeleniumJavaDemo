@@ -92,8 +92,8 @@ jobs:
             
             const parsedData = parseToJSON(inputData);
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-            console.log('Parsed data:', JSON.stringify(parsedData));
-            core.setOutput('parsedData', JSON.stringify(parsedData));
+            console.log('Parsed data:', parsedData);
+            core.setOutput('parsedData', parsedData);
 
 #            core.setOutput('parsedData', JSON.stringify(parsedData));
           
@@ -109,6 +109,10 @@ jobs:
             const parsedData = JSON.parse(  core.getInput('parsedData'));
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve parsed data:', parsedData)
+            
+            const parsedJsonData = JSON.stringify(  core.getInput('parsedData'));
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+            console.log('Retrieve parsed Json data:', parsedJsonData)
 
 #            await github.rest.actions.createWorkflowDispatch({
 #              owner: github.context.repo.owner,
