@@ -47,6 +47,7 @@ jobs:
         id: parse_inputs
         uses: actions/github-script@v7.0.1
         with:
+#            core.setOutput('parsedData', JSON.stringify(parsedData));
           script: |            
             const inputData = context.payload.issue.body
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
@@ -84,14 +85,10 @@ jobs:
                     }
                   }
                 }
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-                console.log('Raw json data:', jsonData);
-              
-                jsonData.StagesToRun = `'${jsonData.StagesToRun}`;
-              
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-                console.log('Raw json data after apply single quotes to StagesToRun:', jsonData);
              });
+            
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+              console.log('Raw json data:', jsonData);
             
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
               console.log('Parsed JSON data:', JSON.stringify(jsonData, null, 2));
@@ -103,8 +100,7 @@ jobs:
             console.log('Parsed data:', parsedData);
             core.setOutput('parsedData', parsedData);
 
-#            core.setOutput('parsedData', JSON.stringify(parsedData));
-          
+
       - name: Trigger second workflow
         id: trigger_second_workflow
         uses: actions/github-script@v7.0.1
