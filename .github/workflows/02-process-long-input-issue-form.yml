@@ -92,8 +92,8 @@ jobs:
             
             const parsedData = parseToJSON(inputData);
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-            console.log('Parsed data:', parsedData);
-            core.setOutput('parsedData', parsedData);
+            console.log('Parsed data:', JSON.stringify(parsedData));
+            core.setOutput('parsedData', JSON.stringify(parsedData));
 
 #            core.setOutput('parsedData', JSON.stringify(parsedData));
           
@@ -101,25 +101,29 @@ jobs:
         id: trigger_second_workflow
         uses: actions/github-script@v7.0.1
         with:
-          script: |            
+          script: |
+            const rawParsedData = core.getInput('parsedData');
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+            console.log('Retrieve raw parsed data:', rawParsedData)            
+            
             const parsedData = JSON.parse(  core.getInput('parsedData'));
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve parsed data:', parsedData)
 
-            await github.rest.actions.createWorkflowDispatch({
-              owner: github.context.repo.owner,
-              repo: github.context.repo.repo,
-              workflow_id: 'target-workflow.yml', // The ID or filename of the workflow to trigger
-              ref: 'master', // The branch to run the workflow on
-              inputs: {
-                Runner: parsedData.Runner,
-                Environment: parsedData.Environment,
-                InvocationCount: parsedData.InvocationCount.toString(),
-                RetryCount: parsedData.RetryCount.toString(),
-                Description: parsedData.Description,
-                StagesToRun: JSON.stringify(parsedData.StagesToRun)
-              }
-            });
+#            await github.rest.actions.createWorkflowDispatch({
+#              owner: github.context.repo.owner,
+#              repo: github.context.repo.repo,
+#              workflow_id: 'target-workflow.yml', // The ID or filename of the workflow to trigger
+#              ref: 'master', // The branch to run the workflow on
+#              inputs: {
+#                Runner: parsedData.Runner,
+#                Environment: parsedData.Environment,
+#                InvocationCount: parsedData.InvocationCount.toString(),
+#                RetryCount: parsedData.RetryCount.toString(),
+#                Description: parsedData.Description,
+#                StagesToRun: JSON.stringify(parsedData.StagesToRun)
+#              }
+#            });
 
 #      - name: Trigger test workflow
 #        id: trigger-test
