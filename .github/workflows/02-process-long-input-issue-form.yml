@@ -52,45 +52,45 @@ jobs:
             const inputData = github.context.payload.issue.body;
             console.log('Input data:', inputData);
             
-            function parseToJSON(inputData) {
-              const lines = inputData.split('\n').map(line => line.trim());
-              const jsonData = {
-                Branch: "",
-                Runner: "",
-                Environment: "",
-                InvocationCount: 0,
-                RetryCount: 0,
-                Description: "",
-                StagesToRun: {}
-              };
+#            function parseToJSON(inputData) {
+#              const lines = inputData.split('\n').map(line => line.trim());
+#              const jsonData = {
+#                Branch: "",
+#                Runner: "",
+#                Environment: "",
+#                InvocationCount: 0,
+#                RetryCount: 0,
+#                Description: "",
+#                StagesToRun: {}
+#              };
+#
+#               let currentKey = "";
+#
+#               lines.forEach(line => {
+#                if (line.startsWith('###')) {
+#                  currentKey = line.replace('###', '').trim();
+#                } else if (line.startsWith('- [X]')) {
+#                  const stage = line.replace('- [X]', '').trim();
+#                  jsonData.StagesToRun[stage] = true;
+#                } else if (line.startsWith('- [ ]')) {
+#                  const stage = line.replace('- [ ]', '').trim();
+#                  jsonData.StagesToRun[stage] = false;
+#                } else if (line) {
+#                  if (currentKey) {
+#                    if (currentKey === 'InvocationCount' || currentKey === 'RetryCount') {
+#                      jsonData[currentKey] = parseInt(line, 10);
+#                    } else {
+#                      jsonData[currentKey] = line;
+#                    }
+#                  }
+#                }
+#             });
+#              console.log('Parsed JSON data:', JSON.stringify(jsonData, null, 2));
+#              return jsonData;
+#            }
             
-               let currentKey = "";
-            
-               lines.forEach(line => {
-                if (line.startsWith('###')) {
-                  currentKey = line.replace('###', '').trim();
-                } else if (line.startsWith('- [X]')) {
-                  const stage = line.replace('- [X]', '').trim();
-                  jsonData.StagesToRun[stage] = true;
-                } else if (line.startsWith('- [ ]')) {
-                  const stage = line.replace('- [ ]', '').trim();
-                  jsonData.StagesToRun[stage] = false;
-                } else if (line) {
-                  if (currentKey) {
-                    if (currentKey === 'InvocationCount' || currentKey === 'RetryCount') {
-                      jsonData[currentKey] = parseInt(line, 10);
-                    } else {
-                      jsonData[currentKey] = line;
-                    }
-                  }
-                }
-             });
-              console.log('Parsed JSON data:', JSON.stringify(jsonData, null, 2));
-              return jsonData;
-            }
-            
-            const parsedData = parseToJSON(inputData);
-            core.setOutput('parsedData', JSON.stringify(parsedData));
+#            const parsedData = parseToJSON(inputData);
+#            core.setOutput('parsedData', JSON.stringify(parsedData));
           
       - name: Trigger second workflow
         id: trigger_second_workflow
