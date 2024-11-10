@@ -116,7 +116,7 @@ jobs:
         uses: actions/github-script@v7.0.1
         with:
           script: |                        
-            const inputValue = ${{ steps.parse_inputs.outputs.parsedData }}"
+            const inputValue = ${{ steps.parse_inputs.outputs.parsedData }}
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve input data:', inputValue)
             
