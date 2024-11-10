@@ -122,8 +122,8 @@ jobs:
             const parsedData = JSON.parse(process.env.INPUT_ISSUE_FORM_DATA);
 
             await github.rest.actions.createWorkflowDispatch({
-              owner: github.context.repo.owner,
-              repo: github.context.repo.repo,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               workflow_id: 'target-workflow.yml', // The ID or filename of the workflow to trigger
               ref: 'master', // The branch to run the workflow on
               inputs: {
