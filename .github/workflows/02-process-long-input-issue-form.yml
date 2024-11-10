@@ -109,12 +109,14 @@ jobs:
           echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
           echo "Json Parsed Data: ${{ steps.parse_inputs.outputs.jsonParsedData }}"
 
+#  const inputValue = core.getInput('jsonParsedData');
+
       - name: Trigger second workflow
         id: trigger_second_workflow
         uses: actions/github-script@v7.0.1
         with:
           script: |                        
-            const inputValue = core.getInput('jsonParsedData');
+            const inputValue = ${{ steps.parse_inputs.outputs.parsedData }}"
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve input data:', inputValue)
             
