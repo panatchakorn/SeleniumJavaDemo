@@ -89,7 +89,8 @@ jobs:
             const parsedData = parseToJSON(inputData);
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Parsed data:', parsedData);
-            core.setOutput('parsedData', JSON.stringify(parsedData));
+            core.setOutput('parsedData', parsedData);
+            core.setOutput('jsonParsedData', JSON.stringify(parsedData));
 #            core.setOutput('parsedData', parsedData);
 
       #                  if (currentKey) {
@@ -99,6 +100,14 @@ jobs:
       #                      jsonData[currentKey] = line;
       #                    }
       #                  }
+
+      - name: Output the Parsed Issue Data
+        id: output
+        run: |
+          echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+          echo "Parsed Data: ${{ steps.parse_inputs.outputs.parsedData }}"
+          echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+          echo "Json Parsed Data: ${{ steps.parse_inputs.outputs.jsonParsedData }}"
 
       - name: Trigger second workflow
         id: trigger_second_workflow
