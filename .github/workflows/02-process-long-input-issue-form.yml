@@ -114,7 +114,7 @@ jobs:
         uses: actions/github-script@v7.0.1
         with:
           script: |                        
-            const inputValue = core.getInput('parsedData');
+            const inputValue = core.getInput('jsonParsedData');
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve input data:', inputValue)
             
