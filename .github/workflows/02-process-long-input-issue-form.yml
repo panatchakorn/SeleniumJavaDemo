@@ -43,11 +43,12 @@ jobs:
         #  const github = require('@actions/github');
         #  const inputData = github.context.payload.issue.body;
 
+#  core.setOutput('parsedData', JSON.stringify(parsedData));
+
       - name: Parse input data
         id: parse_inputs
         uses: actions/github-script@v7.0.1
         with:
-#            core.setOutput('parsedData', JSON.stringify(parsedData));
           script: |            
             const inputData = context.payload.issue.body
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
@@ -78,13 +79,6 @@ jobs:
                   jsonData.StagesToRun[stage] = false;
                 } else if (line) {
                     jsonData[currentKey] = line;
-#                  if (currentKey) {
-#                    if (currentKey === 'InvocationCount' || currentKey === 'RetryCount') {
-#                      jsonData[currentKey] = parseInt(line, 10);
-#                    } else {
-#                      jsonData[currentKey] = line;
-#                    }
-#                  }
                 }
              });
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
@@ -97,6 +91,13 @@ jobs:
             console.log('Parsed data:', parsedData);
             core.setOutput('parsedData', parsedData);
 
+      #                  if (currentKey) {
+      #                    if (currentKey === 'InvocationCount' || currentKey === 'RetryCount') {
+      #                      jsonData[currentKey] = parseInt(line, 10);
+      #                    } else {
+      #                      jsonData[currentKey] = line;
+      #                    }
+      #                  }
 
       - name: Trigger second workflow
         id: trigger_second_workflow
