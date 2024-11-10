@@ -1,5 +1,5 @@
 name: Process Long Input Issue Form
-run-name: triggered by @${{ github.triggering_actor }}
+run-name: triggered via Issue by @${{ github.triggering_actor }}
 
 on:
   issues:

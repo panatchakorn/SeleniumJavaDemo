@@ -1,7 +1,7 @@
 name: Long Form Run Test Workflow
 description: Submit a request to run GitHub Workflow test
 title: '[Request] Run long test'
-labels: ['run-long-test']
+labels: ['02-run-long-test']
 
 body:
   # Markdown type fields are not included in the submitted issue body
