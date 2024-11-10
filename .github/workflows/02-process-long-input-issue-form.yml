@@ -140,12 +140,14 @@ jobs:
               if (response.status === 204) {
                 console.log('Workflow triggered successfully');
               } else {
-                core.setFailed('Failed to trigger workflow:', response);
                 console.error('Failed to trigger workflow:', response);
+                core.setFailed('Failed to trigger workflow:', response);
+                
               }
             } catch (error) {
+              console.error('Error triggering workflow:', error);
               core.setFailed('Error triggering workflow:', error);
-              console.error('Error triggering workflow:', response);
+              
             }
 
       - name: Close Issue
