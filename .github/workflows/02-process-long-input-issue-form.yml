@@ -107,24 +107,25 @@ jobs:
             const parsedData = JSON.parse(  core.getInput('parsedData'));
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve parsed data:', parsedData)            
+            
             const parsedJsonData = JSON.stringify(  core.getInput('parsedData'));
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve parsed Json data:', parsedJsonData)
 
-#            await github.rest.actions.createWorkflowDispatch({
-#              owner: github.context.repo.owner,
-#              repo: github.context.repo.repo,
-#              workflow_id: 'target-workflow.yml', // The ID or filename of the workflow to trigger
-#              ref: 'master', // The branch to run the workflow on
-#              inputs: {
-#                Runner: parsedData.Runner,
-#                Environment: parsedData.Environment,
-#                InvocationCount: parsedData.InvocationCount.toString(),
-#                RetryCount: parsedData.RetryCount.toString(),
-#                Description: parsedData.Description,
-#                StagesToRun: JSON.stringify(parsedData.StagesToRun)
-#              }
-#            });
+            await github.rest.actions.createWorkflowDispatch({
+              owner: github.context.repo.owner,
+              repo: github.context.repo.repo,
+              workflow_id: 'target-workflow.yml', // The ID or filename of the workflow to trigger
+              ref: 'master', // The branch to run the workflow on
+              inputs: {
+                Runner: parsedData.Runner,
+                Environment: parsedData.Environment,
+                InvocationCount: parsedData.InvocationCount.toString(),
+                RetryCount: parsedData.RetryCount.toString(),
+                Description: parsedData.Description,
+                StagesToRun: JSON.stringify(parsedData.StagesToRun)
+              }
+            });
 
 #      - name: Trigger test workflow
 #        id: trigger-test
