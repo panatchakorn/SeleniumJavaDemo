@@ -117,7 +117,7 @@ jobs:
         env:
           INPUT_ISSUE_FORM_DATA: ${{ steps.parse_inputs.outputs.parsedData }}
         with:
-          github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const parsedData = JSON.parse(process.env.INPUT_ISSUE_FORM_DATA);
       
