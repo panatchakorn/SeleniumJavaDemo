@@ -125,8 +125,8 @@ jobs:
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: 'target-workflow.yml', // The ID or filename of the workflow to trigger
-              ref: 'master', // The branch to run the workflow on
+              workflow_id: '02-target-workflow.yml', // The ID or filename of the workflow to trigger
+              ref: parsedData.Branch, // The branch to run the workflow on
               inputs: {
                 Runner: parsedData.Runner,
                 Environment: parsedData.Environment,
