@@ -120,10 +120,11 @@ jobs:
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve input data:', inputValue)
             
-            const parsedData = JSON.parse(inputValue);
+#            const parsedData = JSON.parse(inputValue);
+            const parsedData = inputValue;
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve parsed data:', parsedData)            
-            
+
             const parsedJsonData = JSON.stringify(core.getInput('parsedData'));
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve parsed Json data:', parsedJsonData)
