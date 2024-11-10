@@ -103,12 +103,10 @@ jobs:
         id: trigger_second_workflow
         uses: actions/github-script@v7.0.1
         with:
-          script: |
-                        
+          script: |                        
             const parsedData = JSON.parse(  core.getInput('parsedData'));
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-            console.log('Retrieve parsed data:', parsedData)
-            
+            console.log('Retrieve parsed data:', parsedData)            
             const parsedJsonData = JSON.stringify(  core.getInput('parsedData'));
             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
             console.log('Retrieve parsed Json data:', parsedJsonData)
