@@ -16,6 +16,7 @@ body:
       label: Branch
       description: Branch to run the test
       placeholder: 'master'
+      value: 'master'
     validations:
       required: true
 
