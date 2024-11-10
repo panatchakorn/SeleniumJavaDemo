@@ -59,10 +59,10 @@ jobs:
                 Branch: "",
                 Runner: "",
                 Environment: "",
-                InvocationCount: 0,
-                RetryCount: 0,
+                InvocationCount: "0",
+                RetryCount: "0",
                 Description: "",
-                StagesToRun: "{}"
+                StagesToRun: {}
               };
 
                let currentKey = "";
@@ -77,19 +77,16 @@ jobs:
                   const stage = line.replace('- [ ]', '').trim();
                   jsonData.StagesToRun[stage] = false;
                 } else if (line) {
-                  if (currentKey) {
-                    if (currentKey === 'InvocationCount' || currentKey === 'RetryCount') {
-                      jsonData[currentKey] = parseInt(line, 10);
-                    } else {
-                      jsonData[currentKey] = line;
-                    }
-                  }
+                    jsonData[currentKey] = line;
+#                  if (currentKey) {
+#                    if (currentKey === 'InvocationCount' || currentKey === 'RetryCount') {
+#                      jsonData[currentKey] = parseInt(line, 10);
+#                    } else {
+#                      jsonData[currentKey] = line;
+#                    }
+#                  }
                 }
              });
-            
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-              console.log('Raw json data:', jsonData);
-            
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
               console.log('Parsed JSON data:', JSON.stringify(jsonData, null, 2));
               return jsonData;
