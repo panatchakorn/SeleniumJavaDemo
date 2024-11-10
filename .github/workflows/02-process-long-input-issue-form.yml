@@ -118,24 +118,47 @@ jobs:
           INPUT_ISSUE_FORM_DATA: ${{ steps.parse_inputs.outputs.parsedData }}
         with:
           github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
-          script: |           
-            console.log('Form inputs data:', process.env.INPUT_ISSUE_FORM_DATA);
+          script: |
             const parsedData = JSON.parse(process.env.INPUT_ISSUE_FORM_DATA);
+      
+            try {
+              const response = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: '02-target-workflow.yml', // The ID or filename of the workflow to trigger
+                ref: parsedData.Branch, // The branch to run the workflow on
+                inputs: {
+                  Runner: parsedData.Runner,
+                  Environment: parsedData.Environment,
+                  InvocationCount: parsedData.InvocationCount,
+                  RetryCount: parsedData.RetryCount,
+                  Description: parsedData.Description,
+                  StagesToRun: JSON.stringify(parsedData.StagesToRun)
+                }
+              });
+      
+              if (response.status === 204) {
+                console.log('Workflow triggered successfully');
+              } else {
+                console.error('Failed to trigger workflow:', response);
+              }
+            } catch (error) {
+              console.error('Error triggering workflow:', error);
+            }
 
-            await github.rest.actions.createWorkflowDispatch({
+      - name: Close Issue
+        uses: actions/github-script@v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: '02-target-workflow.yml', // The ID or filename of the workflow to trigger
-              ref: parsedData.Branch, // The branch to run the workflow on
-              inputs: {
-                Runner: parsedData.Runner,
-                Environment: parsedData.Environment,
-                InvocationCount: parsedData.InvocationCount,
-                RetryCount: parsedData.RetryCount,
-                Description: parsedData.Description,
-                StagesToRun: JSON.stringify(parsedData.StagesToRun)
-              }
+              issue_number: context.issue.number,
+              state: 'closed'
             });
+
+            console.log(`Issue #${context.issue.number} has been closed.`);
 
 #      - name: Trigger test workflow
 #        id: trigger-test
