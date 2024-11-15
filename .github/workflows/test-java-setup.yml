@@ -7,17 +7,17 @@ on:
   #    branches: [ "master" ]
 
   workflow_dispatch:
-  inputs:
-    javaVersion:
-      description: "Java version to use"
-      required: true
-      options: ["8", "11", "17", "22"]
-      default: "11"
-    javaDistribution:
-      description: "Java distribution to use"
-      options: ["temurin", "microsoft"]
-      required: true
-      default: "temurin"
+    inputs:
+      javaVersion:
+        description: "Java version to use"
+        required: true
+        options: ["8", "11", "17", "22"]
+        default: "11"
+      javaDistribution:
+        description: "Java distribution to use"
+        options: ["temurin", "microsoft"]
+        required: true
+        default: "temurin"
 
 permissions:
   contents: read
