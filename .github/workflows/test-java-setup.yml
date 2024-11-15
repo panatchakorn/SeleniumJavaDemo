@@ -56,7 +56,10 @@ jobs:
               process.env.PATH = `${javaHome}/bin:${process.env.PATH}`;
               console.log(`JAVA_HOME set to ${javaHome}`);
               console.log(`PATH updated to include ${javaHome}/bin`);
+              console.log(`Current JAVA_HOME: ${process.env.JAVA_HOME}`);
+              console.log(`Current PATH: ${process.env.PATH}`);
               return { javaHomeSet: true };
+              
             } else {
               console.log(`No matching JAVA_HOME found for version ${javaVersion} and distribution ${javaDistribution}`);
               return { javaHomeSet: false };
