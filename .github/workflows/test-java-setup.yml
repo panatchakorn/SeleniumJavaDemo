@@ -43,8 +43,8 @@ jobs:
         uses: actions/github-script@v7.0.1
         with:
           script: |
-            const javaVersion = '${{ github.event.inputs.javaVersion }}';
-            const javaDistribution = '${{ github.event.inputs.javaDistribution }}';
+            const javaVersion = '${{ github.event.inputs.javaVersion || '17' }}';
+            const javaDistribution = '${{ github.event.inputs.javaDistribution || 'temurin' }}';
             const javaHomeEnv = `JAVA_HOME_${javaVersion}_X64`;
             const javaHome = process.env[javaHomeEnv];
 
@@ -61,6 +61,11 @@ jobs:
               console.log(`No matching JAVA_HOME found for version ${javaVersion} and distribution ${javaDistribution}`);
               return { javaHomeSet: false };
             }
+
+      - name: Print JAVA_HOME and PATH
+        run: |
+          echo "JAVA_HOME: $JAVA_HOME"
+          echo "PATH: $PATH"
 
       - name: Check system java version
         if: steps.set-java-home.outputs.javaHomeSet == 'true'
