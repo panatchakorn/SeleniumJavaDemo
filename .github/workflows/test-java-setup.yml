@@ -1,5 +1,5 @@
 name: test-java-setup
-
+run-name: ${{ github.event.inputs.description }} + ' ' + github.ref
 on:
   push:
     branches: ["feature/issue-form"]
@@ -26,6 +26,11 @@ on:
         options: ["bash", "github-script"]
         required: true
         default: "github-script"
+      description:
+        type: string
+        description: "A description of the run"
+        required: true
+        default: "Manual run"
 
 permissions:
   contents: read
@@ -42,6 +47,11 @@ jobs:
 
       - name: Print inputs values
         run: echo "${{ toJSON(github.event.inputs) }}"
+
+      - name: Display latest commit message
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          echo "Commit message: $COMMIT_MESSAGE"
 
       - name: Check system java version
         run: java -version
@@ -130,9 +140,12 @@ jobs:
           distribution: ${{ github.event.inputs.javaDistribution }}
 #          cache: maven
 
-      - name: Check system java version after setup - actions/setup-java
+      - name: Check system java version and environment variables after setup - actions/setup-java
         if: steps.setup-java.conclusion == 'success'
-        run: java -version
+        run: |
+          java -version
+          echo ">>>>>>>>>> ENVIRONMENT VARIABLES <<<<<<<<<<"
+          printenv
 
       - name: Build with Maven
         run: mvn compile -DskipTests
