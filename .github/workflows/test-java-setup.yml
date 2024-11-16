@@ -64,7 +64,7 @@ jobs:
               
             } else {
               console.log(`No matching JAVA_HOME found for version ${javaVersion} and distribution ${javaDistribution}`);
-              core.setOutput('javaHomeSet': 'false' };
+              core.setOutput('javaHomeSet': 'false');
             }
 
       - name: Print JAVA_HOME and PATH
