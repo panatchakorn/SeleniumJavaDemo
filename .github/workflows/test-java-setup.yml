@@ -9,11 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       javaVersion:
+        type: choice
         description: "Java version to use"
         required: true
         options: ["8", "11", "17", "22"]
         default: "11"
       javaDistribution:
+        type: choice
         description: "Java distribution to use"
         options: ["temurin", "microsoft"]
         required: true
