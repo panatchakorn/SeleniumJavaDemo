@@ -60,11 +60,11 @@ jobs:
               console.log(`PATH updated to include ${javaHome}/bin`);
               console.log(`Current JAVA_HOME: ${process.env.JAVA_HOME}`);
               console.log(`Current PATH: ${process.env.PATH}`);
-              return { javaHomeSet: true };
+              core.setOutput('javaHomeSet', 'true');
               
             } else {
               console.log(`No matching JAVA_HOME found for version ${javaVersion} and distribution ${javaDistribution}`);
-              return { javaHomeSet: false };
+              core.setOutput('javaHomeSet': 'false' };
             }
 
       - name: Print JAVA_HOME and PATH
