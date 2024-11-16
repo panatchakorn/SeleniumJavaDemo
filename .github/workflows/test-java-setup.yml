@@ -62,15 +62,13 @@ jobs:
           # Check if javaHome is not empty and contains the javaDistribution string
           if [[ -n "$javaHome" && "$javaHome" == *"$javaDistribution"* ]]; then
             echo "JAVA_HOME=$javaHome" >> $GITHUB_ENV
-            # echo "$javaHome/bin" >> $GITHUB_PATH
-            echo "::add-path::$javaHome/bin"
+            echo "$javaHome/bin" >> $GITHUB_PATH            
             echo "JAVA_HOME set to $javaHome"
             echo "PATH updated to include $javaHome/bin"
             # Reload the environment variables
             source $GITHUB_ENV            
             echo "Current JAVA_HOME: $JAVA_HOME"
-            echo "Current PATH: $(cat $GITHUB_PATH)"
-            echo "PATH: $PATH"
+            echo "Current PATH will be available in the next step: $(cat $GITHUB_PATH)"            
             echo "javaHomeSet=true" >> $GITHUB_OUTPUT
           else
             echo "No matching JAVA_HOME found for version $javaVersion and distribution $javaDistribution"
