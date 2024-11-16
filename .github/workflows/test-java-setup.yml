@@ -1,5 +1,5 @@
 name: test-java-setup
-run-name: ${{ github.event.inputs.description }} + ' ' + github.ref
+run-name: ${{ github.event.inputs.description }} - ${{ github.ref }}
 on:
   push:
     branches: ["feature/issue-form"]
