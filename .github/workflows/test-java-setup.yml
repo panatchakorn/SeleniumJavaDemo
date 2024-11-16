@@ -40,6 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.2
 
+      - name: Print inputs values
+        run: echo "${{ toJSON(github.event.inputs) }}"
+
       - name: Check system java version
         run: java -version
 
