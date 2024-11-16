@@ -52,8 +52,10 @@ jobs:
             console.log(`javaHome: ${javaHome}`);
 
             if (javaHome && javaHome.includes(javaDistribution)) {
-              process.env.JAVA_HOME = javaHome;
-              process.env.PATH = `${javaHome}/bin:${process.env.PATH}`;
+              // process.env.JAVA_HOME = javaHome;
+              // process.env.PATH = `${javaHome}/bin:${process.env.PATH}`;
+              core.exportVariable('JAVA_HOME', javaHome);
+              core.addPath(`${javaHome}/bin`);  
               console.log(`JAVA_HOME set to ${javaHome}`);
               console.log(`PATH updated to include ${javaHome}/bin`);
               console.log(`Current JAVA_HOME: ${process.env.JAVA_HOME}`);
