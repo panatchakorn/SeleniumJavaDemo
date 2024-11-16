@@ -1,8 +1,8 @@
 name: test-java-setup
-run-name: ${{ github.event.inputs.description }} - ${{ github.event.head_commit.message }}
+run-name: ${{ github.event.inputs.description }}
 on:
-  push:
-    branches: ["feature/issue-form"]
+#  push:
+#    branches: ["feature/issue-form"]
   #  pull_request:
   #    branches: [ "master" ]
 
@@ -60,7 +60,7 @@ jobs:
         run: printenv
 
       - name: Set JAVA_HOME and update PATH - BASH
-        if: ${{ github.event.inputs.setJavaMethod == 'bash' || 'bash'}}
+        if: ${{ github.event.inputs.setJavaMethod == 'bash'}}
         id: set-java-home-bash
         run: |
           javaVersion="${{ github.event.inputs.javaVersion || '17' }}"
