@@ -1,11 +1,37 @@
 name: test-java-setup
-
+run-name: ${{ github.event.inputs.description }} - ${{ github.event.head_commit.message }}
 on:
+  push:
+    branches: ["feature/issue-form"]
+  #  pull_request:
+  #    branches: [ "master" ]
+
   workflow_dispatch:
-  #push:
-  #  branches: [ "master" ]
-#  pull_request:
-#    branches: [ "master" ]
+    inputs:
+      javaVersion:
+        type: choice
+        description: "Java version to use"
+        required: true
+        options: ["8", "11", "17", "21", "22"]
+        default: "11"
+      javaDistribution:
+        type: choice
+        description: "Java distribution to use"
+        options: ["temurin", "microsoft"]
+        required: true
+        default: "temurin"
+      setJavaMethod:
+        type: choice
+        description: "Method to set JAVA_HOME and PATH"
+        options: ["bash", "github-script"]
+        required: true
+        default: "github-script"
+      description:
+        type: string
+        description: "A description of the run"
+        required: true
+        default: "Manual run"
+
 permissions:
   contents: read
 
@@ -17,13 +43,112 @@ jobs:
       checks: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.2
+
+      - name: Print inputs values
+        run: echo "${{ toJSON(github.event.inputs) }}"
+
+      - name: Display latest commit message
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          echo "Commit message: $COMMIT_MESSAGE"
 
       - name: Check system java version
         run: java -version
 
       - name: Print environment variables
         run: printenv
+
+      - name: Set JAVA_HOME and update PATH - BASH
+        if: ${{ github.event.inputs.setJavaMethod == 'bash' || 'bash'}}
+        id: set-java-home-bash
+        run: |
+          javaVersion="${{ github.event.inputs.javaVersion || '17' }}"
+          javaDistribution="${{ github.event.inputs.javaDistribution || 'temurin' }}"
+          javaHomeEnv="JAVA_HOME_${javaVersion}_X64"
+          # Indirect variable expansion to get the value of the environment variable named javaHomeEnv
+          javaHome="${!javaHomeEnv}"
+      
+          echo "javaHomeEnv: ${javaHomeEnv}"
+          echo "javaHome: ${javaHome}"
+          
+          # Check if javaHome is not empty and contains the javaDistribution string
+          if [[ -n "$javaHome" && "$javaHome" == *"$javaDistribution"* ]]; then
+            echo "JAVA_HOME=$javaHome" >> $GITHUB_ENV
+            echo "$javaHome/bin" >> $GITHUB_PATH            
+            echo "JAVA_HOME set to $javaHome"
+            echo "PATH updated to include $javaHome/bin"
+            # Reload the environment variables
+            source $GITHUB_ENV            
+            echo "Current JAVA_HOME: $JAVA_HOME"
+            echo "Current PATH will be available in the next step: $(cat $GITHUB_PATH)"            
+            echo "javaHomeSet=true" >> $GITHUB_OUTPUT
+          else
+            echo "No matching JAVA_HOME found for version $javaVersion and distribution $javaDistribution"
+            echo "javaHomeSet=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set JAVA_HOME and update PATH - GITHUB-SCRIPT
+        if: ${{ github.event.inputs.setJavaMethod == 'github-script' }}
+        id: set-java-home
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const javaVersion = '${{ github.event.inputs.javaVersion || '17' }}';
+            const javaDistribution = '${{ github.event.inputs.javaDistribution || 'temurin' }}';
+            const javaHomeEnv = `JAVA_HOME_${javaVersion}_X64`;
+            const javaHome = process.env[javaHomeEnv];
+
+            console.log(`javaHomeEnv: ${javaHomeEnv}`);
+            console.log(`javaHome: ${javaHome}`);
+
+            if (javaHome && javaHome.includes(javaDistribution)) {
+              // process.env.JAVA_HOME = javaHome;
+              // process.env.PATH = `${javaHome}/bin:${process.env.PATH}`;
+              core.exportVariable('JAVA_HOME', javaHome);
+              core.addPath(`${javaHome}/bin`);  
+              console.log(`JAVA_HOME set to ${javaHome}`);
+              console.log(`PATH updated to include ${javaHome}/bin`);
+              console.log(`Current JAVA_HOME: ${process.env.JAVA_HOME}`);
+              console.log(`Current PATH: ${process.env.PATH}`);
+              core.setOutput('javaHomeSet', 'true');
+              
+            } else {
+              console.log(`No matching JAVA_HOME found for version ${javaVersion} and distribution ${javaDistribution}`);
+              core.setOutput('javaHomeSet', 'false');
+            }
+
+      - name: Print JAVA_HOME and PATH
+        run: |
+          echo "JAVA_HOME: $JAVA_HOME"
+          echo "PATH: $PATH"
+
+      - name: Check system java version
+        if: steps.set-java-home.outputs.javaHomeSet == 'true' || steps.set-java-home-bash.outputs.javaHomeSet == 'true'
+        run: java -version
+
+      - name: Print environment variables
+        if: steps.set-java-home.outputs.javaHomeSet == 'true' || steps.set-java-home-bash.outputs.javaHomeSet == 'true'
+        run: printenv
+
+      - name: Set up JDK with actions/setup-java
+        if: steps.set-java-home.outputs.javaHomeSet == 'false' || steps.set-java-home-bash.outputs.javaHomeSet == 'false'
+        id: setup-java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ github.event.inputs.javaVersion }}
+          distribution: ${{ github.event.inputs.javaDistribution }}
+#          cache: maven
+
+      - name: Check system java version and environment variables after setup - actions/setup-java
+        if: steps.setup-java.conclusion == 'success'
+        run: |
+          java -version
+          echo ">>>>>>>>>> ENVIRONMENT VARIABLES <<<<<<<<<<"
+          printenv
+
+      - name: Build with Maven
+        run: mvn compile -DskipTests
 
     # - name: Set up JDK 17
     #   uses: actions/setup-java@v3
