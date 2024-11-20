@@ -37,8 +37,13 @@ jobs:
         run: |
           mvn -v
           ls -la ~/.m2
+          echo "<<<<<<<<<< Settings.xml >>>>>>>>>>"
+          cat ~/.m2/settings.xml
+          echo "<<<<<<<<<< Toolchains.xml >>>>>>>>>>"
+          cat ~/.m2/toolchains.xml
           printenv
-          find / -type f -name "browserstack-java-sdk-1.27.0.jar" 2>/dev/null
+
+#          find / -type f -name "browserstack-java-sdk-1.27.0.jar" 2>/dev/null
 
       - name: Find repository
         run: |
