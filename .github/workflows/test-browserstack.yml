@@ -32,13 +32,18 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Log
+        run: |
+          mvn -v
+          ls -la ~/.m2/repository
+
       - name: Build with Maven
         run: |
           if [ "${{ github.event.inputs.runInBrowserstack }}" == "true" ]; then
             echo ">>>>>>>>>> Running in BrowserStack <<<<<<<<<<"
             mvn clean test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/browserstackTest.xml" \
               -Dbrowserstack.automation=true -Dbrowserstack.config="browserstack-config/custom-config.yml" \
-              -DargLine=-javaagent:${{ runner.home }}/.m2/repository/com/browserstack/browserstack-java-sdk/1.27.0/browserstack-java-sdk-1.27.0.jar
+              -DargLine=-javaagent:~/.m2/repository/com/browserstack/browserstack-java-sdk/1.27.0/browserstack-java-sdk-1.27.0.jar
           else
             echo ">>>>>>>>>> Running in GitHub Runner <<<<<<<<<<"
             mvn clean test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/browserstackTest.xml"
