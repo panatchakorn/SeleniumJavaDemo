@@ -1,0 +1,127 @@
+name: Long Form Run Test Workflow
+description: Submit a request to run GitHub Workflow test
+title: '[Request] Run long test'
+labels: ['02-run-long-test']
+
+body:
+  # Markdown type fields are not included in the submitted issue body
+  - type: markdown
+    attributes:
+      value:
+        Please fill out the information below to run test-long-form-issue-created workflow
+
+  - type: input
+    id: Branch
+    attributes:
+      label: Branch
+      description: Branch to run the test
+      placeholder: 'master'
+      value: 'master'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: Runner
+    attributes:
+      label: Runner
+      description: Runner to use to run the test
+      multiple: false
+      options:
+        - ubuntu-latest
+        - runner2
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: Environment
+    attributes:
+      label: Environment
+      description: Environment to use
+      options:
+        - env1
+        - env2
+        - env3
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: InvocationCount
+    attributes:
+      label: InvocationCount
+      description: Invocation Count. Normal range 1-500
+      placeholder: '1'
+      value: '1'
+    validations:
+      required: true
+
+  - type: input
+    id: RetryCount
+    attributes:
+      label: RetryCount
+      description: Retry Count. Normal range 0-5
+      placeholder: '3'
+      value: '3'
+    validations:
+      required: true
+
+  - type: input
+    id: Description
+    attributes:
+      label: Description
+      description: A description of the run
+      placeholder: 'Trigger test run'
+      value: 'Trigger test run'
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: StagesToRun
+    attributes:
+      label: StagesToRun
+      description: StagesToRun will be converted to JSON payload
+      options:
+        - label: 'Stage 1'
+        - label: 'Stage 2'
+        - label: 'Stage 3'
+        - label: 'Stage 4'
+        - label: 'Stage 5'
+        - label: 'Stage 6'
+        - label: 'Stage 7'
+        - label: 'Stage 8'
+        - label: 'Stage 9'
+        - label: 'Stage 10'
+        - label: 'Stage 11'
+        - label: 'Stage 12'
+        - label: 'Stage 13'
+        - label: 'Stage 14'
+        - label: 'Stage 15'
+        - label: 'Stage 16'
+        - label: 'Stage 17'
+        - label: 'Stage 18'
+        - label: 'Stage 19'
+        - label: 'Stage 20'
+        - label: 'Stage 21'
+        - label: 'Stage 22'
+        - label: 'Stage 23'
+        - label: 'Stage 24'
+        - label: 'Stage 25'
+        - label: 'Stage 26'
+        - label: 'Stage 27'
+        - label: 'Stage 28'
+        - label: 'Stage 29'
+        - label: 'Stage 30'
+        - label: 'Stage 31'
+        - label: 'Stage 32'
+        - label: 'Stage 33'
+        - label: 'Stage 34'
+        - label: 'Stage 35'
+        - label: 'Stage 36'
+        - label: 'Stage 37'
+        - label: 'Stage 38'
+        - label: 'Stage 39'
+        - label: 'Stage 40'
+        - label: 'Stage 41'
+        - label: 'Stage 42'
+        - label: 'Stage 43'

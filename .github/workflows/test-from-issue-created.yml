@@ -1,0 +1,285 @@
+
+name: test-from-issue-created
+run-name: triggered by @${{ github.triggering_actor }}
+
+on:
+  workflow_dispatch:
+  issues:
+    types: [opened,reopened]
+  #push:
+  #  branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+#  inputs:
+#    requester:
+#      description: 'Requester'
+#      required: true
+#      default: 'Someone'
+#    java-version:
+#      description: 'Java version'
+#      required: true
+#      default: '17'
+#    message:
+#      description: 'Message'
+#      required: true
+#      default: 'Test from issue created'
+
+
+jobs:
+  run-test-issue-request:
+    name: Run Test from Issue Request
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'run-test')
+
+    permissions:
+      contents: read
+      id-token: write
+
+    outputs:
+      request: ${{ steps.parse.outputs.json }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Parse inputs
+        id: parse
+        uses: issue-ops/parser@v1.0.0
+        with:
+          body: ${{ github.event.issue.body }}
+          issue-form-template: 01-run-test-workflow.yml
+          workspace: ${{ github.workspace }}
+
+      - uses: actions/create-github-app-token@v1.10.1
+        id: token
+        with:
+          app-id: ${{ secrets.CREATE_ISSUE_APP_ID }}
+          private-key: ${{ secrets.CREATE_ISSUE_APP_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Validate Issue
+        id: validate
+        uses: issue-ops/validator@v1.0.0
+        with:
+          add-comment: false
+          github-token: ${{ steps.token.outputs.token }}
+          issue-form-template: 01-run-test-workflow.yml
+          parsed-issue-body: ${{ steps.parse.outputs.json }}
+          workspace: ${{ github.workspace }}
+
+      - name: Output Validation Results
+        id: output
+        run: |
+          echo "Result: ${{ steps.validate.outputs.result }}"
+          echo "Errors: ${{ steps.validate.outputs.errors }}"
+
+  build-test:
+    runs-on: ubuntu-latest
+    needs: run-test-issue-request
+    if: contains(github.event.issue.labels.*.name, 'run-test')
+
+    permissions:
+      contents: write
+      checks: write
+      id-token: write
+
+    steps:
+
+#      - uses: actions/create-github-app-token@v1.10.1
+#        id: token
+#        with:
+#          app-id: ${{ secrets.CREATE_ISSUE_APP_ID }}
+#          private-key: ${{ secrets.CREATE_ISSUE_APP_KEY }}
+#          owner: ${{ github.repository_owner }}
+#          repositories: ${{ github.repository }}
+
+      - uses: actions/checkout@v3
+
+      - name: Echo Request Inputs
+        run: |
+          echo "request: ${{ needs.run-test-issue-request.outputs.request }}"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ fromJSON(needs.run-test-issue-request.outputs.request).java_version }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/smokeTest.xml"
+        #run: mvn -B package --file pom.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            ./target/logs/
+            .target/reports/
+            ./target/surefire-reports/
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          detailed_summary: true
+    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
+    #- name: Update dependency graph
+    #  uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+
+#  attach-artifact-to-issue:
+#    runs-on: ubuntu-latest
+#    needs: build-test
+#    if: always()
+#
+#    steps:
+#      - name: Download artifact
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: test-reports
+#          path: ./downloaded-artifact
+#
+#      - name: List downloaded files
+#        run: ls ./downloaded-artifact
+#
+#      - name: Zip artifact
+#        run: zip -r test-reports.zip ./downloaded-artifact
+#
+#      - name: Upload artifact to issue
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          issue_number=${{ github.event.issue.number }}
+#          artifact_file=test-reports.zip
+#
+#          # Create a comment on the issue
+#          comment_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+#            -X POST \
+#            -d "{\"body\":\"Attached artifact from the latest workflow run.\"}" \
+#            https://api.github.com/repos/${{ github.repository }}/issues/$issue_number/comments)
+#
+#          # Extract the comment ID
+#          comment_id=$(echo $comment_response | jq .id)
+#          echo "Comment ID: $comment_id"
+#
+#          # Upload the file to the comment
+#          upload_response=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+#            -H "Content-Type: application/zip" \
+#            --data-binary @"$artifact_file" \
+#            "https://uploads.github.com/repos/${{ github.repository }}/issues/comments/$comment_id/attachments?name=test-reports.zip")
+#
+#          echo "Upload status code: $upload_response"
+
+  create-artifact-for-issue:
+      needs: build-test
+      runs-on: ubuntu-latest
+      if: always()
+      steps:
+        - name: Create artifact
+          uses: actions/github-script@v6
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            script: |
+              const issue_number = ${{ github.event.issue.number }};
+              const repo = '${{ github.repository }}';
+              const run_id = ${{ github.run_id }};
+              const data = { issue_number, repo, run_id };
+              const fs = require('fs');
+              fs.writeFileSync('data-for-issue-comment.json', JSON.stringify(data));
+
+        - name: Upload artifact
+          uses: actions/upload-artifact@v3
+          with:
+            name: data-for-issue-comment
+            path: data-for-issue-comment.json
+
+#  comment-on-issue:
+#    runs-on: ubuntu-latest
+#    needs: build-test
+#    if: always()
+#
+#    steps:
+#      - name: Get artifacts
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          ISSUE_NUMBER=${{ github.event.issue.number }}  # Replace with your issue number
+#          OWNER=${{ github.repository_owner }}
+#          REPO=${{ github.repository }}
+#          RUN_ID=${{ github.run_id }}
+#
+#          ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+#                           -H "Accept: application/vnd.github.v3+json" \
+#                           "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts")
+#
+#          echo $ARTIFACTS
+#
+#          ARTIFACT_IDS=$(echo $ARTIFACTS | jq '.artifacts[].id')
+#          echo $ARTIFACT_IDS
+#
+#      - name: Create Issue Comment with Artifact URL
+#        uses: actions/github-script@v6
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          script: |
+#            const artifacts = ${{ steps.get-artifacts.outputs.result }};
+#            const issue_number = ${{ github.event.issue.number }}; // Replace with your issue number
+#
+#            for (const artifact of artifacts) {
+#              const artifact_id = artifact.id;
+#              const artifact_name = artifact.name;
+#              const artifact_url = 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';
+#              const comment_body = 'Artifact [${artifact_name}](${artifact_url}) from the latest workflow run.';
+#
+#              const artifact_url2 = 'https://github.com/${{ github.owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}';
+#              const comment_body2 = '[ Artifact2 ](${artifact_url2}) from the latest workflow run.';
+#              await github.rest.issues.createComment({
+#                owner: context.repo.owner,
+#                repo: context.repo.repo,
+#                issue_number: issue_number,
+#                body: comment_body comment_body2
+#              });
+#            }
+
+#      - name: Get Workflow Run Artifacts
+#        id: get-artifacts
+#        uses: actions/github-script@v6
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          script: |
+#            const run_id = context.runId;
+#            const owner = context.repo.owner;
+#            const repo = context.repo.repo;
+#            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+#              owner,
+#              repo,
+#              run_id
+#            });
+#            console.log(JSON.stringify(artifacts));
+#
+#            return artifacts.data.artifacts;
+#
+#      - name: Create Comment with Artifact URL
+#        if: steps.get-artifacts.outputs.count > 0
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          ARTIFACT_NAME=test-reports
+#          ARTIFACT_ID=$(echo '${{ steps.get-artifacts.outputs.result }}' | jq -r '.[] | select(.name == "'$ARTIFACT_NAME'") | .id')
+#          ISSUE_NUMBER=${{ github.event.issue.number }}  # Replace with your issue number
+#
+#          if [ -n "$ARTIFACT_ID" ]; then
+#            DOWNLOAD_URL="https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip"
+#            DOWNLOAD_URL2="https://github.com/${{ github.owner }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/$ARTIFACT_ID"
+#            COMMENT_BODY="Attached artifact from the latest workflow run. [Download Artifact]($DOWNLOAD_URL). [Download artifact 2]($DOWNLOAD_URL2)"
+#
+#            curl -H "Authorization: token $GITHUB_TOKEN" \
+#                 -X POST \
+#                 -d "{\"body\":\"$COMMENT_BODY\"}" \
+#                 https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments
+#          else
+#            echo "Artifact not found"
+#          fi
+#

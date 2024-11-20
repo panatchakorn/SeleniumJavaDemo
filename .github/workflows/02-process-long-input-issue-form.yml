@@ -1,0 +1,213 @@
+name: Process Long Input Issue Form
+run-name: triggered via Issue by @${{ github.triggering_actor }}
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+jobs:
+  test-request:
+    name: Test Run Request
+    runs-on: ubuntu-latest
+
+    # Run this job for request types
+    if: |
+      contains(github.event.issue.labels.*.name, '02-run-long-test')
+
+    permissions:
+      contents: read
+      issues: write
+
+    #    outputs:
+    #      request: ${{ steps.parse.outputs.json }}
+
+    steps:
+
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Print Form Body
+        run: |
+          printf "%s\n" "${{ github.event.issue.body }}"
+
+      #      - name: Convert Issue Body to JSON
+      #        id: convert-to-json
+      #        run: |
+      #          echo "${{ github.event.issue.body }}" | jq -R 'split("\n") | map(select(length > 0)) | map(split(": ")) | map({(.[0]): .[1]}) | add' > issue.json
+      #        shell: bash
+
+        #  const core = require('@actions/core');
+        #  const github = require('@actions/github');
+        #  const inputData = github.context.payload.issue.body;
+
+#  core.setOutput('parsedData', JSON.stringify(parsedData));
+
+      - name: Parse input data
+        id: parse_inputs
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |            
+            const inputData = context.payload.issue.body
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+            console.log('Input data:', inputData);
+
+            function parseToJSON(inputData) {
+              const lines = inputData.split('\n').map(line => line.trim());
+              const jsonData = {
+                Branch: "",
+                Runner: "",
+                Environment: "",
+                InvocationCount: "0",
+                RetryCount: "0",
+                Description: "",
+                StagesToRun: {}
+              };
+
+               let currentKey = "";
+
+               lines.forEach(line => {
+                if (line.startsWith('###')) {
+                  currentKey = line.replace('###', '').trim();
+                } else if (line.startsWith('- [X]')) {
+                  const stage = line.replace('- [X]', '').trim();
+                  jsonData.StagesToRun[stage] = true;
+                } else if (line.startsWith('- [ ]')) {
+                  const stage = line.replace('- [ ]', '').trim();
+                  jsonData.StagesToRun[stage] = false;
+                } else if (line) {
+                    jsonData[currentKey] = line;
+                }
+             });
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+              console.log('Parsed JSON data:', JSON.stringify(jsonData, null, 2));
+              return jsonData;
+            }
+            
+            const parsedData = parseToJSON(inputData);
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+            console.log('Parsed data:', parsedData);
+            core.setOutput('parsedData', parsedData);
+            core.setOutput('jsonParsedData', JSON.stringify(parsedData));
+#            core.setOutput('parsedData', parsedData);
+
+      #                  if (currentKey) {
+      #                    if (currentKey === 'InvocationCount' || currentKey === 'RetryCount') {
+      #                      jsonData[currentKey] = parseInt(line, 10);
+      #                    } else {
+      #                      jsonData[currentKey] = line;
+      #                    }
+      #                  }
+
+      - name: Output the Parsed Issue Data
+        id: output
+        run: |
+          echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+          echo "Parsed Data: ${{ steps.parse_inputs.outputs.parsedData }}"
+          echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+          echo "Json Parsed Data: ${{ steps.parse_inputs.outputs.jsonParsedData }}"
+
+#  const inputValue = core.getInput('jsonParsedData');
+
+      - name: Trigger second workflow
+        id: trigger_second_workflow
+        uses: actions/github-script@v7.0.1
+        env:
+          INPUT_ISSUE_FORM_DATA: ${{ steps.parse_inputs.outputs.parsedData }}
+        with:
+          github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
+          script: |
+            const parsedData = JSON.parse(process.env.INPUT_ISSUE_FORM_DATA);
+      
+            try {
+              const response = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: '02-target-workflow.yml', // The ID or filename of the workflow to trigger
+                ref: parsedData.Branch, // The branch to run the workflow on
+                inputs: {
+                  Runner: parsedData.Runner,
+                  Environment: parsedData.Environment,
+                  InvocationCount: parsedData.InvocationCount,
+                  RetryCount: parsedData.RetryCount,
+                  Description: parsedData.Description,
+                  StagesToRun: JSON.stringify(parsedData.StagesToRun)
+                }
+              });
+      
+              if (response.status === 204) {
+                console.log('Workflow triggered successfully');
+              } else {
+                console.error('Failed to trigger workflow:', response);
+                core.setFailed('Failed to trigger workflow:', response);
+                
+              }
+            } catch (error) {
+              console.error('Error triggering workflow:', error);
+              core.setFailed('Error triggering workflow:', error);
+              
+            }
+
+      - name: Close Issue
+        if: always()
+        uses: actions/github-script@v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            });
+
+            console.log(`Issue #${context.issue.number} has been closed.`);
+
+#      - name: Trigger test workflow
+#        id: trigger-test
+#        uses: actions/github-script@v7.0.1
+#        with:
+#          github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
+#          script: |
+#            const fs = require('fs');
+#            const issue = JSON.parse(fs.readFileSync('issue.json', 'utf8'));
+#            console.log("Runner: ", issue.Runner);
+#            console.log("Environment: ", issue.Environment);
+#            console.log("Description: ", issue.StagesToRun);
+#            const response = await github.rest.actions.createWorkflowDispatch({
+#              owner: '${{ github.repository_owner }}',
+#              repo: '${{ github.event.repository.name }}',
+#              workflow_id: 'target-workflow.yml',
+#              ref: 'master',
+#              inputs: {
+#                Runner: issue.Runner,
+#                Environment: issue.Environment,
+#                Description: issue.Description
+#              }
+#            });
+
+#      - name: Trigger test workflow
+#        id: trigger-test
+#        uses: actions/github-script@v7.0.1
+#        with:
+#          github-token: ${{ secrets.TRIGGER_WORKFLOW_PAT }}
+#          script: |
+#            const request = ${{ steps.parse.outputs.json }}
+#            console.log("Runner: ", request.Runner);
+#            console.log("Environment: ", request.Environment);
+#            console.log("Description: ", request.StagesToRun);
+#            const response = await github.rest.actions.createWorkflowDispatch({
+#              owner: '${{ github.repository_owner }}',
+#              repo: '${{ github.event.repository.name }}',
+#              workflow_id: 'target-workflow.yml',
+#              ref: 'master',
+#              inputs: {
+#                Runner: request.Runner,
+#                Environment: request.Environment,
+#                Description: request.StagesToRun
+#              }
+#            })
+
+

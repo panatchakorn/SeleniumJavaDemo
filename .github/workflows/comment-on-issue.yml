@@ -1,0 +1,131 @@
+name: comment-on-issue
+on:
+  workflow_run:
+    workflows: ["test-from-issue-created"]
+    types:
+      - completed
+
+jobs:
+  comment-on-issue:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Get repo and run_id
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |            
+            const repo = context.repo;
+            const run_id = context.runId;
+            console.log(`Repo: ${repo}`);
+            console.log(`Run ID: ${run_id}`);
+            return { repo, run_id };
+
+      - name: Set repo and run_id as env variables
+        run: |
+          echo "REPO=${{ steps.get-repo-and-run-id.outputs.result.repo }}" >> $GITHUB_ENV
+          echo "RUN_ID=${{ steps.get-repo-and-run-id.outputs.result.run_id }}" >> $GITHUB_ENV
+
+      - name: Get artifacts id for data-for-issue-comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ env.REPO }}
+          RUN_ID: 9643164692  #${{ env.RUN_ID }}
+        run: |
+          # Get the artifacts
+          ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+                           -H "Accept: application/vnd.github.v3+json" \
+                           "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ env.RUN_ID }}/artifacts")
+      
+          echo $ARTIFACTS
+      
+          ARTIFACT_IDS=$(echo $ARTIFACTS | jq -r '.artifacts[].id | select(.name == "data-for-issue-comment") | .id')
+          echo $ARTIFACT_IDS
+          
+          echo "ARTIFACT_ID=$ARTIFACT_IDS" >> $GITHUB_ENV
+
+      - name: Download artifact using GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_ID: ${{ env.ARTIFACT_ID }}
+        run: |
+          # Get the download URL of the artifact
+          DOWNLOAD_URL=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+                              -H "Accept: application/vnd.github.v3+json" \
+                              "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${{ env.ARTIFACT_ID }}" | jq -r '.archive_download_url')
+      
+          # Download the artifact
+          curl -L -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               -o data-for-issue-comment.zip "$DOWNLOAD_URL"
+      
+          # Extract the artifact
+         # unzip data-for-issue-comment.zip
+
+      - name: Extract data and set as env variables
+        run: |
+          unzip data-for-issue-comment.zip
+          ISSUE_NUMBER=$(jq -r '.issue_number' data-for-issue-comment.json)
+          REPO=$(jq -r '.repo' data-for-issue-comment.json)
+          RUN_ID=$(jq -r '.run_id' data-for-issue-comment.json)
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "REPO=$REPO" >> $GITHUB_ENV
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV    
+
+      - name: Print content of data-for-issue-comment.json
+        run: |
+          cat data-for-issue-comment.json
+
+#      - name: Set environment variables
+#        run: |
+#          echo "ISSUE_NUMBER=$(jq -r '.issue_number' data-for-issue-comment.json)" >> $GITHUB_ENV
+#          echo "REPO=$(jq -r '.repo' data-for-issue-comment.json)" >> $GITHUB_ENV
+#          echo "RUN_ID=$(jq -r '.run_id' data-for-issue-comment.json)" >> $GITHUB_ENV
+
+      - name: Get artifacts from the test run
+        id: get-artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+          REPO: ${{ env.REPO }}
+          RUN_ID: ${{ env.RUN_ID }}
+        run: |
+          # Get the artifacts
+          ARTIFACTS=$(curl -H "Authorization: token $GITHUB_TOKEN" \
+                           -H "Accept: application/vnd.github.v3+json" \
+                           "https://api.github.com/repos/${{ env.REPO }}/actions/runs/${{ env.RUN_ID }}/artifacts")
+          
+          echo $ARTIFACTS
+      
+          ARTIFACT_IDS=$(echo $ARTIFACTS | jq '.artifacts[].id')
+          echo $ARTIFACT_IDS
+
+      - name: Create Issue Comment with Artifact URL
+        uses: actions/github-script@v6
+        env:
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+          REPO: ${{ env.REPO }}
+          RUN_ID: ${{ env.RUN_ID }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const artifacts = ${{ steps.get-artifacts.outputs.result }};
+            const ISSUE_NUMBER = process.env.ISSUE_NUMBER;
+            const REPO = process.env.REPO;
+            const RUN_ID = process.env.RUN_ID;
+            
+            for (const artifact of artifacts) {
+              const artifact_id = artifact.id;
+              const artifact_name = artifact.name;
+              const artifact_url = 'https://github.com/${REPO}/actions/runs/${RUN_ID}/artifacts/${artifact_id}';
+              const comment_body = 'Artifact [${artifact_name}](${artifact_url}) from the latest workflow run.';
+            
+              const artifact_url2 = 'https://github.com/${REPO}/actions/runs/${RUN_ID}/artifacts/${artifact_id}';
+              const comment_body2 = '[ Artifact2 ](${artifact_url2}) from the latest workflow run.';
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ISSUE_NUMBER,
+                body: comment_body + comment_body2
+              });
+            }
