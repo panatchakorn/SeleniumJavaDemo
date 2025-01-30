@@ -46,8 +46,8 @@ public abstract class BaseTest implements ITest, ITestListener {
 
         test = extent.createTest(getTestName(), getTestDescription());
         test.assignCategory(method.getAnnotation(Test.class).groups());
-//        driver = WebDriverManager.getDriver(BrowserType.valueOf(configReader.getConfigKey("browser").toUpperCase()));
-//        driver.manage().window().maximize();
+       driver = WebDriverManager.getDriver(BrowserType.valueOf(configReader.getConfigKey("browser").toUpperCase()));
+       driver.manage().window().maximize();
 
     }
 
