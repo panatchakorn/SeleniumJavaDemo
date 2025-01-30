@@ -26,6 +26,9 @@
 <!--                        <suiteXmlFile>${user.dir}/src/test/testsuite/smokeTest.xml</suiteXmlFile>-->
                     </suiteXmlFiles>
                     <useSystemClassLoader>false</useSystemClassLoader>
+                    <systemPropertyVariables>
+                        <verbose>10</verbose>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
