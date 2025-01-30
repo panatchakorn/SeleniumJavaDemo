@@ -23,8 +23,8 @@ public class LogTest extends BaseTest {
     }
     @DataProvider(name = "numberProvider")
     public Object[][] numberProvider() {
-        Object[][] data = new Object[5001][1];
-        for (int i = 0; i <= 5000; i++) {
+        Object[][] data = new Object[25001][1];
+        for (int i = 0; i <= 25000; i++) {
             data[i][0] = i;
         }
         return data;
@@ -38,30 +38,30 @@ public class LogTest extends BaseTest {
 
     }
 
-    @Test(dataProvider = "numberProvider")
-    public void logTest2(int number) {
-        String lineNo = "Line no " + number;
-        LOGGER.error("Test2 log {}",  lineNo);
-        Assert.assertEquals("Line no " + number, lineNo);
-    }
+    // @Test(dataProvider = "numberProvider")
+    // public void logTest2(int number) {
+    //     String lineNo = "Line no " + number;
+    //     LOGGER.error("Test2 log {}",  lineNo);
+    //     Assert.assertEquals("Line no " + number, lineNo);
+    // }
 
-    @Test(dataProvider = "numberProvider")
-    public void logTest3(int number) {
-        String lineNo = "Line no " + number;
-        LOGGER.error("Test3 log {}",  lineNo);
-        Assert.assertEquals("Line no " + number, lineNo);
-    }
+    // @Test(dataProvider = "numberProvider")
+    // public void logTest3(int number) {
+    //     String lineNo = "Line no " + number;
+    //     LOGGER.error("Test3 log {}",  lineNo);
+    //     Assert.assertEquals("Line no " + number, lineNo);
+    // }
 
-    @Test(dataProvider = "numberProvider")
-    public void logTest4(int number) {
-        String lineNo = "Line no " + number;
-        LOGGER.error("Test4 log {}",  lineNo);
-        Assert.assertEquals("Line no " + number, lineNo);
-    }
-    @Test(dataProvider = "numberProvider")
-    public void logTest5(int number) {
-        String lineNo = "Line no " + number;
-        LOGGER.error("Test5 log {}",  lineNo);
-        Assert.assertEquals("Line no " + number, lineNo);
-    }
+    // @Test(dataProvider = "numberProvider")
+    // public void logTest4(int number) {
+    //     String lineNo = "Line no " + number;
+    //     LOGGER.error("Test4 log {}",  lineNo);
+    //     Assert.assertEquals("Line no " + number, lineNo);
+    // }
+    // @Test(dataProvider = "numberProvider")
+    // public void logTest5(int number) {
+    //     String lineNo = "Line no " + number;
+    //     LOGGER.error("Test5 log {}",  lineNo);
+    //     Assert.assertEquals("Line no " + number, lineNo);
+    // }
 }
