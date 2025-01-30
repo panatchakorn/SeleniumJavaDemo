@@ -23,8 +23,8 @@ public class LogTest extends BaseTest {
     }
     @DataProvider(name = "numberProvider")
     public Object[][] numberProvider() {
-        Object[][] data = new Object[10001][1];
-        for (int i = 0; i <= 10000; i++) {
+        Object[][] data = new Object[20001][1];
+        for (int i = 0; i <= 20000; i++) {
             data[i][0] = i;
         }
         return data;
