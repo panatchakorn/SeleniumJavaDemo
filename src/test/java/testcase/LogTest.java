@@ -58,4 +58,10 @@ public class LogTest extends BaseTest {
         LOGGER.error("Test4 log {}",  lineNo);
         Assert.assertEquals("Line no " + number, lineNo);
     }
+    @Test(dataProvider = "numberProvider")
+    public void logTest5(int number) {
+        String lineNo = "Line no " + number;
+        LOGGER.error("Test5 log {}",  lineNo);
+        Assert.assertEquals("Line no " + number, lineNo);
+    }
 }
