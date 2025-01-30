@@ -12,7 +12,7 @@
                      filePattern="${log-path}/app-%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="${log-pattern}"/>
             <Policies>
-                <SizeBasedTriggerPolicy size="50000"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
         </RollingFile>
     </Appenders>
