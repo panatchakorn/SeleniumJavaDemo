@@ -14,6 +14,7 @@ import org.testng.ITestResult;
 import org.testng.annotations.*;
 import report.ExtentReportManager;
 import utils.ConfigReader;
+import utils.ExtentReportUtil;
 import webdriver.BrowserType;
 import webdriver.WebDriverManager;
 
@@ -85,6 +86,9 @@ public abstract class BaseTest implements ITest, ITestListener {
         testName = addBrowserStackPlatform(testName);
         this.testName = testName;
     }
+    public String getConfigKey(String key){
+        return configReader.getConfigKey(key);
+    }
 
     private String addBrowserStackPlatform(String testName) {
         HashMap<String, Object> platform = BrowserStackSdk.getCurrentPlatform();
@@ -107,5 +111,12 @@ public abstract class BaseTest implements ITest, ITestListener {
         return test;
     }
 
+    public void logJson(String jsonString){
+        ExtentReportUtil.logJsonData(getTest(), jsonString);
+    }
+
+    public void logJson(Object jsonObject){
+        ExtentReportUtil.logJsonData(getTest(),jsonObject);
+    }
 
 }

@@ -1,29 +1,27 @@
 package testcase;
 
-
+import base.BaseTest;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.deque.html.axecore.extensions.WebDriverExtensions;
 import com.deque.html.axecore.results.ResultType;
 import com.deque.html.axecore.results.Results;
 import com.deque.html.axecore.results.Rule;
 import com.deque.html.axecore.selenium.AxeBuilder;
 import com.deque.html.axecore.selenium.AxeReporter;
-import org.openqa.selenium.ElementNotInteractableException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import utils.ConfigReader;
-import webdriver.BrowserType;
-import webdriver.WebDriverManager;
+import utils.ExtentReportUtil;
+import utils.GeneralUtil;
 
+import javax.naming.OperationNotSupportedException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -32,43 +30,33 @@ import java.util.List;
 import static com.deque.html.axecore.selenium.AxeReporter.getReadableAxeResults;
 
 
-public class AxeCoreTest {
-    WebDriver driver;
-    static final ConfigReader configReader = new ConfigReader();
+public class AxeCoreTest extends BaseTest {
 
     @BeforeMethod
     public void setup() {
-//        ExtentTest nodeSetup = getTest().createNode("Go to Selenium Dev Website");
-//        nodeSetup.log(Status.INFO,"Go to https://www.selenium.dev/selenium/web/web-form.html");
-        //WebDriver driver = new ChromeDriver();
-
-        driver = WebDriverManager.getDriver(BrowserType.valueOf(configReader.getConfigKey("browser")
-                .toUpperCase()));
-        driver.manage()
-                .window()
-                .maximize();
-
-        Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(15))
-                .pollingEvery(Duration.ofMillis(300))
-                .ignoring(ElementNotInteractableException.class, StaleElementReferenceException.class);
-        driver.get("https://www.selenium.dev/selenium/web/web-form.html");
-        driver.getTitle();
-
-
+        String url = getConfigKey("url");
+        ExtentTest nodeSetup = getTest().createNode("Go to Selenium Dev Website");
+        nodeSetup.log(Status.INFO, "Go to " + url);
+        driver.get(url);
     }
 
-    @AfterMethod
-    public void tearDown() {
-        if (driver != null) {
-            WebDriverManager.quitDriver();
-        }
+    @Test
+    public void checkAccessibilityWithWebDriverExtensions() throws OperationNotSupportedException, IOException {
+        ExtentTest nodeAct = getTest().createNode("Analyse with Axe-Core");
+
+        String testName = "Web Form Page";
+        Results result = WebDriverExtensions.analyze(driver);
+        printResults(result, testName);
+        ObjectWriter writer = new ObjectMapper().writer()
+                .withDefaultPrettyPrinter();
+        String jsonReport = writer.writeValueAsString(result);
+        ExtentReportUtil.logJsonData(nodeAct, jsonReport);
+        Assert.assertTrue(result.violationFree(), "Accessibility violations should not be found.");
     }
 
     @Test
     public void checkAccessibility() {
-//        ExtentTest nodeAct = getTest().createNode("Check Accessibility");
-//        nodeAct.log(Status.INFO,"Enter Selenium");
+        ExtentTest nodeAct = getTest().createNode("Analyse with Axe-Core");
         String testName = "Web Form Page";
         AxeBuilder builder = makeAxeBuilder();
 //        builder.withTags(Arrays.asList("wcag2aa", "wcag2aaa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice", "ACT"))
@@ -76,8 +64,9 @@ public class AxeCoreTest {
         Results result = builder.analyze(driver);
         printResults(result, testName);
         createReport(result, testName);
+        ExtentReportUtil.logJsonData(nodeAct, result);
 
-        Assert.assertTrue(result.violationFree());
+        Assert.assertTrue(result.violationFree(),"Accessibility violations should not be found.");
     }
 
     private AxeBuilder makeAxeBuilder() {
@@ -107,7 +96,9 @@ public class AxeCoreTest {
     }
 
     private void createReport(Results results, String testName) {
-        testName = testName.trim().replace(" ", "_").toLowerCase();
+        testName = testName.trim()
+                .replace(" ", "_")
+                .toLowerCase();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy_HHmmssSSS");
         String timestamp = LocalDateTime.now()
                 .format(formatter);
@@ -122,20 +113,20 @@ public class AxeCoreTest {
 
            /* Path filePath = reportDir.resolve(fileName);
             Files.createFile(filePath);*/
-            AxeReporter.writeResultsToJsonFile(filePath,results);
+            AxeReporter.writeResultsToJsonFile(filePath, results);
 
             // Write only violations to text file
             List<Rule> violatedRules = results.getViolations();
-            getReadableAxeResults(ResultType.Violations.getKey(),driver,violatedRules);
-            AxeReporter.writeResultsToTextFile(filePath + "violation",AxeReporter.getAxeResultString());
+            getReadableAxeResults(ResultType.Violations.getKey(), driver, violatedRules);
+            AxeReporter.writeResultsToTextFile(filePath + "violation", AxeReporter.getAxeResultString());
 
             // Write passed rules check to text file
             List<Rule> passedRules = results.getPasses();
-            getReadableAxeResults(ResultType.Passes.getKey(),driver,passedRules);
-            AxeReporter.writeResultsToTextFile(filePath + "passed",AxeReporter.getAxeResultString());
+            getReadableAxeResults(ResultType.Passes.getKey(), driver, passedRules);
+            AxeReporter.writeResultsToTextFile(filePath + "passed", AxeReporter.getAxeResultString());
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(GeneralUtil.convertStackTraceToString(e));
         }
 
     }
