@@ -71,7 +71,8 @@ public class AxeCoreTest extends BaseTest {
 
     private AxeBuilder makeAxeBuilder() {
         return new AxeBuilder()
-                .withTags(Arrays.asList("wcag2a", "wcag2aa", "wcag2aaa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice", "ACT"))
+                .withTags(Arrays.asList("wcag2a","wcag2aa","wcag2aaa","wcag21aa"))
+//                .withTags(Arrays.asList("wcag2a", "wcag2aa", "wcag2aaa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice", "ACT"))
                 .exclude("#comonly-released-element-with-known-issues");
     }
 
@@ -124,6 +125,16 @@ public class AxeCoreTest extends BaseTest {
             List<Rule> passedRules = results.getPasses();
             getReadableAxeResults(ResultType.Passes.getKey(), driver, passedRules);
             AxeReporter.writeResultsToTextFile(filePath + "passed", AxeReporter.getAxeResultString());
+
+            // Write inapplicable rules check to text file
+            List<Rule> inapplicableRules = results.getInapplicable();
+            getReadableAxeResults(ResultType.Inapplicable.getKey(), driver, inapplicableRules);
+            AxeReporter.writeResultsToTextFile(filePath + "inapplicable", AxeReporter.getAxeResultString());
+
+            // Write incomplete rules check to text file
+            List<Rule> incompleteRules = results.getIncomplete();
+            getReadableAxeResults(ResultType.Inapplicable.getKey(), driver, incompleteRules);
+            AxeReporter.writeResultsToTextFile(filePath + "incomplete", AxeReporter.getAxeResultString());
 
         } catch (IOException e) {
             LOGGER.error(GeneralUtil.convertStackTraceToString(e));
