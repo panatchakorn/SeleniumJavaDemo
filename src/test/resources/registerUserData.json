@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "dateOfBirth": "15/03/1985",
+      "address": {
+        "no": "123",
+        "unit": "4B",
+        "street": "Main Street",
+        "suburb": "Downtown",
+        "city": "Wellington",
+        "postCode": "6011",
+        "country": "New Zealand"
+      },
+      "homePhone": "044-1234567",
+      "mobilePhone": "021-9876543"
+    },
+    {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "dateOfBirth": "22/07/1990",
+      "address": {
+        "no": "456",
+        "unit": "5A",
+        "street": "Elm Street",
+        "suburb": "Uptown",
+        "city": "Auckland",
+        "postCode": "1010",
+        "country": "New Zealand"
+      },
+      "homePhone": "09-9876543",
+      "mobilePhone": "021-1234567"
+    }
+  ]
+}
