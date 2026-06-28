@@ -149,7 +149,7 @@ jobs:
       
   deployReport:
     if: |
-      (${{ success() }} || ${{ failure() }}) 
+      ${{ success() || failure() }} 
       && needs.buildTest.outputs.github_page_artifact_output == 'success'
     needs: buildTest
     
