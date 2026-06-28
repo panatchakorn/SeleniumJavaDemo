@@ -39,17 +39,17 @@ jobs:
       request: ${{ steps.parse.outputs.json }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Parse inputs
         id: parse
-        uses: issue-ops/parser@v1.0.0
+        uses: issue-ops/parser@v5
         with:
           body: ${{ github.event.issue.body }}
           issue-form-template: 01-run-test-workflow.yml
           workspace: ${{ github.workspace }}
 
-      - uses: actions/create-github-app-token@v1.10.1
+      - uses: actions/create-github-app-token@v3
         id: token
         with:
           app-id: ${{ secrets.CREATE_ISSUE_APP_ID }}
@@ -58,7 +58,7 @@ jobs:
 
       - name: Validate Issue
         id: validate
-        uses: issue-ops/validator@v1.0.0
+        uses: issue-ops/validator@v4
         with:
           add-comment: false
           github-token: ${{ steps.token.outputs.token }}
@@ -92,14 +92,14 @@ jobs:
 #          owner: ${{ github.repository_owner }}
 #          repositories: ${{ github.repository }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Echo Request Inputs
         run: |
           echo "request: ${{ needs.run-test-issue-request.outputs.request }}"
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ fromJSON(needs.run-test-issue-request.outputs.request).java_version }}
           distribution: 'temurin'
@@ -111,7 +111,7 @@ jobs:
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: test-reports
           path: |
@@ -120,7 +120,7 @@ jobs:
             ./target/surefire-reports/
 
       - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v6
         if: success() || failure() # always run even if the previous step fails
         with:
           report_paths: '**/target/surefire-reports/TEST-*.xml'
@@ -136,7 +136,7 @@ jobs:
 #
 #    steps:
 #      - name: Download artifact
-#        uses: actions/download-artifact@v2
+#        uses: actions/download-artifact@v8
 #        with:
 #          name: test-reports
 #          path: ./downloaded-artifact
@@ -178,7 +178,7 @@ jobs:
       if: always()
       steps:
         - name: Create artifact
-          uses: actions/github-script@v6
+          uses: actions/github-script@v9
           with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             script: |
@@ -190,7 +190,7 @@ jobs:
               fs.writeFileSync('data-for-issue-comment.json', JSON.stringify(data));
 
         - name: Upload artifact
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v7
           with:
             name: data-for-issue-comment
             path: data-for-issue-comment.json
@@ -220,7 +220,7 @@ jobs:
 #          echo $ARTIFACT_IDS
 #
 #      - name: Create Issue Comment with Artifact URL
-#        uses: actions/github-script@v6
+#        uses: actions/github-script@v9
 #        with:
 #          github-token: ${{ secrets.GITHUB_TOKEN }}
 #          script: |
@@ -245,7 +245,7 @@ jobs:
 
 #      - name: Get Workflow Run Artifacts
 #        id: get-artifacts
-#        uses: actions/github-script@v6
+#        uses: actions/github-script@v9
 #        with:
 #          github-token: ${{ secrets.GITHUB_TOKEN }}
 #          script: |

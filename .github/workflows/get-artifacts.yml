@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Get Artifacts By Run ID
         id: get_artifacts
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           debug: true

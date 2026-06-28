@@ -11,7 +11,7 @@ jobs:
     steps:
 
       - name: Get repo and run_id
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |            
@@ -101,7 +101,7 @@ jobs:
           echo $ARTIFACT_IDS
 
       - name: Create Issue Comment with Artifact URL
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         env:
           ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
           REPO: ${{ env.REPO }}

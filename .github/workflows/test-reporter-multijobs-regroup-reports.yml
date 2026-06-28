@@ -29,10 +29,10 @@ jobs:
     steps:
       #- run: echo ${{ steps.deployment.outputs.page_url }}
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -43,7 +43,7 @@ jobs:
         #run: mvn -B package --file pom.xml
 
       - name: Cache maven dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         id: cache-maven-artifacts
         with:
           path: ~/.m2/repository
@@ -57,16 +57,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Restore maven cache
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -92,7 +92,7 @@ jobs:
 
       - name: Upload extent reports
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: extent-reports-group-a
           path: ${{ github.workspace }}/results/groupA/reports/
@@ -100,7 +100,7 @@ jobs:
 
       - name: Upload surefire reports
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports-group-a
           path: ${{ github.workspace }}/results/groupA/surefire-reports/
@@ -108,7 +108,7 @@ jobs:
 
       - name: Publish Test Report
         id: publish_report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: success() || failure() # always run even if the previous step fails
         with:
           name: Test Report GroupA
@@ -133,15 +133,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Restore maven cache
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -162,7 +162,7 @@ jobs:
 
       - name: Upload extent reports
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: extent-reports-test-bundleC
           path: "**/target/reports/*" #${{ github.workspace }}/results/groupB/bundleC/reports/*
@@ -170,7 +170,7 @@ jobs:
 
       - name: Upload surefire reports
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports-test-bundleC
           path: "**/target/surefire-reports/**/*"   #${{ github.workspace }}/results/groupB/bundleC/surefire-reports/**/*
@@ -178,7 +178,7 @@ jobs:
 
       - name: Publish Test Report
         id: publish_report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: success() || failure() # always run even if the previous step fails
         with:
           name: Test Report BundleC
@@ -203,15 +203,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Restore maven cache
-        uses: actions/cache@v2
+        uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -232,7 +232,7 @@ jobs:
 
       - name: Upload extent reports
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: extent-reports-test-bundleD
           path: "**/target/reports/*"   #${{ github.workspace }}/results/groupB/bundleD/reports/*
@@ -240,7 +240,7 @@ jobs:
 
       - name: Upload surefire reports
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports-test-bundleD
           path: "**/target/surefire-reports/**/*"   #${{ github.workspace }}/results/groupB/bundleD/surefire-reports/**/*
@@ -248,7 +248,7 @@ jobs:
 
       - name: Publish Test Report
         id: publish_report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: success() || failure() # always run even if the previous step fails
         with:
           name: Test Report BundleD
@@ -288,7 +288,7 @@ jobs:
   #    runs-on: ubuntu-latest
   #    steps:
   #      - name: Checkout code
-  #        uses: actions/checkout@v3
+  #        uses: actions/checkout@v7
   #
   #      - name: check reports directory
   #        id: check_reports_dir
@@ -303,7 +303,7 @@ jobs:
   #
   #      - name: Upload extent reports
   #        if: success() || failure()
-  #        uses: actions/upload-artifact@v3
+  #        uses: actions/upload-artifact@v7
   #        with:
   #          name: extent-reports-group-a
   #          path: ${{ github.workspace }}/results/groupA/reports/
@@ -311,7 +311,7 @@ jobs:
   #
   #      - name: Upload surefire reports
   #        if: success() || failure()
-  #        uses: actions/upload-artifact@v3
+  #        uses: actions/upload-artifact@v7
   #        with:
   #          name: surefire-reports-group-a
   #          path: ${{ github.workspace }}/results/groupA/surefire-reports/
@@ -326,16 +326,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Download artifacts extent reports C
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8
         with:
           name: extent-reports-test-bundleC
           path: results/groupB/extent-reports/
 
       - name: Download artifacts extent reports D
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8
         with:
           name: extent-reports-test-bundleD
           path: results/groupB/extent-reports/
@@ -355,32 +355,32 @@ jobs:
 #        shell: bash
 
       - name: Upload group B extent reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: extent-reports-group-b
           path: ${{ github.workspace }}/results/groupB/extent-reports/
 
       - name: Download artifacts surefire reports C
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8
         with:
           name: surefire-reports-test-bundleC
           path: results/groupB/surefire-reports/
 
       - name: Download artifacts surefire reports D
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8
         with:
           name: surefire-reports-test-bundleD
           path: results/groupB/surefire-reports/
 
       - name: Upload group B surefire reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports-group-b
           path: ${{ github.workspace }}/results/groupB/surefire-reports/
 
           #      - name: Upload test reports
           #        if: success() || failure()
-          #        uses: actions/upload-artifact@v3
+          #        uses: actions/upload-artifact@v7
           #        with:
           #          name: test-reports
           #          path: |
@@ -393,7 +393,7 @@ jobs:
 
           #      - name: Upload surefire test reports
           #        if: success() || failure()
-          #        uses: actions/upload-artifact@v3
+          #        uses: actions/upload-artifact@v7
           #        with:
           #          name: surefire-test-reports
           #          path: |
@@ -414,11 +414,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 #      - name: Checkout code
-#        uses: actions/checkout@v3
+#        uses: actions/checkout@v7
 
 #      - name: Publish Test Report
 #        id: publish_report
-#        uses: dorny/test-reporter@v1
+#        uses: dorny/test-reporter@v3
 #        if: success() || failure() # always run even if the previous step fails
 #        with:
 #         name: Test Report
@@ -481,7 +481,7 @@ jobs:
 
         #      - name: Setup Pages
         #        id: pages
-        #        uses: actions/configure-pages@v3
+        #        uses: actions/configure-pages@v6
         #        if: success() || failure()
         #
         #      - name: Print Setup Pages Output
@@ -502,7 +502,7 @@ jobs:
         #
         #      - name: Upload artifact for github page
         #        id: github_page_artifact
-        #        uses: actions/upload-pages-artifact@v2
+        #        uses: actions/upload-pages-artifact@v5
         #        if: success() || failure()
         #        with:
         #          name: 'github-pages'
@@ -525,7 +525,7 @@ jobs:
         #      - name: Deploy to GitHub Pages
         #    if: needs.buildTest.outputs.github_page_artifact_output == 'success'
     #        id: deployment
-    #        uses: actions/deploy-pages@v2
+    #        uses: actions/deploy-pages@v5
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
