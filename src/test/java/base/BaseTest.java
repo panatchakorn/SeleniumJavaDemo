@@ -28,7 +28,8 @@ import java.util.Objects;
 
 public abstract class BaseTest implements ITest, ITestListener {
     protected WebDriver driver;
-    static final ConfigReader configReader = new ConfigReader();
+    // no static to keep instance references isolated per test class execution
+    protected final ConfigReader configReader = ConfigReader.getInstance();
 
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class.getName());
     private String testName;
