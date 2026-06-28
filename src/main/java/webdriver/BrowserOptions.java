@@ -13,6 +13,7 @@ public class BrowserOptions {
         options.addArguments("--incognito");
         options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
         options.addArguments("--no-sandbox"); // Bypass OS security model
+        options.addArguments("--headless=new");
         return options;
     }
 
