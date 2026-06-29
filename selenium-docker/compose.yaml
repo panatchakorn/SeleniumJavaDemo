@@ -1,5 +1,5 @@
 # run docker compose up -d. (detached mode run in the background. press Ctrl+C to get prompt back or stop execution)
-# -f <file> specify a compose file to use. default is docker-compose.yml
+# -f <file> specify a compose file to use. default is docker-compose.yml Command parameter has to go in order. eg. docker compose -f selenium-docker/compose.yaml up -d
 # verify selenium hub is running by visiting http://localhost:4444/ui
 # remove services: docker compose down
 # monitor output: docker compose logs
