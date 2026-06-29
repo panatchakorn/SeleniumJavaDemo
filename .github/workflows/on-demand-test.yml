@@ -68,4 +68,4 @@ jobs:
 
     - name: Cleanup Selenium Grid Docker container
       if : ${{ always() && steps.start-selenium-grid.outcome == 'success' }}
-      run: docker compose down -f selenium-docker/compose.yaml
+      run: docker compose -f selenium-docker/compose.yaml down
