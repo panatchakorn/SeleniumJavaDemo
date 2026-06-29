@@ -11,7 +11,12 @@ import org.testng.ITest;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import org.testng.annotations.*;
+import org.testng.Reporter;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 import report.ExtentReportManager;
 import utils.ConfigReader;
 import webdriver.BrowserType;
@@ -23,7 +28,8 @@ import java.util.Objects;
 
 public abstract class BaseTest implements ITest, ITestListener {
     protected WebDriver driver;
-    static final ConfigReader configReader = new ConfigReader();
+    // no static to keep instance references isolated per test class execution
+    protected final ConfigReader configReader = ConfigReader.getInstance();
 
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class.getName());
     private String testName;
@@ -32,7 +38,8 @@ public abstract class BaseTest implements ITest, ITestListener {
     private ExtentTest test;
 
     @BeforeSuite
-    public void beforeSuite(ITestContext testContext){
+    public void beforeSuite(){
+        ITestContext testContext = Reporter.getCurrentTestResult().getTestContext();
         String suiteName = testContext.getCurrentXmlTest().getSuite().getName();
         String projectName = configReader.getConfigKey("projectName");
 

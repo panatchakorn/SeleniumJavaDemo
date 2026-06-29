@@ -3,8 +3,13 @@ package webdriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.edge.EdgeOptions;
+import utils.ConfigReader;
 
 public class BrowserOptions {
+
+    // Shared the same config reader instance for accessing configuration properties
+    private static final ConfigReader CONFIG = ConfigReader.getInstance();
+
     private BrowserOptions() { throw    new IllegalStateException("BrowserOptions cannot be instantiated"); }
 
     public static ChromeOptions getChromeOptions() {
@@ -13,6 +18,11 @@ public class BrowserOptions {
         options.addArguments("--incognito");
         options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
         options.addArguments("--no-sandbox"); // Bypass OS security model
+
+        if (CONFIG.getConfigKeyAsBoolean("headless", false)) {
+            options.addArguments("--headless=new");
+        }
+
         return options;
     }
 
