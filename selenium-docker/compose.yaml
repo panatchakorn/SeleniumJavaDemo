@@ -1,0 +1,36 @@
+# run docker compose up -d. (detached mode run in the background. press Ctrl+C to get prompt back or stop execution)
+# -f <file> specify a compose file to use. default is docker-compose.yml
+# verify selenium hub is running by visiting http://localhost:4444/ui
+# remove services: docker compose down
+# monitor output: docker compose logs
+# list services along with current status: docker compose ps
+# To access host go to http://localhost:4444/ui
+
+name: selenium-grid
+
+services:
+  selenium-hub:
+    image: selenium/hub:4.45.0-20260606
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+
+  chrome1:
+    image: selenium/node-chrome:149.0-20260606
+    platform: linux/amd64
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+
+  chrome2:
+    image: selenium/node-chrome:149.0-20260606
+    platform: linux/amd64
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
