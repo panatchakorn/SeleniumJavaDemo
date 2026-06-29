@@ -12,11 +12,46 @@ import java.util.Properties;
 
 public class ConfigReader {
     private static final Logger LOGGER = LogManager.getLogger(ConfigReader.class.getName());
+    private static volatile ConfigReader instance;
     private final HashMap<String, String> configMap;
 
     public ConfigReader() {
         configMap = new HashMap<>();
         loadConfigProperties();
+        mergeSystemProperties();
+    }
+
+    public static ConfigReader getInstance() {
+        if (instance == null) {
+            synchronized (ConfigReader.class) {
+                if (instance == null) {
+                    LOGGER.info("Loading ConfigReader singleton instance");
+                    instance = new ConfigReader();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public String getConfigKey(String key) {
+        return configMap.getOrDefault(key, "");
+    }
+
+    public String getConfigKey(String key, String defaultValue) {
+        return configMap.getOrDefault(key, defaultValue);
+    }
+
+    public boolean getConfigKeyAsBoolean(String key) {
+        return Boolean.parseBoolean(configMap.getOrDefault(key, "false"));
+    }
+
+    public boolean getConfigKeyAsBoolean(String key, boolean defaultValue) {
+        String value = configMap.getOrDefault(key, String.valueOf(defaultValue));
+        return Boolean.parseBoolean(value);
+    }
+
+    public Map<String, String> getAllConfig() {
+        return configMap;
     }
 
     private void loadConfigProperties() {
@@ -35,13 +70,16 @@ public class ConfigReader {
             LOGGER.error(String.format("Unable to load config file. Error: %s", e.getMessage()));
         }
     }
+    // System properties take precedence over config file properties
 
-    public String getConfigKey(String key) {
-        return configMap.getOrDefault(key, "");
-    }
-
-    public Map<String, String> getAllConfig() {
-        return configMap;
+    private void mergeSystemProperties() {
+        Properties systemProperties = System.getProperties();
+        for (String key : systemProperties.stringPropertyNames()) {
+            String value = systemProperties.getProperty(key);
+            configMap.put(key, value);
+            LOGGER.debug(String.format("System property override - Key %s=%s", key, value));
+        }
+        System.getProperties().putAll(configMap);
     }
 
 }

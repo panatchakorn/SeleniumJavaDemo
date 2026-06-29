@@ -3,6 +3,7 @@ package base;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import com.browserstack.BrowserStackSdk;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -10,18 +11,25 @@ import org.testng.ITest;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import org.testng.annotations.*;
+import org.testng.Reporter;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 import report.ExtentReportManager;
 import utils.ConfigReader;
 import webdriver.BrowserType;
 import webdriver.WebDriverManager;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Objects;
 
 public abstract class BaseTest implements ITest, ITestListener {
     protected WebDriver driver;
-    static final ConfigReader configReader = new ConfigReader();
+    // no static to keep instance references isolated per test class execution
+    protected final ConfigReader configReader = ConfigReader.getInstance();
 
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class.getName());
     private String testName;
@@ -30,7 +38,8 @@ public abstract class BaseTest implements ITest, ITestListener {
     private ExtentTest test;
 
     @BeforeSuite
-    public void beforeSuite(ITestContext testContext){
+    public void beforeSuite(){
+        ITestContext testContext = Reporter.getCurrentTestResult().getTestContext();
         String suiteName = testContext.getCurrentXmlTest().getSuite().getName();
         String projectName = configReader.getConfigKey("projectName");
 
@@ -46,8 +55,8 @@ public abstract class BaseTest implements ITest, ITestListener {
 
         test = extent.createTest(getTestName(), getTestDescription());
         test.assignCategory(method.getAnnotation(Test.class).groups());
-//        driver = WebDriverManager.getDriver(BrowserType.valueOf(configReader.getConfigKey("browser").toUpperCase()));
-//        driver.manage().window().maximize();
+        driver = WebDriverManager.getDriver(BrowserType.valueOf(configReader.getConfigKey("browser").toUpperCase()));
+        driver.manage().window().maximize();
 
     }
 
@@ -80,7 +89,18 @@ public abstract class BaseTest implements ITest, ITestListener {
         return testName;
     }
     public void setTestName(String testName){
+        testName = addBrowserStackPlatform(testName);
         this.testName = testName;
+    }
+
+    private String addBrowserStackPlatform(String testName) {
+        HashMap<String, Object> platform = BrowserStackSdk.getCurrentPlatform();
+        if (platform == null || platform.isEmpty()) {
+            return testName;
+        } else {
+            testName = testName + " - " + platform.get("os") + " " + platform.get("osVersion") + " - " + platform.get("browserName") + " " + platform.get("browserVersion");
+            return testName;
+        }
     }
 
     public String getTestDescription(){
