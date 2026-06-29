@@ -39,7 +39,7 @@ jobs:
       id: start-selenium-grid
       if : ${{ github.event.inputs.runRemotelyInDocker == 'true' }}
       run: |
-        docker compose up -d -f selenium-docker/compose.yaml
+        docker compose -f selenium-docker/compose.yaml up -d
         sleep 5 # Wait for the Selenium Grid to start
 
     - name: Build and run tests with Maven
