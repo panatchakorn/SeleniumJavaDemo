@@ -23,7 +23,6 @@ import java.util.Objects;
 
 public abstract class BaseTest implements ITest, ITestListener {
     protected WebDriver driver;
-    static final ConfigReader configReader = new ConfigReader();
 
     protected static final Logger LOGGER = LogManager.getLogger(BaseTest.class.getName());
     private String testName;
@@ -34,9 +33,7 @@ public abstract class BaseTest implements ITest, ITestListener {
     @BeforeSuite
     public void beforeSuite(ITestContext testContext){
         String suiteName = testContext.getCurrentXmlTest().getSuite().getName();
-        String projectName = configReader.getConfigKey("projectName");
-
-
+        String projectName = ConfigReader.getInstance().getConfigKey("projectName");
     }
 
     @BeforeMethod
@@ -48,7 +45,7 @@ public abstract class BaseTest implements ITest, ITestListener {
 
         test = extent.createTest(getTestName(), getTestDescription());
         test.assignCategory(method.getAnnotation(Test.class).groups());
-        driver = WebDriverManager.getDriver(BrowserType.valueOf(configReader.getConfigKey("browser").toUpperCase()));
+        driver = WebDriverManager.getDriver(BrowserType.valueOf(ConfigReader.getInstance().getConfigKey("browser").toUpperCase()));
         driver.manage().window().maximize();
 
     }

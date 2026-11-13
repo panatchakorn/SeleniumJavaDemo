@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Xray with Attributes Test Suite">
+    <test name = "XRay First Test">
+        <classes>
+            <class name = "testcase.XrayWithAttributesTest">
+                <methods>
+                    <include name="xrayWithAttributesFirstTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name = "XRay Second Test">
+        <classes>
+            <class name = "testcase.XrayWithAttributesTest">
+                <methods>
+                    <include name="xrayWithAttributesSecondTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    <test name = "XRay Third Test">
+        <classes>
+            <class name = "testcase.XrayWithAttributesTest">
+                <methods>
+                    <include name="xrayWithAttributesThirdTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+<!--    <test verbose="2" preserve-order="true" thread-count="5" name="UserTests">-->
+<!--        <classes>-->
+<!--            <class name="testcase.FirstTest">-->
+<!--                <methods>-->
+<!--                    <include name="firstTest"/>-->
+<!--                    <include name="secondTest"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+<!--            <class name="testcase.StampResultsTest">-->
+<!--                <methods>-->
+<!--                    <include name="passedTest"/>-->
+<!--                    <include name="skippedTest"/>-->
+<!--                    <include name="failedTest"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+<!--        </classes>-->
+<!--    </test>-->
+</suite>
