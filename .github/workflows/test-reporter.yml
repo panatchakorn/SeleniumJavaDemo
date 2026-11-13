@@ -104,9 +104,7 @@ jobs:
       github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
       
   deployReport:
-    if: |
-      (${{ success() }} || ${{ failure() }}) 
-      && needs.buildTest.outputs.github_page_artifact_output == 'success'
+    if: ${{ (success() || failure()) && needs.buildTest.outputs.github_page_artifact_output == 'success' }}
     needs: buildTest
     
     environment:
