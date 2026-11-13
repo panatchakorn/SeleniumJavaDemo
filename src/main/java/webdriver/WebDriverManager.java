@@ -1,6 +1,7 @@
 package webdriver;
 
 import org.openqa.selenium.WebDriver;
+import utils.ConfigReader;
 
 public class WebDriverManager {
     private WebDriverManager() {
@@ -13,7 +14,15 @@ public class WebDriverManager {
         WebDriver driver = webDriverThreadLocal.get();
 
         if (driver == null) {
-            driver = DriverFactory.createDriver(browserType);
+            ConfigReader configReader = ConfigReader.getInstance();
+            boolean isRemote = configReader.getConfigKeyAsBoolean("remote", false);
+
+            if (isRemote) {
+                String remoteUrl = configReader.getConfigKey("grid.url");
+                driver = DriverFactory.createRemoteDriver(browserType, remoteUrl);
+            } else {
+                driver = DriverFactory.createDriver(browserType);
+            }
             webDriverThreadLocal.set(driver);
         }
 

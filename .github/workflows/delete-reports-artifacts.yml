@@ -1,0 +1,55 @@
+name: delete-reports-artifacts
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["test-reporter-multijobs-regroup-reports"]
+    types: [completed]
+    branches: [ "master" ]
+
+permissions:
+  contents: write
+  checks: write
+  actions: write
+
+jobs:
+  delete-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup unused reports artifacts
+        id: delete_report_artifacts
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          debug: true
+          retries: 2
+          script: |
+            const artifactNamesToDelete = ['extent-reports-test-bundleC', 'extent-reports-test-bundleD', 'surefire-reports-test-bundleC', 'surefire-reports-test-bundleD'];
+            const response = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ github.event.workflow_run.id }}
+            });
+
+            console.log(JSON.stringify(response));
+
+            response.data.artifacts
+              .forEach(({ id, name}) => {
+              if (artifactNamesToDelete.includes(name)) {
+                console.log("Artifact id: " + id + " name: " + name);
+              }
+            });
+            
+            const deletionPromises = response.data.artifacts
+              .filter(({ name }) => artifactNamesToDelete.includes(name))
+              .map(({ id, name }) => {
+                console.log("Deleting Artifact id: " + id + " name: " + name);
+                return github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: id
+                });
+              });
+
+            const deletionResponses = await Promise.all(deletionPromises);
+            console.log("Deletion responses:", JSON.stringify(deletionResponses));

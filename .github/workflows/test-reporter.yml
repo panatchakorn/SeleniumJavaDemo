@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   #push:
   #  branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
 
 permissions:
   contents: write
@@ -37,7 +37,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn clean test
+        run: mvn clean test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/smokeTest.xml"
         #run: mvn -B package --file pom.xml
 
 
@@ -73,12 +73,46 @@ jobs:
           reporter: java-junit
           only-summary: false
           list-suites: all
-          list-tests: all
+          list-tests: failed
           fail-on-error: false
-          path: '**/target/surefire-reports/TEST-*.xml'
+          path: '**/target/surefire-reports/junitreports/TEST-*.xml'
 
-        #   path: '**/target/surefire-reports/junitreports/TEST-*.xml'
+        #  path: '**/target/surefire-reports/TEST-*.xml'
 
+      - name: Print Test Report Output
+        if: success() || failure()
+        run: |
+          echo "url: ${{ steps.publish_report.outputs.url }}"
+          echo "url_html: ${{ steps.publish_report.outputs.url_html }}"
+          echo "Passed count: ${{ steps.publish_report.outputs.passed }}"
+          echo "Failed count: ${{ steps.publish_report.outputs.failed }}"
+          echo "Skipped count: ${{ steps.publish_report.outputs.skipped }}"
+          echo "Execution time ms: ${{ steps.publish_report.outputs.time }}"      
+
+      - name: CALCULATION
+        if: success() || failure()
+        run: |
+          numa=1
+          numb=2
+          numc=$((numa + numb))
+          echo "numc = $numc"
+          
+      - name: Test Results Summary
+        id: test_summary
+        if: success() || failure()
+        run: |
+          passed=${{ steps.publish_report.outputs.passed }}
+          failed=${{ steps.publish_report.outputs.failed }}
+          skipped=${{ steps.publish_report.outputs.skipped }}
+          total=$((passed+failed+skipped))
+          echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line          
+          echo "Total: $total" >> $GITHUB_STEP_SUMMARY
+          echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
+          echo ":x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
+          echo ":white_circle: Skipped: ${{ steps.publish_report.outputs.skipped }}" >> $GITHUB_STEP_SUMMARY
+          echo "Execution time (ms): ${{ steps.publish_report.outputs.time }}" >> $GITHUB_STEP_SUMMARY
+          
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v6
@@ -91,6 +125,14 @@ jobs:
           echo "origin: ${{ steps.pages.outputs.origin }}"
           echo "host: ${{ steps.pages.outputs.host }}"
           echo "base_path ${{ steps.pages.outputs.base_path }}"
+
+      - name: Prepare files for Github pages
+        if: success() || failure()
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+          cp -r target/reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+          cp -r target/surefire-reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
+        working-directory: ${{ github.workspace }}
      
       - name: Upload artifact for github page
         id: github_page_artifact
@@ -98,7 +140,7 @@ jobs:
         if: success() || failure()
         with:
           name: 'github-pages'
-          path: '${{ github.workspace }}/target/reports'
+          path: '${{ github.workspace }}/_site/'
           retention-days: 1          
     outputs:
       github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}

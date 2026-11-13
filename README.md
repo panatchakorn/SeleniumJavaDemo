@@ -23,7 +23,7 @@ Before you begin, ensure you have met the following requirements:
 ## Running Tests
 Clone the project
 Right click on test and run as TestNG test
-Run from command line: mvn clean test
+Run from command line: mvn clean test -DsuiteXmlFile=src/test/testsuite/<testsuite>.xml
 
 ## Test Reports
 Extent reports can be found on ../target/reports/extent-report-yyyyMMdd_HHmmss.html
