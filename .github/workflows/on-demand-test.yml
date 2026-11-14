@@ -1,70 +1,125 @@
-
 name: on-demand-test
 
 on:
   workflow_dispatch:
-  #push:
-  #  branches: [ "master" ]
-#  pull_request:
-#    branches: [ "master" ]
-
     inputs:
+      suite:
+        description: TestNG suite to run
+        type: choice
+        required: true
+        default: smokeTest
+        options:
+          - smokeTest
+          - groupATest
+          - bundleATest
+          - bundleBTest
+          - bundleCTest
+          - bundleDTest
+          - browserstackTest
       runRemotelyInDocker:
-        description: "Run test in Selenium Grid Docker container"
+        description: Run test in Selenium Grid Docker container
         default: false
         type: boolean
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      checks: write
-
     steps:
-    - uses: actions/checkout@v7
-    - name: Set up JDK 17
-      uses: actions/setup-java@v6
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
+      - uses: actions/checkout@v7
 
-    - name: Check Docker version
-      run: docker --version
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
 
-    - name: Start Selenium Grid in Docker
-      id: start-selenium-grid
-      if : ${{ github.event.inputs.runRemotelyInDocker == 'true' }}
-      run: |
-        docker compose -f selenium-docker/compose.yaml up -d
-        sleep 5 # Wait for the Selenium Grid to start
+      - name: Validate suite selection
+        env:
+          TEST_SUITE: ${{ inputs.suite }}
+        run: |
+          case "$TEST_SUITE" in
+            smokeTest|groupATest|bundleATest|bundleBTest|bundleCTest|bundleDTest|browserstackTest) ;;
+            *)
+              echo "::error::Unsupported TestNG suite: $TEST_SUITE"
+              exit 1
+              ;;
+          esac
+          test -f "src/test/testsuite/$TEST_SUITE.xml"
 
-    - name: Build and run tests with Maven
-      run: mvn test -DsuiteXmlFile="src/test/testsuite/smokeTest.xml" -Dremote=${{ github.event.inputs.runRemotelyInDocker }}
-      #run: mvn -B package --file pom.xml
-      
-    - name: Upload test reports
-      if: always()
-      uses: actions/upload-artifact@v7
-      with:
-        name: test-reports
-        path: |
-          ./target/logs/
-          .target/reports/
-          ./target/surefire-reports/
-          
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v6
-      if: success() || failure() # always run even if the previous step fails
-      with:
-        report_paths: '**/target/surefire-reports/TEST-*.xml'
-        detailed_summary: true
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    #- name: Update dependency graph
-    #  uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      - name: Check Docker version
+        if: ${{ inputs.runRemotelyInDocker }}
+        run: docker --version
 
-    - name: Cleanup Selenium Grid Docker container
-      if : ${{ always() && steps.start-selenium-grid.outcome == 'success' }}
-      run: docker compose -f selenium-docker/compose.yaml down
+      - name: Start Selenium Grid in Docker
+        id: start-selenium-grid
+        if: ${{ inputs.runRemotelyInDocker }}
+        run: |
+          docker compose -f selenium-docker/compose.yaml up -d
+          sleep 5
+
+      - name: Run Maven tests
+        env:
+          TEST_SUITE: ${{ inputs.suite }}
+          RUN_REMOTELY: ${{ inputs.runRemotelyInDocker }}
+        run: mvn clean test -DsuiteXmlFile="$GITHUB_WORKSPACE/src/test/testsuite/$TEST_SUITE.xml" -Dremote="$RUN_REMOTELY"
+
+      - name: Upload test reports
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: |
+            target/logs/
+            target/reports/
+          if-no-files-found: ignore
+
+      - name: Upload Surefire reports
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: surefire-test-reports
+          path: '**/target/surefire-reports/**/*'
+          if-no-files-found: ignore
+
+      - name: Publish Test Report
+        id: publish_report
+        uses: dorny/test-reporter@v3
+        if: ${{ success() || failure() }}
+        with:
+          name: Test Report
+          reporter: java-junit
+          only-summary: false
+          list-suites: all
+          list-tests: failed
+          fail-on-error: false
+          path: '**/target/surefire-reports/**/TEST-*.xml'
+
+      - name: Write collector result
+        id: write_result
+        if: ${{ !cancelled() && steps.publish_report.outcome == 'success' }}
+        env:
+          TEST_SUITE: ${{ inputs.suite }}
+          PASSED: ${{ steps.publish_report.outputs.passed }}
+          FAILED: ${{ steps.publish_report.outputs.failed }}
+          SKIPPED: ${{ steps.publish_report.outputs.skipped }}
+          DURATION_MS: ${{ steps.publish_report.outputs.time }}
+          OUTPUT_DIRECTORY: ${{ runner.temp }}/test-history-input
+        run: node .github/scripts/write-test-result.mjs
+
+      - name: Upload collector input
+        if: ${{ !cancelled() && steps.write_result.outcome == 'success' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-history-input
+          path: ${{ runner.temp }}/test-history-input/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Cleanup Selenium Grid Docker container
+        if: ${{ always() && steps.start-selenium-grid.outcome == 'success' }}
+        run: docker compose -f selenium-docker/compose.yaml down
