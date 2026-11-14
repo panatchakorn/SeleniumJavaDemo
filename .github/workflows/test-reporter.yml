@@ -38,7 +38,7 @@ jobs:
           TEST_SUITE: ${{ inputs.suite }}
         run: |
           case "$TEST_SUITE" in
-            smokeTest|groupATest|bundleATest|bundleBTest|bundleCTest|bundleDTest|browserstackTest) ;;
+            smokeTest|allBundlesTest|groupATest|bundleATest|bundleBTest|bundleCTest|bundleDTest|browserstackTest) ;;
             *)
               echo "::error::Unsupported TestNG suite: $TEST_SUITE"
               exit 1
