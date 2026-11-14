@@ -11,6 +11,7 @@ on:
         options:
           - smokeTest
           - allBundlesTest
+          - overAMinuteTest
           - groupATest
           - bundleATest
           - bundleBTest
@@ -44,7 +45,7 @@ jobs:
           TEST_SUITE: ${{ inputs.suite }}
         run: |
           case "$TEST_SUITE" in
-            smokeTest|allBundlesTest|groupATest|bundleATest|bundleBTest|bundleCTest|bundleDTest|browserstackTest) ;;
+            smokeTest|allBundlesTest|groupATest|bundleATest|bundleBTest|bundleCTest|bundleDTest|browserstackTest|overAMinuteTest) ;;
             *)
               echo "::error::Unsupported TestNG suite: $TEST_SUITE"
               exit 1
