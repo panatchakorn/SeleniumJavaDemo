@@ -81,8 +81,11 @@ const html = `<!doctype html>
     table { width: 100%; border-collapse: collapse; text-align: left; }
     th, td { padding: .65rem; border-bottom: 1px solid #8885; white-space: nowrap; }
     .table-wrap { overflow-x: auto; }
-    .legend { display: flex; gap: 1rem; margin: .75rem 0; }
-    .legend span::before { content: ""; display: inline-block; width: .7rem; height: .7rem; margin-right: .4rem; background: var(--color); }
+    .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: .75rem 0; }
+    .legend-item { display: inline-flex; align-items: center; gap: .4rem; }
+    .legend-swatch { display: inline-block; width: 1.5rem; border-top: 3px solid var(--color); }
+    .legend-item.failed .legend-swatch { border-top-style: dashed; }
+    .legend-item.skipped .legend-swatch { border-top-style: dotted; }
   </style>
 </head>
 <body>
@@ -98,9 +101,9 @@ const html = `<!doctype html>
   <p id="empty" class="muted" hidden>No runs match these filters.</p>
   <h2>Trend (latest 50 matching runs)</h2>
   <div class="legend">
-    <span style="--color:#16803c">Passed</span>
-    <span style="--color:#c53030">Failed</span>
-    <span style="--color:#718096">Skipped</span>
+    <span class="legend-item passed"><i class="legend-swatch"></i>Passed</span>
+    <span class="legend-item failed"><i class="legend-swatch"></i>Failed</span>
+    <span class="legend-item skipped"><i class="legend-swatch"></i>Skipped</span>
   </div>
   <div class="chart"><svg id="chart" viewBox="0 0 900 320" role="img" aria-label="Test result counts by workflow run"></svg></div>
   <h2>Runs (latest 100 matching runs)</h2>
@@ -111,7 +114,11 @@ const html = `<!doctype html>
     </table>
   </div>
   <script>
-    const colors = { passed: "#16803c", failed: "#c53030", skipped: "#718096" };
+    const series = [
+      { key: "passed", color: "#16803c", dash: "", marker: "circle" },
+      { key: "skipped", color: "#718096", dash: "2 4", marker: "diamond" },
+      { key: "failed", color: "#c53030", dash: "7 4", marker: "square" },
+    ];
     const filters = {
       suite: document.querySelector("#suite-filter"),
       branch: document.querySelector("#branch-filter"),
@@ -175,7 +182,7 @@ const html = `<!doctype html>
         const label = addSvg("text", { x: plot.left - 8, y: y + 4, "text-anchor": "end", class: "axis-label" });
         label.textContent = value;
       }
-      for (const [key, color] of Object.entries(colors)) {
+      for (const { key, color, dash, marker } of series) {
         const points = chartRuns.map((record, index) => {
           const x = chartRuns.length === 1
             ? (plot.left + plot.right) / 2
@@ -184,14 +191,36 @@ const html = `<!doctype html>
           return { x, y, record };
         });
         if (points.length > 1) {
-          addSvg("polyline", {
+          const line = addSvg("polyline", {
             points: points.map((point) => point.x + "," + point.y).join(" "),
             fill: "none", stroke: color, "stroke-width": 2,
           });
+          if (dash) line.setAttribute("stroke-dasharray", dash);
         }
         for (const point of points) {
-          const circle = addSvg("circle", { cx: point.x, cy: point.y, r: 3.5, fill: color });
-          const title = addSvg("title", {}, circle);
+          let shape;
+          if (marker === "circle") {
+            shape = addSvg("circle", { cx: point.x, cy: point.y, r: 4, fill: color });
+          } else if (marker === "diamond") {
+            shape = addSvg("polygon", {
+              points: [
+                point.x + "," + (point.y - 5),
+                (point.x + 5) + "," + point.y,
+                point.x + "," + (point.y + 5),
+                (point.x - 5) + "," + point.y,
+              ].join(" "),
+              fill: color,
+            });
+          } else {
+            shape = addSvg("rect", {
+              x: point.x - 3.5,
+              y: point.y - 3.5,
+              width: 7,
+              height: 7,
+              fill: color,
+            });
+          }
+          const title = addSvg("title", {}, shape);
           title.textContent = "#" + point.record.runNumber + " " + key + ": " + point.record[key];
         }
       }
