@@ -196,7 +196,7 @@ jobs:
           retention-days: 1          
     outputs:
       github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
-  deployReport:
+
   deployReport:
     if: ${{ always() && needs.buildTest.outputs.github_page_artifact_output == 'success' }}
     needs: buildTest
