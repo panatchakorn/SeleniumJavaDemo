@@ -28,3 +28,4 @@ Run from command line: mvn clean test -DsuiteXmlFile=src/test/testsuite/<testsui
 ## Test Reports
 Extent reports can be found on ../target/reports/extent-report-yyyyMMdd_HHmmss.html
 
+The `test-reporter` GitHub Actions workflow publishes a test-history dashboard to GitHub Pages. It shows passed, failed, and skipped counts for each run, with links to the corresponding workflow run and its downloadable reports. Configure GitHub Pages to use **GitHub Actions**, then run the workflow from the Actions tab. Each deployment carries forward the history from the previously published dashboard.
