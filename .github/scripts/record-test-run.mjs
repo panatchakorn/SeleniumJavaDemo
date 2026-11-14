@@ -16,7 +16,7 @@ const git = (directory, args, options = {}) =>
     encoding: "utf8",
     ...options,
   }).trim();
-  n 
+
 const repository = required("GITHUB_REPOSITORY");
 if (!/^[\w.-]+\/[\w.-]+$/.test(repository)) {
   throw new Error(`Invalid repository name: "${repository}".`);
