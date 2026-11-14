@@ -10,12 +10,14 @@ on:
         default: smokeTest
         options:
           - smokeTest
+          - allBundlesTest
           - groupATest
           - bundleATest
           - bundleBTest
           - bundleCTest
           - bundleDTest
           - browserstackTest
+          - overAMinuteTest
       runRemotelyInDocker:
         description: Run test in Selenium Grid Docker container
         default: false
@@ -43,7 +45,7 @@ jobs:
           TEST_SUITE: ${{ inputs.suite }}
         run: |
           case "$TEST_SUITE" in
-            smokeTest|groupATest|bundleATest|bundleBTest|bundleCTest|bundleDTest|browserstackTest) ;;
+            smokeTest|allBundlesTest|groupATest|bundleATest|bundleBTest|bundleCTest|bundleDTest|browserstackTest|overAMinuteTest) ;;
             *)
               echo "::error::Unsupported TestNG suite: $TEST_SUITE"
               exit 1
