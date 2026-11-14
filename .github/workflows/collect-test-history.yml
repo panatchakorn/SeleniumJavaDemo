@@ -1,0 +1,84 @@
+name: collect-test-history
+on:
+  workflow_run:
+    workflows:
+      - test-reporter
+      - on-demand-test
+    types:
+      - completed
+
+permissions:
+  actions: read
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  collect:
+    if: >-
+      github.event.workflow_run.repository.full_name == github.repository &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.conclusion == 'success' ||
+       github.event.workflow_run.conclusion == 'failure')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download test result artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: test-history-input
+          run-id: ${{ github.event.workflow_run.id }}
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/test-history-input
+
+      - name: Persist run record
+        env:
+          ARTIFACT_DIRECTORY: ${{ runner.temp }}/test-history-input
+          HISTORY_DIRECTORY: ${{ runner.temp }}/test-history
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+          RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+          RUN_DATE: ${{ github.event.workflow_run.created_at }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+        run: node .github/scripts/record-test-run.mjs
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Build dashboard
+        env:
+          HISTORY_DIRECTORY: ${{ runner.temp }}/test-history
+          SITE_DIRECTORY: ${{ github.workspace }}/_site
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+        run: node .github/scripts/build-test-history.mjs
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          name: github-pages
+          path: ${{ github.workspace }}/_site/
+          retention-days: 1
+
+  deploy:
+    needs: collect
+    if: ${{ needs.collect.result == 'success' }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
