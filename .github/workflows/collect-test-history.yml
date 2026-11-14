@@ -3,6 +3,7 @@ on:
   workflow_run:
     workflows:
       - test-reporter
+      - on-demand-test
     types:
       - completed
 
