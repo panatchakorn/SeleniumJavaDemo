@@ -77,7 +77,7 @@ jobs:
           list-suites: all
           list-tests: failed
           fail-on-error: false
-          path: '**/target/surefire-reports/junitreports/TEST-*.xml'
+          path: '**/target/surefire-reports/**/TEST-*.xml'
 
         #  path: '**/target/surefire-reports/TEST-*.xml'
 
@@ -102,18 +102,27 @@ jobs:
       - name: Test Results Summary
         id: test_summary
         if: success() || failure()
+        env:
+          PASSED: ${{ steps.publish_report.outputs.passed }}
+          FAILED: ${{ steps.publish_report.outputs.failed }}
+          SKIPPED: ${{ steps.publish_report.outputs.skipped }}
+          DURATION_MS: ${{ steps.publish_report.outputs.time }}
         run: |
-          passed=${{ steps.publish_report.outputs.passed }}
-          failed=${{ steps.publish_report.outputs.failed }}
-          skipped=${{ steps.publish_report.outputs.skipped }}
+          if ! [[ "$PASSED" =~ ^[0-9]+$ && "$FAILED" =~ ^[0-9]+$ && "$SKIPPED" =~ ^[0-9]+$ ]]; then
+            echo "::error::The test reporter did not provide valid passed, failed, and skipped counts."
+            exit 1
+          fi
+          passed=$PASSED
+          failed=$FAILED
+          skipped=$SKIPPED
           total=$((passed+failed+skipped))
           echo "### Test Results Summary :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line          
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "Total: $total" >> $GITHUB_STEP_SUMMARY
-          echo ":heavy_check_mark: Passed: ${{ steps.publish_report.outputs.passed }} " >> $GITHUB_STEP_SUMMARY
-          echo ":x: Failed: ${{ steps.publish_report.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
-          echo ":white_circle: Skipped: ${{ steps.publish_report.outputs.skipped }}" >> $GITHUB_STEP_SUMMARY
-          echo "Execution time (ms): ${{ steps.publish_report.outputs.time }}" >> $GITHUB_STEP_SUMMARY
+          echo ":heavy_check_mark: Passed: $passed" >> $GITHUB_STEP_SUMMARY
+          echo ":x: Failed: $failed" >> $GITHUB_STEP_SUMMARY
+          echo ":white_circle: Skipped: $skipped" >> $GITHUB_STEP_SUMMARY
+          echo "Execution time (ms): ${DURATION_MS:-unknown}" >> $GITHUB_STEP_SUMMARY
           
       - name: Setup Pages
         id: pages
@@ -128,28 +137,68 @@ jobs:
           echo "host: ${{ steps.pages.outputs.host }}"
           echo "base_path ${{ steps.pages.outputs.base_path }}"
 
-      - name: Prepare files for Github pages
-        if: success() || failure()
+      - name: Download previous test history
+        id: previous_history
+        if: ${{ !cancelled() && steps.pages.outcome == 'success' }}
+        env:
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+          HISTORY_FILE: ${{ runner.temp }}/test-history.json
         run: |
-          mkdir -p $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
-          cp -r target/reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
-          cp -r target/surefire-reports $GITHUB_WORKSPACE/_site/$GITHUB_RUN_ID
-        working-directory: ${{ github.workspace }}
+          mkdir -p "$(dirname "$HISTORY_FILE")"
+          status=$(curl --silent --show-error --location \
+            --output "$HISTORY_FILE" \
+            --write-out '%{http_code}' \
+            "${BASE_URL%/}/test-history.json")
+          if [ "$status" = "404" ]; then
+            printf '[]\n' > "$HISTORY_FILE"
+          elif [ "$status" != "200" ]; then
+            echo "::error::Could not retrieve previous test history (HTTP $status)."
+            exit 1
+          fi
+
+      - name: Prepare files for GitHub Pages
+        id: prepare_site
+        if: ${{ !cancelled() && steps.previous_history.outcome == 'success' }}
+        run: |
+          site_dir="$GITHUB_WORKSPACE/_site"
+          run_dir="$site_dir/$GITHUB_RUN_ID"
+          mkdir -p "$run_dir"
+          if [ -d target/reports ]; then
+            cp -R target/reports "$run_dir/"
+          fi
+          if [ -d target/surefire-reports ]; then
+            cp -R target/surefire-reports "$run_dir/"
+          fi
+
+      - name: Build test history dashboard
+        id: build_history
+        if: ${{ !cancelled() && steps.prepare_site.outcome == 'success' }}
+        env:
+          HISTORY_FILE: ${{ runner.temp }}/test-history.json
+          SITE_DIR: ${{ github.workspace }}/_site
+          PASSED: ${{ steps.publish_report.outputs.passed }}
+          FAILED: ${{ steps.publish_report.outputs.failed }}
+          SKIPPED: ${{ steps.publish_report.outputs.skipped }}
+          DURATION_MS: ${{ steps.publish_report.outputs.time }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node .github/scripts/build-test-history.mjs
      
       - name: Upload artifact for github page
         id: github_page_artifact
         uses: actions/upload-pages-artifact@v5
-        if: success() || failure()
+        if: ${{ !cancelled() && steps.build_history.outcome == 'success' }}
         with:
           name: 'github-pages'
           path: '${{ github.workspace }}/_site/'
           retention-days: 1          
     outputs:
       github_page_artifact_output: ${{ steps.github_page_artifact.outcome }}
-      
   deployReport:
-    if: |
-      ${{ success() || failure() && needs.buildTest.outputs.github_page_artifact_output == 'success' }}
+  deployReport:
+    if: ${{ always() && needs.buildTest.outputs.github_page_artifact_output == 'success' }}
     needs: buildTest
     
     environment:
