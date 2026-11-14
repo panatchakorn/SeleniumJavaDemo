@@ -69,6 +69,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Publish Test Report
+        id: publish_report
         uses: dorny/test-reporter@v3
         if: ${{ success() || failure() }}
         with:
