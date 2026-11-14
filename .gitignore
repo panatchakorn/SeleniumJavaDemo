@@ -25,5 +25,5 @@ target/*
 .idea/*
 *.iml
 
-.DS*
+*DS*
 pjnotes.txt

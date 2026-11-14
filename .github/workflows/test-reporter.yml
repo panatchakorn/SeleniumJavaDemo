@@ -25,9 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -70,7 +69,6 @@ jobs:
           if-no-files-found: ignore
 
       - name: Publish Test Report
-        id: publish_report
         uses: dorny/test-reporter@v3
         if: ${{ success() || failure() }}
         with:
