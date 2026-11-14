@@ -10,13 +10,13 @@ on:
         options:
           - smokeTest
           - allBundlesTest
-          - overAMinuteTest
           - groupATest
           - bundleATest
           - bundleBTest
           - bundleCTest
           - bundleDTest
           - browserstackTest
+          - overAMinuteTest
 
 permissions:
   contents: read
