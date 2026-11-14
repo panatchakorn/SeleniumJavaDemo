@@ -1,0 +1,16 @@
+{
+  "runId": "43569125990",
+  "runNumber": 38,
+  "attempt": 1,
+  "date": "2026-11-14T07:01:40Z",
+  "branch": "master",
+  "commit": "117d2339833bb629364f19e886d5ca8690077e22",
+  "workflow": "on-demand-test",
+  "suite": "bundleATest",
+  "conclusion": "failure",
+  "passed": 2,
+  "failed": 2,
+  "skipped": 2,
+  "durationMs": 9738,
+  "url": "https://github.com/panatchakorn/SeleniumJavaDemo/actions/runs/43569125990"
+}
