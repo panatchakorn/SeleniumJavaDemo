@@ -9,6 +9,7 @@ on:
         default: smokeTest
         options:
           - smokeTest
+          - allBundlesTest
           - groupATest
           - bundleATest
           - bundleBTest
